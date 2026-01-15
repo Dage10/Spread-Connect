@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/iniciFragment">
+
+    <fragment
+        android:id="@+id/iniciFragment"
+        android:name="com.daviddam.clickconnect.IniciFragment"
+        android:label="fragment_inici"
+        tools:layout="@layout/fragment_inici" >
+        <action
+            android:id="@+id/action_iniciFragment_to_registreFragment"
+            app:destination="@id/registreFragment" />
+        <action
+            android:id="@+id/action_iniciFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.daviddam.clickconnect.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/registreFragment"
+        android:name="com.daviddam.clickconnect.RegistreFragment"
+        android:label="fragment_registre"
+        tools:layout="@layout/fragment_registre" />
+</navigation>
