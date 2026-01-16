@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.daviddam.clickconnect.databinding.FragmentLoginBinding
+import kotlin.getValue
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,12 +43,41 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val viewModelLogin: viewmodel.LoginViewModel by viewModels()
+
         binding.botoEnrere.setOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.btnLogin.setOnClickListener {
+            val usuari = binding.etUsuari.text.toString().trim()
+            val contrasenya = binding.etContrasenya.text.toString().trim()
+
+            if (usuari.isEmpty() || contrasenya.isEmpty()) {
+                binding.textError.text = "Omple tots els camps"
+                return@setOnClickListener
+            }
+
+            viewModelLogin.login(usuari, contrasenya, requireContext())
+        }
+
+        lifecycleScope.launchWhenStarted {
+            viewModelLogin.uiState.collect { state ->
+                binding.textError.text = when {
+                    state.loading -> "Carregant..."
+                    state.error != null -> state.error
+                    state.usuari != null -> {
+                        binding.root.post {
+                            findNavController().navigate(R.id.action_loginFragment_to_areesFragments)
+                        }
+                        ""
+                    }
+                    else -> ""
+                }
+            }
         }
     }
 

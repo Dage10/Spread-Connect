@@ -16,15 +16,26 @@
         <action
             android:id="@+id/action_iniciFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_iniciFragment_to_areesFragments"
+            app:destination="@id/areesFragments" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.daviddam.clickconnect.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_areesFragments"
+            app:destination="@id/areesFragments" />
+    </fragment>
     <fragment
         android:id="@+id/registreFragment"
         android:name="com.daviddam.clickconnect.RegistreFragment"
         android:label="fragment_registre"
         tools:layout="@layout/fragment_registre" />
+    <fragment
+        android:id="@+id/areesFragments"
+        android:name="com.daviddam.clickconnect.AreesFragments"
+        android:label="AreesFragments" />
 </navigation>

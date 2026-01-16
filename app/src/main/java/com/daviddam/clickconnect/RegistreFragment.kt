@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.daviddam.clickconnect.databinding.FragmentRegistreBinding
 
@@ -40,14 +42,36 @@ class RegistreFragment : Fragment() {
         binding = FragmentRegistreBinding.inflate(inflater, container, false)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val viewModelRegistre: viewmodel.RegistreViewModel by viewModels()
 
         binding.botoEnrere.setOnClickListener {
             findNavController().navigateUp()
         }
+
+        binding.btnRegistre.setOnClickListener {
+            val campUsuari = binding.etUsuari.text.toString().trim()
+            val campEmail = binding.etEmail.text.toString().trim()
+            val campContrasenya = binding.etConstrasenya.text.toString().trim()
+            val campRepetir = binding.etReConstrasenya.text.toString().trim()
+
+            viewModelRegistre.registre(campUsuari, campEmail, campContrasenya, campRepetir)
+        }
+
+        lifecycleScope.launchWhenStarted {
+            viewModelRegistre.uiState.collect { state ->
+                binding.textError.text = when {
+                    state.loading -> "Carregant..."
+                    state.error != null -> state.error
+                    state.usuariCreat != null -> "Usuari creat correctament!"
+                    else -> ""
+                }
+            }
+        }
     }
+
 
 
     companion object {

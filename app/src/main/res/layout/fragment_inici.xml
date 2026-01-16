@@ -60,7 +60,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btnLogin"
+            android:id="@+id/btnRegistre"
             android:layout_width="125dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="70dp"
@@ -90,7 +90,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btnRegistre"
+            android:id="@+id/btnLogin"
             android:layout_width="125dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="60dp"
