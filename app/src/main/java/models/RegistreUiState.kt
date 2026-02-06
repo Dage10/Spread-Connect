@@ -1,4 +1,4 @@
-import models.Usuari
+package models
 
 data class RegistreUiState(
     val loading: Boolean = false,

@@ -1,4 +1,4 @@
-import models.Usuari
+package models
 
 data class LoginUiState(
     val loading: Boolean = false,

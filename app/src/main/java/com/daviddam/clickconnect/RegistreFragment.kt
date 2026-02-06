@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -57,6 +58,7 @@ class RegistreFragment : Fragment() {
             val campContrasenya = binding.etConstrasenya.text.toString().trim()
             val campRepetir = binding.etReConstrasenya.text.toString().trim()
 
+            binding.btnRegistre.isEnabled = false
             viewModelRegistre.registre(campUsuari, campEmail, campContrasenya, campRepetir)
         }
 
@@ -67,6 +69,14 @@ class RegistreFragment : Fragment() {
                     state.error != null -> state.error
                     state.usuariCreat != null -> "Usuari creat correctament!"
                     else -> ""
+                }
+
+                binding.btnRegistre.isEnabled = !state.loading
+
+                if (state.usuariCreat != null) {
+                    Toast.makeText(requireContext(), "Registrat correctament", Toast.LENGTH_SHORT).show()
+                    val action = RegistreFragmentDirections.actionRegistreFragmentToLoginFragment()
+                    findNavController().navigate(action)
                 }
             }
         }

@@ -1,6 +1,6 @@
 package viewmodel
 
-import LoginUiState
+import models.LoginUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +22,8 @@ class LoginViewModel(
 
         viewModelScope.launch {
             try {
-                val usuari = repo.loginUsuari(nomUsuari, contrasenya)
-                SharedPreference.guardarUsuarioLoguejat(context, usuari.id)
+                val usuari = repo.usuariDao.loginUsuari(nomUsuari, contrasenya)
+                SharedPreference.guardarUsuariLoguejat(context, usuari.id)
 
                 _uiState.value = LoginUiState(usuari = usuari)
             } catch (e: Exception) {

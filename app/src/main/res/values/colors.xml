@@ -4,4 +4,19 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#3B82F6</color>
     <color name="darkblue">#1E3A8A</color>
+
+
+    <color name="app_background">#FFFFFF</color>
+    <color name="header_background">#1E3A8A</color>
+    <color name="item_background">#3B82F6</color>
+    <color name="form_background">#3B82F6</color>
+    <color name="input_background">#1E3A8A</color>
+    <color name="text_primary">#000000</color>
+    <color name="text_on_header">#FFFFFF</color>
+    <color name="text_on_item">#FFFFFF</color>
+    <color name="text_on_form">#FFFFFF</color>
+
+
+    <color name="form_card_background">#3B82F6</color>
+    <color name="input_field_background">#1E3A8A</color>
 </resources>

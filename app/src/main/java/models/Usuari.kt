@@ -9,6 +9,7 @@ data class Usuari(
     val email: String,
     val contrasenya_hash: String,
     val descripcio: String?,
+    val avatar_url: String? = null,
     val created_at: String,
     val updated_at: String
 )

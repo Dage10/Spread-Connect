@@ -10,5 +10,7 @@ data class Post(
     val descripcio: String,
     val area_id: String,
     val created_at: String,
-    val updated_at: String
+    val updated_at: String,
+    val nom_usuari: String? = null,
+    val imatge_url: String? = null
 )

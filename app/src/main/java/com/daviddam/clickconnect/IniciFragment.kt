@@ -46,17 +46,18 @@ class IniciFragment : Fragment() {
 
 
         if (SharedPreference.estaLoguejat(requireContext())) {
-            binding.root.post {
-                findNavController().navigate(R.id.action_iniciFragment_to_areesFragments)
-            }
+            val action = IniciFragmentDirections.actionIniciFragmentToAreesFragments()
+            findNavController().navigate(action)
         }
 
         binding.btnLogin.setOnClickListener {
-            findNavController().navigate(R.id.action_iniciFragment_to_loginFragment)
+            val action = IniciFragmentDirections.actionIniciFragmentToLoginFragment()
+            findNavController().navigate(action)
         }
 
         binding.btnRegistre.setOnClickListener {
-            findNavController().navigate(R.id.action_iniciFragment_to_registreFragment)
+            val action = IniciFragmentDirections.actionIniciFragmentToRegistreFragment()
+            findNavController().navigate(action)
         }
     }
 

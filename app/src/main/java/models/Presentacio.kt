@@ -11,5 +11,6 @@ data class Presentacio(
     val imatge_url: String?,
     val area_id: String,
     val created_at: String,
-    val updated_at: String
+    val updated_at: String,
+    val nom_usuari: String? = null
 )

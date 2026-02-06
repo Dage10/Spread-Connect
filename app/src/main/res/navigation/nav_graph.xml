@@ -20,6 +20,7 @@
             android:id="@+id/action_iniciFragment_to_areesFragments"
             app:destination="@id/areesFragments" />
     </fragment>
+
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.daviddam.clickconnect.LoginFragment"
@@ -28,14 +29,108 @@
         <action
             android:id="@+id/action_loginFragment_to_areesFragments"
             app:destination="@id/areesFragments" />
+        <action
+            android:id="@+id/action_loginFragment_to_iniciFragment"
+            app:destination="@id/iniciFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/registreFragment"
         android:name="com.daviddam.clickconnect.RegistreFragment"
         android:label="fragment_registre"
-        tools:layout="@layout/fragment_registre" />
+        tools:layout="@layout/fragment_registre" >
+        <action
+            android:id="@+id/action_registreFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/areesFragments"
         android:name="com.daviddam.clickconnect.AreesFragments"
-        android:label="AreesFragments" />
+        android:label="AreesFragments">
+
+        <action
+            android:id="@+id/action_areesFragments_to_editarPerfilFragment"
+            app:destination="@id/editarPerfilFragment" />
+
+        <action
+            android:id="@+id/action_areesFragments_to_crearPostFragment"
+            app:destination="@id/crearPostFragment">
+            <argument
+                android:name="areaId"
+                app:argType="string" />
+        </action>
+
+        <action
+            android:id="@+id/action_areesFragments_to_editarPostFragment"
+            app:destination="@id/editarPostFragment">
+            <argument
+                android:name="postId"
+                app:argType="string" />
+        </action>
+
+        <action
+            android:id="@+id/action_areesFragments_to_crearPresentacioFragment"
+            app:destination="@id/crearPresentacioFragment">
+            <argument
+                android:name="areaId"
+                app:argType="string" />
+        </action>
+
+        <action
+            android:id="@+id/action_areesFragments_to_editarPresentacioFragment"
+            app:destination="@id/editarPresentacioFragment">
+            <argument
+                android:name="presentacioId"
+                app:argType="string" />
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/editarPerfilFragment"
+        android:name="com.daviddam.clickconnect.EditarPerfilFragment"
+        android:label="Editar Perfil"
+        tools:layout="@layout/fragment_editar_perfil" />
+
+    <fragment
+        android:id="@+id/crearPostFragment"
+        android:name="com.daviddam.clickconnect.CrearPostFragment"
+        android:label="Crear Post"
+        tools:layout="@layout/fragment_crear_post">
+        <argument
+            android:name="areaId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editarPostFragment"
+        android:name="com.daviddam.clickconnect.EditarPostFragment"
+        android:label="Editar Post"
+        tools:layout="@layout/fragment_editar_post">
+        <argument
+            android:name="postId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/crearPresentacioFragment"
+        android:name="com.daviddam.clickconnect.CrearPresentacioFragment"
+        android:label="Crear Presentació"
+        tools:layout="@layout/fragment_crear_presentacio">
+        <argument
+            android:name="areaId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editarPresentacioFragment"
+        android:name="com.daviddam.clickconnect.EditarPresentacioFragment"
+        android:label="Editar Presentació"
+        tools:layout="@layout/fragment_editar_presentacio">
+        <argument
+            android:name="presentacioId"
+            app:argType="string" />
+    </fragment>
+
 </navigation>

@@ -49,7 +49,8 @@ class LoginFragment : Fragment() {
         val viewModelLogin: viewmodel.LoginViewModel by viewModels()
 
         binding.botoEnrere.setOnClickListener {
-            findNavController().navigateUp()
+            val action = LoginFragmentDirections.actionLoginFragmentToAreesFragments()
+            findNavController().navigate(action)
         }
 
         binding.btnLogin.setOnClickListener {
@@ -71,7 +72,8 @@ class LoginFragment : Fragment() {
                     state.error != null -> state.error
                     state.usuari != null -> {
                         binding.root.post {
-                            findNavController().navigate(R.id.action_loginFragment_to_areesFragments)
+                            val action = LoginFragmentDirections.actionLoginFragmentToAreesFragments()
+                            findNavController().navigate(action)
                         }
                         ""
                     }

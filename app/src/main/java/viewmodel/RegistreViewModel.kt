@@ -1,6 +1,5 @@
 package viewmodel
-
-import RegistreUiState
+import models.RegistreUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,10 +25,11 @@ class RegistreViewModel(
 
         viewModelScope.launch {
             try {
-                val usuari = repo.registreUsuari(nom, email, pass)
+                val usuari = repo.usuariDao.registreUsuari(nom, email, pass)
+                repo.preferenciesDao.insertPreferenciesPerDefecte(usuari.id)
                 _uiState.value = RegistreUiState(usuariCreat = usuari)
             } catch (e: Exception) {
-                _uiState.value = RegistreUiState(error = e.message)
+                _uiState.value = RegistreUiState(error = e.message ?: "Error en el registre")
             }
         }
     }

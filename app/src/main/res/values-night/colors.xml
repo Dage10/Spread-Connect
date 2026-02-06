@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="app_background">#000000</color>
+    <color name="header_background">#1E3A8A</color>
+    <color name="item_background">#1E3A8A</color>
+    <color name="form_background">#1E3A8A</color>
+    <color name="form_card_background">#1E3A8A</color>
+    <color name="input_background">#3B82F6</color>
+    <color name="input_field_background">#3B82F6</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_on_header">#FFFFFF</color>
+    <color name="text_on_item">#FFFFFF</color>
+    <color name="text_on_form">#FFFFFF</color>
+</resources>
