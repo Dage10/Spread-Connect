@@ -8,7 +8,12 @@
     </style>
 
     <style name="Theme.ClickConnect" parent="Base.Theme.ClickConnect" />
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
 
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.ClickConnect</item>
+    </style>
     <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
         <item name="cornerSize">50%</item>
     </style>

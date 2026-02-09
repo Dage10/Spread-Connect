@@ -67,4 +67,5 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
     implementation("com.google.mlkit:translate:17.0.3")
+    implementation("androidx.core:core-splashscreen:1.2.0")
 }
