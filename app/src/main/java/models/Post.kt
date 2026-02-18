@@ -12,5 +12,6 @@ data class Post(
     val created_at: String,
     val updated_at: String,
     val nom_usuari: String? = null,
-    val imatge_url: String? = null
+    val imatge_url: String? = null,
+    val avatar_url: String? = null
 )

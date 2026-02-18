@@ -59,4 +59,6 @@
     <string name="idioma_angles">English</string>
     <string name="tema_clar">Light</string>
     <string name="tema_fosc">Dark</string>
+    <string name="filtrar_usuari">Filter by user</string>
+    <string name="filtrar_data">Filter by date</string>
 </resources>

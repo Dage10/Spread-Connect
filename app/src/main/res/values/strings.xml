@@ -58,4 +58,6 @@
     <string name="idioma_angles">Anglès</string>
     <string name="tema_clar">Clar</string>
     <string name="tema_fosc">Fosc</string>
+    <string name="filtrar_usuari">Filtrar per usuari</string>
+    <string name="filtrar_data">Filtrar per data</string>
 </resources>

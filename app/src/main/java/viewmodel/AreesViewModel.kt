@@ -116,10 +116,24 @@ class AreesViewModel(
                         null
                     }
                 }
+                val mapaAvatars = ids.associateWith { id ->
+                    try {
+                        repo.usuariDao.getUsuariPerId(id).avatar_url
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
 
                 _uiState.value = _uiState.value.copy(
-                    posts = postsRaw.map { it.copy(nom_usuari = mapaUsuaris[it.id_usuari] ?: "Usuari") },
-                    presentacions = presentacionsRaw.map { it.copy(nom_usuari = mapaUsuaris[it.id_usuari] ?: "Usuari") },
+                    posts = postsRaw.map {
+                        it.copy(
+                            nom_usuari = mapaUsuaris[it.id_usuari] ?: "Usuari",
+                            avatar_url = mapaAvatars[it.id_usuari]
+                        )
+                    },
+                    presentacions = presentacionsRaw.map {
+                        it.copy(nom_usuari = mapaUsuaris[it.id_usuari] ?: "Usuari")
+                    },
                     error = null
                 )
             } catch (e: Exception) {

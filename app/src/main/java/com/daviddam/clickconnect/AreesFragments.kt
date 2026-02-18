@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.daviddam.clickconnect.databinding.FragmentAreesFragmentsBinding
 import kotlinx.coroutines.flow.collectLatest
 import models.Area
+import androidx.core.widget.addTextChangedListener
 import sharedPreference.SharedPreference
 import util.ImageExtension.loadImageOrDefault
 import viewmodel.AreesViewModel
@@ -51,6 +52,10 @@ class AreesFragments : Fragment() {
     private var indexInici = 0
     private val maxPerPagina = 3
     private var modePresentacions = false
+
+    private var totsPosts: List<models.Post> = emptyList()
+    private var filtreUsuari: String? = null
+    private var filtreData: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,6 +147,22 @@ class AreesFragments : Fragment() {
             }
         }
 
+
+        binding.etFiltreUsuari.addTextChangedListener {
+            filtreUsuari = it?.toString()?.trim().takeIf { s -> !s.isNullOrEmpty() }
+            applyFilters()
+        }
+
+        binding.etFiltreData.setOnClickListener {
+            showDateDialog()
+        }
+
+        binding.etFiltreData.addTextChangedListener {
+            filtreData = it?.toString()?.trim().takeIf { s -> !s.isNullOrEmpty() }
+            applyFilters()
+        }
+
+
         lifecycleScope.launchWhenStarted {
             viewModelAreesViewModel.uiState.collectLatest { state ->
                 state.error?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
@@ -151,7 +172,10 @@ class AreesFragments : Fragment() {
                 actualitzarAreesPaginades()
                 areesAdapter.setSelected(state.areaSeleccionada?.id)
                 presentacioAdapter.updateData(state.presentacions)
-                postAdapter.updateData(state.posts)
+
+
+                totsPosts = state.posts
+                applyFilters()
             }
         }
 
@@ -182,6 +206,7 @@ class AreesFragments : Fragment() {
     private fun actualitzarMode() {
         binding.rvPresentacions.visibility = if (modePresentacions) View.VISIBLE else View.GONE
         binding.rvPosts.visibility = if (modePresentacions) View.GONE else View.VISIBLE
+        binding.layoutFiltres.visibility = if (modePresentacions) View.GONE else View.VISIBLE
     }
 
     private fun actualitzarAreesPaginades() {
@@ -190,6 +215,34 @@ class AreesFragments : Fragment() {
         val hiHaMesDeTres = totesArees.size > maxPerPagina
         binding.btnPrevArea.visibility = if (hiHaMesDeTres && indexInici > 0) View.VISIBLE else View.INVISIBLE
         binding.btnNextArea.visibility = if (hiHaMesDeTres && indexInici + maxPerPagina < totesArees.size) View.VISIBLE else View.INVISIBLE
+    }
+
+    private fun applyFilters() {
+        var filtrat = totsPosts
+        filtreUsuari?.let { usuari ->
+            filtrat = filtrat.filter {
+                it.nom_usuari?.contains(usuari, ignoreCase = true) == true
+            }
+        }
+        filtreData?.let { data ->
+            filtrat = filtrat.filter { it.created_at.startsWith(data) }
+        }
+        postAdapter.updateData(filtrat)
+    }
+
+    private fun showDateDialog() {
+        val now = java.util.Calendar.getInstance()
+        val year = now.get(java.util.Calendar.YEAR)
+        val month = now.get(java.util.Calendar.MONTH)
+        val day = now.get(java.util.Calendar.DAY_OF_MONTH)
+        val dialog = android.app.DatePickerDialog(requireContext(), { _, y, m, d ->
+            val formatted = String.format("%04d-%02d-%02d", y, m + 1, d)
+            binding.etFiltreData.setText(formatted)
+        }, year, month, day)
+        dialog.setButton(android.app.AlertDialog.BUTTON_NEUTRAL, "Clear") { _, _ ->
+            binding.etFiltreData.setText("")
+        }
+        dialog.show()
     }
 
     private fun mostrarMenuUsuari(anchor: View) {

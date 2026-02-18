@@ -35,7 +35,10 @@ class PostAdapter(
         val esDelMateixUsuari = idUsuariLoguejat == post.id_usuari
 
         holder.binding.apply {
+            imgAvatarUser.loadImageOrDefault(post.avatar_url, R.drawable.avatar)
             tvUsuari.text = post.nom_usuari ?: "Usuari"
+            tvData.text = post.created_at.take(10)
+
             tvTitol.text = post.titol
             tvDescripcio.text = post.descripcio
             

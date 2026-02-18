@@ -17,13 +17,38 @@
             android:orientation="vertical"
             android:padding="8dp">
 
-            <TextView
-                android:id="@+id/tvUsuari"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Usuari"
-                android:textStyle="bold"
-                android:textColor="@color/text_on_item"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/imgAvatarUser"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/avatar"
+                    android:contentDescription="Avatar"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvUsuari"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Usuari"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_on_item"/>
+
+                <TextView
+                    android:id="@+id/tvData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2025-01-01"
+                    android:textColor="@color/text_on_item"
+                    android:textSize="12sp"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvTitol"

@@ -117,18 +117,56 @@
             app:layout_constraintTop_toBottomOf="@id/layoutArees"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/rvPosts"
+            app:layout_constraintBottom_toTopOf="@id/layoutFiltres"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:overScrollMode="never"/>
 
+
+        <LinearLayout
+            android:id="@+id/layoutFiltres"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="8dp"
+            app:layout_constraintTop_toBottomOf="@id/rvPresentacions"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <EditText
+                android:id="@+id/etFiltreUsuari"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/filtrar_usuari"
+                android:background="@drawable/bg_filter"
+                android:padding="8dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:inputType="text"/>
+
+            <EditText
+                android:id="@+id/etFiltreData"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:hint="@string/filtrar_data"
+                android:background="@drawable/bg_filter"
+                android:padding="8dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:focusable="false"
+                android:clickable="true"/>
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPosts"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/rvPresentacions"
+            app:layout_constraintTop_toBottomOf="@id/layoutFiltres"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

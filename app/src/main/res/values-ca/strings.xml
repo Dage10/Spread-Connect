@@ -59,4 +59,6 @@
     <string name="idioma_catala">Catala</string>
     <string name="idioma_castella">Español</string>
     <string name="idioma_angles">Anglès</string>
+    <string name="filtrar_usuari">Filtrar per usuari</string>
+    <string name="filtrar_data">Filtrar per data</string>
 </resources>
