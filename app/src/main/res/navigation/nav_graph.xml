@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_loginFragment_to_iniciFragment"
             app:destination="@id/iniciFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_oblidatContrasenyaFragment"
+            app:destination="@id/oblidatContrasenyaFragment" />
     </fragment>
 
     <fragment
@@ -132,5 +135,10 @@
             android:name="presentacioId"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/oblidatContrasenyaFragment"
+        android:name="com.daviddam.clickconnect.OblidatContrasenyaFragment"
+        android:label="fragment_oblidat_contrasenya"
+        tools:layout="@layout/fragment_oblidat_contrasenya" />
 
 </navigation>

@@ -61,4 +61,7 @@
     <string name="tema_fosc">Dark</string>
     <string name="filtrar_usuari">Filter by user</string>
     <string name="filtrar_data">Filter by date</string>
+    <string name="enviar_email">Send Email</string>
+    <string name="otp_codigo">Code</string>
+    <string name="verify_code">Verify and change</string>
 </resources>

@@ -60,4 +60,7 @@
     <string name="tema_fosc">Fosc</string>
     <string name="filtrar_usuari">Filtrar per usuari</string>
     <string name="filtrar_data">Filtrar per data</string>
+    <string name="enviar_email">Enviar correu</string>
+    <string name="otp_codigo">Codi</string>
+    <string name="verify_code">Verificar i canviar</string>
 </resources>

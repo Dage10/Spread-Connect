@@ -65,6 +65,11 @@ class LoginFragment : Fragment() {
             viewModelLogin.login(usuari, contrasenya, requireContext())
         }
 
+        binding.btnOblidat.setOnClickListener {
+            val action = LoginFragmentDirections.actionLoginFragmentToOblidatContrasenyaFragment()
+            findNavController().navigate(action)
+        }
+
         lifecycleScope.launchWhenStarted {
             viewModelLogin.uiState.collect { state ->
                 binding.textError.text = when {

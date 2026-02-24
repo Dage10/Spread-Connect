@@ -6,8 +6,18 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import models.Usuari
 import java.security.MessageDigest
+import java.util.Properties
+import javax.mail.Message
+import javax.mail.Session
+import javax.mail.Transport
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeMessage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class UsuariDao {
+
+    private val otpCodis: MutableMap<String, String> = mutableMapOf()
 
     private fun sha256(text: String): String {
         val digest = MessageDigest.getInstance("SHA-256")
@@ -109,5 +119,58 @@ class UsuariDao {
         } catch (e: Exception) {
             throw e
         }
+    }
+
+    suspend fun enviarOtp(email: String) {
+        SupabaseClient.client
+            .from("usuaris")
+            .select { filter { eq("email", email) } }
+            .decodeList<Usuari>()
+            .firstOrNull()
+            ?: throw Exception("No s'ha trobat cap usuari amb aquest correu")
+
+        val codi = (100_000..999_999).random().toString()
+        otpCodis[email] = codi
+
+
+        withContext(Dispatchers.IO) {
+            try {
+                val propietats = Properties().apply {
+                    put("mail.smtp.host", "10.0.2.2")
+                    put("mail.smtp.port", "25")
+                    put("mail.smtp.auth", "false")
+                }
+                val sessio = Session.getInstance(propietats)
+                val missatge = MimeMessage(sessio).apply {
+                    setFrom(InternetAddress("no-reply@clickconnect.local"))
+                    addRecipient(Message.RecipientType.TO, InternetAddress(email))
+                    setSubject("Codi de recuperació")
+                    setText("El teu codi és: $codi")
+                }
+                Transport.send(missatge)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    suspend fun verificarOtpICanviar(email: String, codi: String, novaContrasenya: String) {
+        val guardat = otpCodis[email] ?: throw Exception("No s'ha sol·licitat cap codi")
+        if (guardat != codi) throw Exception("Codi incorrecte")
+
+        val hash = sha256(novaContrasenya)
+
+        try {
+            SupabaseClient.client
+                .from("usuaris")
+                .update(mapOf("contrasenya_hash" to hash)) {
+                    filter { eq("email", email) }
+                }
+                .decodeList<Usuari>()
+        } catch (_: Exception) {
+
+        }
+
+        otpCodis.remove(email)
     }
 }

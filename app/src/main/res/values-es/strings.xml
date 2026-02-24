@@ -61,4 +61,7 @@
     <string name="idioma_angles">Inglés</string>
     <string name="filtrar_usuari">Filtrar por usuario</string>
     <string name="filtrar_data">Filtrar por fecha</string>
+    <string name="enviar_email">Enviar correo</string>
+    <string name="otp_codigo">Código</string>
+    <string name="verify_code">Verificar y cambiar</string>
 </resources>

@@ -13,7 +13,7 @@ object TranslationUtil {
     private fun getLanguageCode(llenguatge: String): String {
         return when (llenguatge) {
             "Català" -> "ca"
-            "Castellà" -> "es"
+            "Español" -> "es"
             "Anglès" -> "en"
             else -> "es"
         }

@@ -46,7 +46,7 @@ class EditarPerfilFragment : Fragment() {
     private lateinit var binding: FragmentEditarPerfilBinding
     private val viewModelEditarPerfil: EditarPerfilViewModel by viewModels()
 
-    private val idiomesKeys = listOf("Català", "Castellà", "Anglès")
+    private val idiomesKeys = listOf("Català", "Español", "Anglès")
     private val temesKeys = listOf("Clar", "Fosc")
 
     override fun onCreate(savedInstanceState: Bundle?) {

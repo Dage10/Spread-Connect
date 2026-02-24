@@ -44,6 +44,13 @@ android {
         dataBinding = true
         viewBinding = true
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            merges += "META-INF/NOTICE.md"
+            merges += "META-INF/LICENSE.md"
+        }
+    }
 }
 
 dependencies {
@@ -68,4 +75,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
     implementation("com.google.mlkit:translate:17.0.3")
     implementation("androidx.core:core-splashscreen:1.2.0")
+
+    implementation(libs.android.mail)
+    implementation(libs.android.activation)
 }
