@@ -167,8 +167,8 @@ class UsuariDao {
                     filter { eq("email", email) }
                 }
                 .decodeList<Usuari>()
-        } catch (_: Exception) {
-
+        } catch (e: Exception) {
+            throw RuntimeException("Error en verificar OTP i canviar contrasenya: ",e)
         }
 
         otpCodis.remove(email)

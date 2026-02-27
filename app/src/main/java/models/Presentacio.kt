@@ -12,5 +12,9 @@ data class Presentacio(
     val area_id: String,
     val created_at: String,
     val updated_at: String,
-    val nom_usuari: String? = null
+    val nom_usuari: String? = null,
+    val avatar_url: String? = null,
+    val likes: Int = 0,
+    val dislikes: Int = 0,
+    val reaccioActual: String? = null
 )

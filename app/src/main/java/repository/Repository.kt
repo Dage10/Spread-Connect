@@ -4,6 +4,7 @@ import daos.AreaDao
 import daos.PostDao
 import daos.PreferenciesDao
 import daos.PresentacioDao
+import daos.ReaccioDao
 import daos.UsuariDao
 
 class Repository (
@@ -12,6 +13,7 @@ class Repository (
     val areaDao: AreaDao = AreaDao(),
     val postDao: PostDao = PostDao(),
     val presentacioDao: PresentacioDao = PresentacioDao(),
-    val preferenciesDao: PreferenciesDao = PreferenciesDao()
+    val preferenciesDao: PreferenciesDao = PreferenciesDao(),
+    val reaccioDao: ReaccioDao = ReaccioDao()
 
 )

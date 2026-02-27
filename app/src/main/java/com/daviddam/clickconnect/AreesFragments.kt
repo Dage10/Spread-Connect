@@ -54,6 +54,7 @@ class AreesFragments : Fragment() {
     private var modePresentacions = false
 
     private var totsPosts: List<models.Post> = emptyList()
+    private var totsPresentacions: List<models.Presentacio> = emptyList()
     private var filtreUsuari: String? = null
     private var filtreData: String? = null
 
@@ -93,7 +94,9 @@ class AreesFragments : Fragment() {
             onEditar = { p ->
                 findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToEditarPresentacioFragment(p.id))
             },
-            onEliminar = { p -> viewModelEliminarPresentacio.eliminarPresentacio(p) }
+            onEliminar = { p -> viewModelEliminarPresentacio.eliminarPresentacio(p) },
+            onLike = { p -> viewModelAreesViewModel.reaccionarPresentacio(p, "like") },
+            onDislike = { p -> viewModelAreesViewModel.reaccionarPresentacio(p, "dislike") }
         )
 
         postAdapter = PostAdapter(
@@ -102,7 +105,9 @@ class AreesFragments : Fragment() {
             onEditar = { p ->
                 findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToEditarPostFragment(p.id))
             },
-            onEliminar = { p -> viewModelEliminarPost.eliminarPost(p) }
+            onEliminar = { p -> viewModelEliminarPost.eliminarPost(p) },
+            onLike = { p -> viewModelAreesViewModel.reaccionarPost(p, "like") },
+            onDislike = { p -> viewModelAreesViewModel.reaccionarPost(p, "dislike") }
         )
 
         binding.rvArees.apply {
@@ -173,8 +178,8 @@ class AreesFragments : Fragment() {
                 areesAdapter.setSelected(state.areaSeleccionada?.id)
                 presentacioAdapter.updateData(state.presentacions)
 
-
                 totsPosts = state.posts
+                totsPresentacions = state.presentacions
                 applyFilters()
             }
         }
@@ -203,10 +208,16 @@ class AreesFragments : Fragment() {
         actualitzarMode()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModelAreesViewModel.refrescarArea()
+    }
+
     private fun actualitzarMode() {
         binding.rvPresentacions.visibility = if (modePresentacions) View.VISIBLE else View.GONE
         binding.rvPosts.visibility = if (modePresentacions) View.GONE else View.VISIBLE
-        binding.layoutFiltres.visibility = if (modePresentacions) View.GONE else View.VISIBLE
+        binding.layoutFiltres.visibility = View.VISIBLE
+        applyFilters()
     }
 
     private fun actualitzarAreesPaginades() {
@@ -218,16 +229,29 @@ class AreesFragments : Fragment() {
     }
 
     private fun applyFilters() {
-        var filtrat = totsPosts
-        filtreUsuari?.let { usuari ->
-            filtrat = filtrat.filter {
-                it.nom_usuari?.contains(usuari, ignoreCase = true) == true
+        if (modePresentacions) {
+            var filtrat = totsPresentacions
+            filtreUsuari?.let { usuari ->
+                filtrat = filtrat.filter {
+                    it.nom_usuari?.contains(usuari, ignoreCase = true) == true
+                }
             }
+            filtreData?.let { data ->
+                filtrat = filtrat.filter { it.created_at.startsWith(data) }
+            }
+            presentacioAdapter.updateData(filtrat)
+        } else {
+            var filtrat = totsPosts
+            filtreUsuari?.let { usuari ->
+                filtrat = filtrat.filter {
+                    it.nom_usuari?.contains(usuari, ignoreCase = true) == true
+                }
+            }
+            filtreData?.let { data ->
+                filtrat = filtrat.filter { it.created_at.startsWith(data) }
+            }
+            postAdapter.updateData(filtrat)
         }
-        filtreData?.let { data ->
-            filtrat = filtrat.filter { it.created_at.startsWith(data) }
-        }
-        postAdapter.updateData(filtrat)
     }
 
     private fun showDateDialog() {

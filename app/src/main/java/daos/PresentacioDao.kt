@@ -1,6 +1,5 @@
 package daos
 
-import android.util.Log
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import kotlinx.serialization.json.buildJsonObject
@@ -29,7 +28,6 @@ class PresentacioDao {
         areaId: String,
         imatgeUrl: String?
     ): Presentacio {
-        Log.d("PresentacioDao", "crearPresentacio idUsuari=$idUsuari titol=$titol areaId=$areaId imatgeUrl=${imatgeUrl != null}")
         val nova = buildJsonObject {
             put("id_usuari", idUsuari)
             put("titol", titol)
@@ -39,7 +37,6 @@ class PresentacioDao {
                 put("imatge_url", imatgeUrl)
             }
         }
-        Log.d("PresentacioDao", "crearPresentacio nova=$nova")
 
         return try {
             SupabaseClient.client
@@ -50,7 +47,6 @@ class PresentacioDao {
                 .decodeList<Presentacio>()
                 .firstOrNull() ?: throw Exception("Error en crear la presentació")
         } catch (e: Exception) {
-            Log.e("PresentacioDao", "crearPresentacio ERROR: ${e.message}", e)
             throw e
         }
     }
@@ -61,7 +57,6 @@ class PresentacioDao {
         contingut: String,
         imatgeUrl: String?
     ): Presentacio {
-        Log.d("PresentacioDao", "editarPresentacio id=$id titol=$titol imatgeUrl=${imatgeUrl != null}")
         val data = buildJsonObject {
             put("titol", titol)
             put("contingut_presentacio", contingut)
@@ -69,7 +64,6 @@ class PresentacioDao {
                 put("imatge_url", imatgeUrl)
             }
         }
-        Log.d("PresentacioDao", "editarPresentacio data=$data")
         return try {
             SupabaseClient.client
                 .from("presentacions")
@@ -80,20 +74,16 @@ class PresentacioDao {
                 .decodeList<Presentacio>()
                 .firstOrNull() ?: throw Exception("Error en editar la presentació")
         } catch (e: Exception) {
-            Log.e("PresentacioDao", "editarPresentacio ERROR: ${e.message}", e)
             throw e
         }
     }
 
     suspend fun eliminarPresentacio(id: String) {
-        Log.d("PresentacioDao", "eliminarPresentacio id=$id")
         try {
             SupabaseClient.client
                 .from("presentacions")
                 .delete { filter { eq("id", id) } }
-            Log.d("PresentacioDao", "eliminarPresentacio OK")
         } catch (e: Exception) {
-            Log.e("PresentacioDao", "eliminarPresentacio ERROR", e)
             throw e
         }
     }

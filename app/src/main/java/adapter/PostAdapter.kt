@@ -14,7 +14,9 @@ class PostAdapter(
     private var posts: List<Post>,
     private val idUsuariLoguejat: String?,
     private val onEditar: (Post) -> Unit,
-    private val onEliminar: (Post) -> Unit
+    private val onEliminar: (Post) -> Unit,
+    private val onLike: (Post) -> Unit = {},
+    private val onDislike: (Post) -> Unit = {}
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     fun updateData(nous: List<Post>) {
@@ -45,9 +47,26 @@ class PostAdapter(
             imgPost.loadImageOrDefault(post.imatge_url, R.drawable.avatar)
             imgPost.visibility = if (post.imatge_url.isNullOrEmpty()) View.GONE else View.VISIBLE
 
+            textLikeComptador.text = post.likes.toString()
+            tvDislikeComptador.text = post.dislikes.toString()
+            
+            if (post.reaccioActual == "like") {
+                btnLike.setColorFilter(android.graphics.Color.RED)
+            } else {
+                btnLike.clearColorFilter()
+            }
+            
+            if (post.reaccioActual == "dislike") {
+                btnDislike.setColorFilter(android.graphics.Color.BLUE)
+            } else {
+                btnDislike.clearColorFilter()
+            }
+
             btnEditar.visibility = if (esDelMateixUsuari) View.VISIBLE else View.GONE
             btnEliminar.visibility = if (esDelMateixUsuari) View.VISIBLE else View.GONE
 
+            btnLike.setOnClickListener { onLike(post) }
+            btnDislike.setOnClickListener { onDislike(post) }
             btnEditar.setOnClickListener { onEditar(post) }
             btnEliminar.setOnClickListener { onEliminar(post) }
         }

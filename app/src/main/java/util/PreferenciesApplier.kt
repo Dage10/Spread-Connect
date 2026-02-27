@@ -9,7 +9,7 @@ object PreferenciesApplier {
     fun applyLanguage(activity: Activity, llenguatge: String) {
         val tag = when (llenguatge) {
             "Català" -> "ca"
-            "Castellà" -> "es"
+            "Español" -> "es"
             "Anglès" -> "en"
             else -> "es"
         }

@@ -13,5 +13,8 @@ data class Post(
     val updated_at: String,
     val nom_usuari: String? = null,
     val imatge_url: String? = null,
-    val avatar_url: String? = null
+    val avatar_url: String? = null,
+    val likes: Int = 0,
+    val dislikes: Int = 0,
+    val reaccioActual: String? = null
 )
