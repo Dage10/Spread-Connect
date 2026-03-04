@@ -2,6 +2,8 @@ package viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -104,55 +106,50 @@ class AreesViewModel(
     private fun carregarPerArea(areaId: String) {
         viewModelScope.launch {
             try {
-                val postsRaw = repo.postDao.getPostsPerArea(areaId)
-                val presentacionsRaw = repo.presentacioDao.getPresentacionsPerArea(areaId)
+                val postsDeferred = async { repo.postDao.getPostsPerArea(areaId) }
+                val presDeferred = async { repo.presentacioDao.getPresentacionsPerArea(areaId) }
 
-                val ids = (postsRaw.map {
-                    it.id_usuari
-                } + presentacionsRaw.map {
-                    it.id_usuari
-                }).distinct()
+                val postsRaw = postsDeferred.await()
+                val presentacionsRaw = presDeferred.await()
 
-                val mapaUsuaris = ids.associateWith { id ->
-                    try {
-                        repo.usuariDao.getUsuariPerId(id).nom_usuari
-                    } catch (e: Exception) {
-                        null
-                    }
+                val ids = (postsRaw.map { it.id_usuari } + presentacionsRaw.map { it.id_usuari }).distinct()
+
+                val usuarisDeferred = ids.map { id ->
+                    async { id to try { repo.usuariDao.getUsuariPerId(id) } catch (e: Exception) { null } }
                 }
-                val mapaAvatars = ids.associateWith { id ->
-                    try {
-                        repo.usuariDao.getUsuariPerId(id).avatar_url
-                    } catch (e: Exception) {
-                        null
-                    }
-                }
+                val usuarisMapa = usuarisDeferred.awaitAll().toMap()
 
                 val postsDetallats = postsRaw.map { post ->
-                    val likes = repo.reaccioDao.getLikes(post.id)
-                    val dislikes = repo.reaccioDao.getDislikes(post.id)
-                    val reaccioActual = idUsuariActual?.let { repo.reaccioDao.getReaccioUsuari(post.id, it) }
-                    post.copy(
-                        nom_usuari = mapaUsuaris[post.id_usuari] ?: "Usuari",
-                        avatar_url = mapaAvatars[post.id_usuari],
-                        likes = likes,
-                        dislikes = dislikes,
-                        reaccioActual = reaccioActual
-                    )
-                }
+                    async {
+                        val likes = repo.reaccioDao.getLikes(post.id)
+                        val dislikes = repo.reaccioDao.getDislikes(post.id)
+                        val reaccioActual = idUsuariActual?.let { repo.reaccioDao.getReaccioUsuari(post.id, it) }
+                        val usuari = usuarisMapa[post.id_usuari]
+                        post.copy(
+                            nom_usuari = usuari?.nom_usuari ?: "Usuari",
+                            avatar_url = usuari?.avatar_url,
+                            likes = likes,
+                            dislikes = dislikes,
+                            reaccioActual = reaccioActual
+                        )
+                    }
+                }.awaitAll()
 
                 val presentacionsDetallades = presentacionsRaw.map { pres ->
-                    val likes = repo.reaccioDao.getLikesPresentacio(pres.id)
-                    val dislikes = repo.reaccioDao.getDislikesPresentacio(pres.id)
-                    val reaccioActual = idUsuariActual?.let { repo.reaccioDao.getReaccioUsuariPresentacio(pres.id, it) }
-                    pres.copy(
-                        nom_usuari = mapaUsuaris[pres.id_usuari] ?: "Usuari",
-                        avatar_url = mapaAvatars[pres.id_usuari],
-                        likes = likes,
-                        dislikes = dislikes,
-                        reaccioActual = reaccioActual
-                    )
-                }
+                    async {
+                        val likes = repo.reaccioDao.getLikesPresentacio(pres.id)
+                        val dislikes = repo.reaccioDao.getDislikesPresentacio(pres.id)
+                        val reaccioActual = idUsuariActual?.let { repo.reaccioDao.getReaccioUsuariPresentacio(pres.id, it) }
+                        val usuari = usuarisMapa[pres.id_usuari]
+                        pres.copy(
+                            nom_usuari = usuari?.nom_usuari ?: "Usuari",
+                            avatar_url = usuari?.avatar_url,
+                            likes = likes,
+                            dislikes = dislikes,
+                            reaccioActual = reaccioActual
+                        )
+                    }
+                }.awaitAll()
 
                 _uiState.value = _uiState.value.copy(
                     posts = postsDetallats,
@@ -189,7 +186,6 @@ class AreesViewModel(
                     _uiState.value = _uiState.value.copy(posts = postsActualitzats)
                 } catch (e: Exception) {
                     _uiState.value = _uiState.value.copy(error = "Error: ${e.message}")
-                    e.printStackTrace()
                 }
             }
         }
@@ -219,7 +215,6 @@ class AreesViewModel(
                     _uiState.value = _uiState.value.copy(presentacions = presActualitzades)
                 } catch (e: Exception) {
                     _uiState.value = _uiState.value.copy(error = "Error: ${e.message}")
-                    e.printStackTrace()
                 }
             }
         }

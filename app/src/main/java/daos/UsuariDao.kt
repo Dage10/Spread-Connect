@@ -14,6 +14,7 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.time.Instant
 
 class UsuariDao {
 
@@ -95,6 +96,7 @@ class UsuariDao {
         val data = buildJsonObject {
             put("nom_usuari", nomUsuari)
             put("email", email)
+            put("updated_at", Instant.now().toString())
             if (descripcio != null) {
                 put("descripcio", descripcio)
             }
@@ -163,7 +165,10 @@ class UsuariDao {
         try {
             SupabaseClient.client
                 .from("usuaris")
-                .update(mapOf("contrasenya_hash" to hash)) {
+                .update(mapOf(
+                    "contrasenya_hash" to hash,
+                    "updated_at" to Instant.now().toString()
+                )) {
                     filter { eq("email", email) }
                 }
                 .decodeList<Usuari>()

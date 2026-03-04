@@ -11,4 +11,6 @@
     <color name="text_on_header">#FFFFFF</color>
     <color name="text_on_item">#FFFFFF</color>
     <color name="text_on_form">#FFFFFF</color>
+
+    <color name="comment_stroke">#FFFFFF</color>
 </resources>

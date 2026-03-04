@@ -19,4 +19,6 @@
 
     <color name="form_card_background">#3B82F6</color>
     <color name="input_field_background">#1E3A8A</color>
+
+    <color name="comment_stroke">#000000</color>
 </resources>

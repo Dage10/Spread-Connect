@@ -203,4 +203,102 @@ class ReaccioDao {
             e.printStackTrace()
         }
     }
+
+    suspend fun getLikesComentari(idComentari: String): Int {
+        return try {
+            SupabaseClient.client
+                .from("reaccions_comentaris")
+                .select {
+                    filter {
+                        eq("id_comentari", idComentari)
+                        eq("tipus", "like")
+                    }
+                }
+                .decodeList<Reaccio>()
+                .size
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+    suspend fun getDislikesComentari(idPresentacio: String): Int {
+        return try {
+            SupabaseClient.client
+                .from("reaccions_comentaris")
+                .select {
+                    filter {
+                        eq("id_comentari", idPresentacio)
+                        eq("tipus", "dislike")
+                    }
+                }
+                .decodeList<Reaccio>()
+                .size
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+    suspend fun getReaccioUsuariComentari(idComentari: String, idUsuari: String): String? {
+        return try {
+            SupabaseClient.client
+                .from("reaccions_comentaris")
+                .select {
+                    filter {
+                        eq("id_comentari", idComentari)
+                        eq("id_usuari", idUsuari)
+                    }
+                }
+                .decodeList<Reaccio>()
+                .firstOrNull()
+                ?.tipus
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun canviarReaccioComentari(idComentari: String, idUsuari: String, tipus: String) {
+        try {
+            val reaccioExistent = SupabaseClient.client
+                .from("reaccions_comentaris")
+                .select {
+                    filter {
+                        eq("id_comentari", idComentari)
+                        eq("id_usuari", idUsuari)
+                    }
+                }
+                .decodeList<Reaccio>()
+                .firstOrNull()
+
+            if (reaccioExistent != null) {
+                if (reaccioExistent.tipus == tipus) {
+                    SupabaseClient.client
+                        .from("reaccions_comentaris")
+                        .delete {
+                            filter { eq("id", reaccioExistent.id) }
+                        }
+                } else {
+                    SupabaseClient.client
+                        .from("reaccions_comentaris")
+                        .update({ set("tipus", tipus) }) {
+                            filter { eq("id", reaccioExistent.id) }
+                        }
+                }
+            } else {
+                val horaActual = java.time.Instant.now().toString()
+                SupabaseClient.client
+                    .from("reaccions_comentaris")
+                    .insert(
+                        Reaccio(
+                            id = UUID.randomUUID().toString(),
+                            id_comentari = idComentari,
+                            id_usuari = idUsuari,
+                            tipus = tipus,
+                            created_at = horaActual
+                        )
+                    )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }

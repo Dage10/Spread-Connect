@@ -88,6 +88,18 @@
                 app:argType="string" />
         </action>
 
+        <action
+            android:id="@+id/action_areesFragments_to_comentarisFragment"
+            app:destination="@id/comentarisFragment">
+            <argument
+                android:name="targetId"
+                app:argType="string" />
+            <argument
+                android:name="targetType"
+                app:argType="string"
+                android:defaultValue="post" />
+        </action>
+
     </fragment>
 
     <fragment
@@ -140,5 +152,22 @@
         android:name="com.daviddam.clickconnect.OblidatContrasenyaFragment"
         android:label="fragment_oblidat_contrasenya"
         tools:layout="@layout/fragment_oblidat_contrasenya" />
+
+    <fragment
+        android:id="@+id/comentarisFragment"
+        android:name="com.daviddam.clickconnect.ComentarisFragment"
+        android:label="Comentaris"
+        tools:layout="@layout/fragment_comentaris">
+        <argument
+            android:name="targetId"
+            app:argType="string" />
+        <argument
+            android:name="targetType"
+            app:argType="string"
+            android:defaultValue="post" />
+        <action
+            android:id="@+id/action_comentarisFragment_self"
+            app:destination="@id/comentarisFragment" />
+    </fragment>
 
 </navigation>

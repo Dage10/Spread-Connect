@@ -12,10 +12,10 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import coil.load
 import com.daviddam.clickconnect.databinding.FragmentEditarPerfilBinding
 import kotlinx.coroutines.flow.collectLatest
 import sharedPreference.SharedPreference
+import util.ImageExtension.loadImageOrDefault
 import util.PreferenciesApplier
 import viewmodel.EditarPerfilViewModel
 
@@ -36,7 +36,7 @@ class EditarPerfilFragment : Fragment() {
     private val launcherAvatar = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             selectedAvatarUri = it
-            binding.imgAvatar.load(it)
+            binding.imgAvatar.loadImageOrDefault(it.toString(), isProfile = true)
         }
     }
 
@@ -83,51 +83,27 @@ class EditarPerfilFragment : Fragment() {
             getString(R.string.tema_fosc)
         )
 
-        val adapterIdiomes = ArrayAdapter(
-            requireContext(),
-            R.layout.spinner_item_selected,
-            idiomesLabels
-        )
-        adapterIdiomes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerIdioma.adapter = adapterIdiomes
+        binding.spinnerIdioma.adapter = ArrayAdapter(requireContext(), R.layout.spinner_item_selected, idiomesLabels)
+        binding.spinnerTema.adapter = ArrayAdapter(requireContext(), R.layout.spinner_item_selected, temesLabels)
 
-        val adapterTemes = ArrayAdapter(
-            requireContext(),
-            R.layout.spinner_item_selected,
-            temesLabels
-        )
-        adapterTemes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerTema.adapter = adapterTemes
-
-        binding.botoEnrere.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
+        binding.botoEnrere.setOnClickListener { findNavController().navigateUp() }
         binding.btnCanviarAvatar.setOnClickListener { launcherAvatar.launch("image/*") }
 
         binding.btnGuardar.setOnClickListener {
-            val nom = binding.etNom.text.toString().trim()
-            val email = binding.etEmail.text.toString().trim()
-            val desc = binding.etDescripcio.text.toString().trim()
-            val contrasenyaAntiga = binding.etContrasenyaAntiga.text.toString().trim().ifBlank {
-                null
-            }
-            val novaPass = binding.etContrasenya.text.toString().trim().ifBlank {
-                null
-            }
-
-            val llenguatge = idiomesKeys[binding.spinnerIdioma.selectedItemPosition]
-            val tema = temesKeys[binding.spinnerTema.selectedItemPosition]
-            val rebreNotificacions = binding.switchNotificacions.isChecked
-
             val avatarBytes = selectedAvatarUri?.let { u ->
                 requireContext().contentResolver.openInputStream(u)?.use { it.readBytes() }
             }
 
             viewModelEditarPerfil.guardarCanvis(
-                idUsuari, nom, email, desc.ifBlank { null },
-                contrasenyaAntiga, novaPass,
-                llenguatge, tema, rebreNotificacions,
+                idUsuari, 
+                binding.etNom.text.toString().trim(),
+                binding.etEmail.text.toString().trim(),
+                binding.etDescripcio.text.toString().trim().ifBlank { null },
+                binding.etContrasenyaAntiga.text.toString().trim().ifBlank { null },
+                binding.etContrasenya.text.toString().trim().ifBlank { null },
+                idiomesKeys[binding.spinnerIdioma.selectedItemPosition],
+                temesKeys[binding.spinnerTema.selectedItemPosition],
+                binding.switchNotificacions.isChecked,
                 avatarImageBytes = avatarBytes
             )
         }
@@ -139,51 +115,28 @@ class EditarPerfilFragment : Fragment() {
 
         lifecycleScope.launchWhenStarted {
             viewModelEditarPerfil.uiState.collectLatest { state ->
-                when {
+                state.error?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
 
-                    state.error != null -> {
-                        Toast.makeText(requireContext(), state.error, Toast.LENGTH_SHORT).show()
+                if (state.usuari != null && binding.etNom.text.isNullOrBlank()) {
+                    binding.etNom.setText(state.usuari.nom_usuari)
+                    binding.etEmail.setText(state.usuari.email)
+                    binding.etDescripcio.setText(state.usuari.descripcio ?: "")
+                    binding.imgAvatar.loadImageOrDefault(state.usuari.avatar_url, isProfile = true)
+
+                    state.preferencies?.let { prefs ->
+                        binding.spinnerIdioma.setSelection(idiomesKeys.indexOf(prefs.llenguatge).coerceAtLeast(0))
+                        binding.spinnerTema.setSelection(temesKeys.indexOf(prefs.tema).coerceAtLeast(0))
+                        binding.switchNotificacions.isChecked = prefs.rebre_notificacions
                     }
+                }
 
-                    state.usuari != null && binding.etNom.text.isNullOrBlank() -> {
-                        binding.etNom.setText(state.usuari.nom_usuari)
-                        binding.etEmail.setText(state.usuari.email)
-                        binding.etDescripcio.setText(state.usuari.descripcio ?: "")
-
-                        state.usuari.avatar_url?.let { url ->
-                            if (!url.isNullOrEmpty()) {
-                                try {
-                                    binding.imgAvatar.load(url) {
-                                        crossfade(true)
-                                        error(R.drawable.avatar)
-                                    }
-                                } catch (e: Exception) {
-                                    binding.imgAvatar.setImageResource(R.drawable.avatar)
-                                }
-                            } else {
-                                binding.imgAvatar.setImageResource(R.drawable.avatar)
-                            }
-                        }
-
-                        state.preferencies?.let { prefs ->
-                            val idxIdioma = idiomesKeys.indexOf(prefs.llenguatge).takeIf {
-                                it >= 0
-                            } ?: 0
-                            val idxTema = temesKeys.indexOf(prefs.tema).takeIf {
-                                it >= 0
-                            } ?: 0
-                            binding.spinnerIdioma.setSelection(idxIdioma)
-                            binding.spinnerTema.setSelection(idxTema)
-                            binding.switchNotificacions.isChecked = prefs.rebre_notificacions
-                        }
-                    }
-
-                    state.usuariActualitzat != null -> {
-                        val llenguatge = idiomesKeys[binding.spinnerIdioma.selectedItemPosition]
-                        val tema = temesKeys[binding.spinnerTema.selectedItemPosition]
-                        PreferenciesApplier.applyLanguageAndTheme(requireActivity(), llenguatge, tema)
-                        Toast.makeText(requireContext(), getString(R.string.perfil_actualitzat), Toast.LENGTH_SHORT).show()
-                    }
+                if (state.usuariActualitzat != null) {
+                    PreferenciesApplier.applyLanguageAndTheme(
+                        requireActivity(),
+                        idiomesKeys[binding.spinnerIdioma.selectedItemPosition],
+                        temesKeys[binding.spinnerTema.selectedItemPosition]
+                    )
+                    Toast.makeText(requireContext(), getString(R.string.perfil_actualitzat), Toast.LENGTH_SHORT).show()
                 }
             }
         }

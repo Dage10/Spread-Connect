@@ -15,7 +15,8 @@ class PresentacioAdapter(
     private val onEditar: (Presentacio) -> Unit,
     private val onEliminar: (Presentacio) -> Unit,
     private val onLike: (Presentacio) -> Unit = {},
-    private val onDislike: (Presentacio) -> Unit = {}
+    private val onDislike: (Presentacio) -> Unit = {},
+    private val onComentaris: (Presentacio) -> Unit = {}
 ) : RecyclerView.Adapter<PresentacioAdapter.PresentacioViewHolder>() {
 
     fun updateData(nous: List<Presentacio>) {
@@ -41,15 +42,16 @@ class PresentacioAdapter(
             tvTitol.text = presentacio.titol
             tvDescripcio.text = presentacio.contingut_presentacio
             tvData.text = presentacio.created_at.take(10)
+            if (presentacio.created_at.length >= 16) {
+                tvHora.text = presentacio.created_at.substring(11, 16)
+            }
             
-            imgAvatarUser.loadImageOrDefault(presentacio.avatar_url, R.drawable.avatar)
-            imgPresentacio.loadImageOrDefault(presentacio.imatge_url,R.drawable.avatar)
+            imgAvatarUser.loadImageOrDefault(presentacio.avatar_url, isProfile = true)
+            imgPresentacio.loadImageOrDefault(presentacio.imatge_url, isProfile = false)
             imgPresentacio.visibility = if (presentacio.imatge_url.isNullOrEmpty()) View.GONE else View.VISIBLE
-
 
             textLikeComptador.text = presentacio.likes.toString()
             textDislikeComptador.text = presentacio.dislikes.toString()
-
 
             if (presentacio.reaccioActual == "like") {
                 btnLike.setColorFilter(android.graphics.Color.RED)
@@ -63,7 +65,6 @@ class PresentacioAdapter(
                 btnDislike.clearColorFilter()
             }
 
-
             btnEditar.visibility = if (esDelMateixUsuari) View.VISIBLE else View.GONE
             btnEliminar.visibility = if (esDelMateixUsuari) View.VISIBLE else View.GONE
 
@@ -71,6 +72,7 @@ class PresentacioAdapter(
             btnEliminar.setOnClickListener { onEliminar(presentacio) }
             btnLike.setOnClickListener { onLike(presentacio) }
             btnDislike.setOnClickListener { onDislike(presentacio) }
+            btnComentaris.setOnClickListener { onComentaris(presentacio) }
         }
     }
 

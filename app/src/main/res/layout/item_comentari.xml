@@ -7,7 +7,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         app:cardBackgroundColor="@color/item_background"
-        app:cardCornerRadius="12dp"
+        app:cardCornerRadius="0dp"
+        app:strokeColor="@color/comment_stroke"
+        app:strokeWidth="2dp"
         app:cardElevation="4dp"
         app:cardUseCompatPadding="true">
 
@@ -48,6 +50,7 @@
                     android:text="2025-01-01"
                     android:textColor="@color/text_on_item"
                     android:textSize="12sp"/>
+
                 <TextView
                     android:id="@+id/tvHora"
                     android:layout_width="wrap_content"
@@ -60,34 +63,25 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/tvTitol"
+                android:id="@+id/tvContingut"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Títol"
+                android:text="Contingut"
                 android:textSize="16sp"
-                android:textStyle="bold"
                 android:textColor="@color/text_on_item"
                 android:layout_marginTop="4dp"/>
 
-            <TextView
-                android:id="@+id/tvDescripcio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Descripció"
-                android:textColor="@color/text_on_item"
-                android:layout_marginTop="4dp"/>
 
             <ImageView
-                android:id="@+id/imgPresentacio"
+                android:id="@+id/imgComentari"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
+                android:layout_height="wrap_content"
+                android:maxHeight="400dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
                 android:layout_marginTop="8dp"
-                android:layout_marginLeft="-8dp"
-                android:layout_marginRight="-8dp"
                 android:visibility="gone"
-                android:background="@null"
-                android:contentDescription="Imatge de la presentació"/>
+                android:contentDescription="Imatge del comentari"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -102,16 +96,16 @@
                     android:layout_height="24dp"
                     android:src="@drawable/like"
                     android:background="@android:color/transparent"
-                    android:contentDescription="Like"
-                    android:scaleType="fitCenter"/>
+                    app:tint="@color/text_on_item"
+                    android:contentDescription="Like"/>
 
                 <TextView
                     android:id="@+id/textLikeComptador"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:layout_marginStart="4dp"
                     android:textColor="@color/text_on_item"
-                    android:layout_marginEnd="8dp"
+                    android:text="0"
                     android:textSize="12sp"/>
 
                 <ImageButton
@@ -120,26 +114,52 @@
                     android:layout_height="24dp"
                     android:src="@drawable/dislike"
                     android:background="@android:color/transparent"
-                    android:contentDescription="Dislike"
-                    android:scaleType="fitCenter"/>
+                    app:tint="@color/text_on_item"
+                    android:layout_marginStart="12dp"
+                    android:contentDescription="Dislike"/>
 
                 <TextView
                     android:id="@+id/textDislikeComptador"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:layout_marginStart="4dp"
                     android:textColor="@color/text_on_item"
-                    android:layout_marginEnd="8dp"
+                    android:text="0"
                     android:textSize="12sp"/>
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
                 <ImageButton
-                    android:id="@+id/btnComentaris"
+                    android:id="@+id/btnComentari"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/comentari"
                     android:background="@android:color/transparent"
-                    android:contentDescription="Comentaris"
-                    android:scaleType="fitCenter"/>
+                    app:tint="@color/text_on_item"
+                    android:contentDescription="Comentari"/>
+
+                <ImageButton
+                    android:id="@+id/btnBookmark"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/bookmark"
+                    android:background="@android:color/transparent"
+                    app:tint="@color/text_on_item"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="BookMark"/>
+
+                <ImageButton
+                    android:id="@+id/btnCompartir"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/compartir"
+                    android:background="@android:color/transparent"
+                    app:tint="@color/text_on_item"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="Compartir"/>
 
                 <ImageButton
                     android:id="@+id/btnEditar"
@@ -149,6 +169,7 @@
                     android:background="@android:color/transparent"
                     app:tint="@color/text_on_item"
                     android:layout_marginStart="8dp"
+                    android:visibility="gone"
                     android:contentDescription="Editar"/>
 
                 <ImageButton
@@ -159,6 +180,7 @@
                     android:background="@android:color/transparent"
                     app:tint="@color/text_on_item"
                     android:layout_marginStart="8dp"
+                    android:visibility="gone"
                     android:contentDescription="Eliminar"/>
             </LinearLayout>
 

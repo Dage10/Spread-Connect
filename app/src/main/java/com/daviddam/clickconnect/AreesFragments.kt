@@ -96,7 +96,11 @@ class AreesFragments : Fragment() {
             },
             onEliminar = { p -> viewModelEliminarPresentacio.eliminarPresentacio(p) },
             onLike = { p -> viewModelAreesViewModel.reaccionarPresentacio(p, "like") },
-            onDislike = { p -> viewModelAreesViewModel.reaccionarPresentacio(p, "dislike") }
+            onDislike = { p -> viewModelAreesViewModel.reaccionarPresentacio(p, "dislike") },
+            onComentaris = { p ->
+                val action = AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(p.id, "presentacio")
+                findNavController().navigate(action)
+            }
         )
 
         postAdapter = PostAdapter(
@@ -107,7 +111,11 @@ class AreesFragments : Fragment() {
             },
             onEliminar = { p -> viewModelEliminarPost.eliminarPost(p) },
             onLike = { p -> viewModelAreesViewModel.reaccionarPost(p, "like") },
-            onDislike = { p -> viewModelAreesViewModel.reaccionarPost(p, "dislike") }
+            onDislike = { p -> viewModelAreesViewModel.reaccionarPost(p, "dislike") },
+            onComentaris = { p ->
+                val action = AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(p.id, "post")
+                findNavController().navigate(action)
+            }
         )
 
         binding.rvArees.apply {
@@ -152,32 +160,27 @@ class AreesFragments : Fragment() {
             }
         }
 
-
         binding.etFiltreUsuari.addTextChangedListener {
             filtreUsuari = it?.toString()?.trim().takeIf { s -> !s.isNullOrEmpty() }
             applyFilters()
         }
 
-        binding.etFiltreData.setOnClickListener {
-            showDateDialog()
-        }
+        binding.etFiltreData.setOnClickListener { showDateDialog() }
 
         binding.etFiltreData.addTextChangedListener {
             filtreData = it?.toString()?.trim().takeIf { s -> !s.isNullOrEmpty() }
             applyFilters()
         }
 
-
         lifecycleScope.launchWhenStarted {
             viewModelAreesViewModel.uiState.collectLatest { state ->
                 state.error?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
                 binding.tvNomUsuari.text = state.nomUsuari ?: getString(R.string.usuari)
-                binding.imgAvatar.loadImageOrDefault(state.avatarUrl, R.drawable.avatar)
+                binding.imgAvatar.loadImageOrDefault(state.avatarUrl, isProfile = true)
                 totesArees = state.areas
                 actualitzarAreesPaginades()
                 areesAdapter.setSelected(state.areaSeleccionada?.id)
-                presentacioAdapter.updateData(state.presentacions)
-
+                
                 totsPosts = state.posts
                 totsPresentacions = state.presentacions
                 applyFilters()
@@ -232,9 +235,7 @@ class AreesFragments : Fragment() {
         if (modePresentacions) {
             var filtrat = totsPresentacions
             filtreUsuari?.let { usuari ->
-                filtrat = filtrat.filter {
-                    it.nom_usuari?.contains(usuari, ignoreCase = true) == true
-                }
+                filtrat = filtrat.filter { it.nom_usuari?.contains(usuari, ignoreCase = true) == true }
             }
             filtreData?.let { data ->
                 filtrat = filtrat.filter { it.created_at.startsWith(data) }
@@ -243,9 +244,7 @@ class AreesFragments : Fragment() {
         } else {
             var filtrat = totsPosts
             filtreUsuari?.let { usuari ->
-                filtrat = filtrat.filter {
-                    it.nom_usuari?.contains(usuari, ignoreCase = true) == true
-                }
+                filtrat = filtrat.filter { it.nom_usuari?.contains(usuari, ignoreCase = true) == true }
             }
             filtreData?.let { data ->
                 filtrat = filtrat.filter { it.created_at.startsWith(data) }

@@ -5,6 +5,7 @@ import io.github.jan.supabase.postgrest.from
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import models.Post
+import java.time.Instant
 
 class PostDao {
 
@@ -47,6 +48,7 @@ class PostDao {
         val data = buildJsonObject {
             put("titol", titol)
             put("descripcio", descripcio)
+            put("updated_at", Instant.now().toString())
             if (imatgeUrl != null) {
                 put("imatge_url", imatgeUrl)
             }

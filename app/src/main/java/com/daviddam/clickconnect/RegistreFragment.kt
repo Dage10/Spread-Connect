@@ -1,6 +1,7 @@
 package com.daviddam.clickconnect
 
 import android.os.Bundle
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -58,7 +59,38 @@ class RegistreFragment : Fragment() {
             val campContrasenya = binding.etConstrasenya.text.toString().trim()
             val campRepetir = binding.etReConstrasenya.text.toString().trim()
 
+            if (campUsuari.isEmpty() || campEmail.isEmpty() || campContrasenya.isEmpty() || campRepetir.isEmpty()) {
+                binding.textError.text = getString(R.string.omple_tots_camps)
+                return@setOnClickListener
+            }
+
+            if(campUsuari.length > 30){
+                binding.textError.text = getString(R.string.usuari_molt_llarg)
+                return@setOnClickListener
+            }
+
+            if(!Patterns.EMAIL_ADDRESS.matcher(campEmail).matches()){
+                binding.textError.text = getString(R.string.email_no_valid)
+                return@setOnClickListener
+            }
+
+            if(campContrasenya != campRepetir){
+                binding.textError.text = getString(R.string.contrasenyes_no_conceidexen)
+                return@setOnClickListener
+            }
+
+            if(campContrasenya.length < 8){
+                binding.textError.text = getString(R.string.contrasenya_curta)
+                return@setOnClickListener
+            }
+
+            if(campContrasenya.length > 255){
+                binding.textError.text = getString(R.string.contrasenya_molt_llarga)
+                return@setOnClickListener
+            }
+
             binding.btnRegistre.isEnabled = false
+            
             viewModelRegistre.registre(campUsuari, campEmail, campContrasenya, campRepetir)
         }
 

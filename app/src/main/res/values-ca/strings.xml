@@ -64,4 +64,12 @@
     <string name="enviar_email">Enviar correu</string>
     <string name="otp_codigo">Codi</string>
     <string name="verify_code">Verificar i canviar</string>
+    <string name="editar_comentari">Editar comentari</string>
+    <string name="esborrar_comentari">Esborrar comentari</string>
+    <string name="confirma_esborrar_comentari">Estàs segur que vols esborrar aquest comentari?</string>
+    <string name="email_no_valid">Email no vàlid</string>
+    <string name="contrasenyes_no_conceidexen">No concideixen les contrasenyes</string>
+    <string name="contrasenya_curta">La contrasenya ha de tenir 8 caràcters com a mínim</string>
+    <string name="usuari_molt_llarg">L\'usuari no pot superar els 30 càracters</string>
+    <string name="contrasenya_molt_llarga">La contrasenya no pot superar els 255 càracters</string>
 </resources>

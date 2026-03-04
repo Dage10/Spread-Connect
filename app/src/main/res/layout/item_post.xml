@@ -48,6 +48,15 @@
                     android:text="2025-01-01"
                     android:textColor="@color/text_on_item"
                     android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/tvHora"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15:00"
+                    android:textColor="@color/text_on_item"
+                    android:textSize="12sp"
+                    android:layout_marginStart="4dp"/>
             </LinearLayout>
 
             <TextView
@@ -71,13 +80,12 @@
             <ImageView
                 android:id="@+id/imgPost"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
+                android:layout_height="wrap_content"
+                android:maxHeight="400dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
                 android:layout_marginTop="8dp"
-                android:layout_marginLeft="-8dp"
-                android:layout_marginRight="-8dp"
                 android:visibility="gone"
-                android:background="@null"
                 android:contentDescription="Imatge del post"/>
 
             <LinearLayout
@@ -124,19 +132,30 @@
                     android:textSize="12sp"/>
 
                 <ImageButton
+                    android:id="@+id/btnComentaris"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/comentari"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Comentaris"
+                    android:layout_marginStart="8dp"
+                    android:scaleType="fitCenter"/>
+
+                <ImageButton
                     android:id="@+id/btnEditar"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_edit"
+                    android:src="@drawable/editar"
                     android:background="@android:color/transparent"
                     app:tint="@color/text_on_item"
+                    android:layout_marginStart="8dp"
                     android:contentDescription="Editar"/>
 
                 <ImageButton
                     android:id="@+id/btnEliminar"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_delete"
+                    android:src="@drawable/eliminar"
                     android:background="@android:color/transparent"
                     app:tint="@color/text_on_item"
                     android:layout_marginStart="8dp"

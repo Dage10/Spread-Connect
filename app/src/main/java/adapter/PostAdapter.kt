@@ -16,7 +16,8 @@ class PostAdapter(
     private val onEditar: (Post) -> Unit,
     private val onEliminar: (Post) -> Unit,
     private val onLike: (Post) -> Unit = {},
-    private val onDislike: (Post) -> Unit = {}
+    private val onDislike: (Post) -> Unit = {},
+    private val onComentaris: (Post) -> Unit = {}
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     fun updateData(nous: List<Post>) {
@@ -37,14 +38,17 @@ class PostAdapter(
         val esDelMateixUsuari = idUsuariLoguejat == post.id_usuari
 
         holder.binding.apply {
-            imgAvatarUser.loadImageOrDefault(post.avatar_url, R.drawable.avatar)
+            imgAvatarUser.loadImageOrDefault(post.avatar_url, isProfile = true)
             tvUsuari.text = post.nom_usuari ?: "Usuari"
             tvData.text = post.created_at.take(10)
+            if (post.created_at.length >= 16) {
+                tvHora.text = post.created_at.substring(11, 16)
+            }
 
             tvTitol.text = post.titol
             tvDescripcio.text = post.descripcio
             
-            imgPost.loadImageOrDefault(post.imatge_url, R.drawable.avatar)
+            imgPost.loadImageOrDefault(post.imatge_url, isProfile = false)
             imgPost.visibility = if (post.imatge_url.isNullOrEmpty()) View.GONE else View.VISIBLE
 
             textLikeComptador.text = post.likes.toString()
@@ -69,6 +73,7 @@ class PostAdapter(
             btnDislike.setOnClickListener { onDislike(post) }
             btnEditar.setOnClickListener { onEditar(post) }
             btnEliminar.setOnClickListener { onEliminar(post) }
+            btnComentaris.setOnClickListener { onComentaris(post) }
         }
     }
 

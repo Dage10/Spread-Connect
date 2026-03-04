@@ -49,7 +49,7 @@ class LoginFragment : Fragment() {
         val viewModelLogin: viewmodel.LoginViewModel by viewModels()
 
         binding.botoEnrere.setOnClickListener {
-            val action = LoginFragmentDirections.actionLoginFragmentToAreesFragments()
+            val action = LoginFragmentDirections.actionLoginFragmentToIniciFragment()
             findNavController().navigate(action)
         }
 
@@ -58,7 +58,7 @@ class LoginFragment : Fragment() {
             val contrasenya = binding.etContrasenya.text.toString().trim()
 
             if (usuari.isEmpty() || contrasenya.isEmpty()) {
-                binding.textError.text = "Omple tots els camps"
+                binding.textError.text = getString(R.string.omple_tots_camps)
                 return@setOnClickListener
             }
 
