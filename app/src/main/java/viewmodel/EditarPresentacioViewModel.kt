@@ -2,12 +2,14 @@ package viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daviddam.clickconnect.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import models.EditarPresentacioUiState
 import models.Presentacio
 import repository.Repository
+import util.UiText
 
 
 class EditarPresentacioViewModel(
@@ -24,7 +26,7 @@ class EditarPresentacioViewModel(
                 val p = repo.presentacioDao.getPresentacioPerId(idPresentacio)
                 _uiState.value = EditarPresentacioUiState(presentacio = p)
             } catch (e: Exception) {
-                _uiState.value = EditarPresentacioUiState(error = e.message)
+                _uiState.value = EditarPresentacioUiState(error = UiText.DynamicString(e.message ?: "Error"))
             }
         }
     }
@@ -36,7 +38,7 @@ class EditarPresentacioViewModel(
         imatgeUrl: String?
     ) {
         if (titol.isBlank() || contingut.isBlank()) {
-            _uiState.value = _uiState.value.copy(error = "Omple tots els camps")
+            _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.omple_tots_camps))
             return
         }
 
@@ -53,7 +55,7 @@ class EditarPresentacioViewModel(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     loading = false,
-                    error = e.message
+                    error = UiText.DynamicString(e.message ?: "Error")
                 )
             }
         }
@@ -72,7 +74,7 @@ class EditarPresentacioViewModel(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     loading = false,
-                    error = e.message
+                    error = UiText.DynamicString(e.message ?: "Error")
                 )
             }
         }

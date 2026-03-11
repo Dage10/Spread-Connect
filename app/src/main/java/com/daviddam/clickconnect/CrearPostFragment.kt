@@ -2,17 +2,21 @@ package com.daviddam.clickconnect
 
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import adapter.EtiquetaAdapter
 import com.daviddam.clickconnect.databinding.FragmentCrearPostBinding
 import conexio.SupabaseStorage
 import kotlinx.coroutines.flow.collectLatest
@@ -34,6 +38,7 @@ class CrearPostFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var binding: FragmentCrearPostBinding
+    private lateinit var etiquetaAdapter: EtiquetaAdapter
     private val args: CrearPostFragmentArgs by navArgs()
     private val viewModel: CrearPostViewModel by viewModels()
 
@@ -99,6 +104,50 @@ class CrearPostFragment : Fragment() {
             }
         }
 
+        etiquetaAdapter = EtiquetaAdapter(
+            llistaEtiquetes = emptyList(),
+            onEditar = { nomActual ->
+                val editText = EditText(requireContext()).apply {
+                    setText(nomActual)
+                    setSelection(nomActual.length)
+                }
+                AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.etiqueta))
+                    .setView(editText)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        val nouNom = editText.text.toString().trim()
+                        if (nouNom.isNotEmpty()) {
+                            viewModel.treureEtiqueta(nomActual)
+                            viewModel.afegirEtiqueta(nouNom)
+                        }
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            },
+            onEliminar = { nom ->
+                viewModel.treureEtiqueta(nom)
+            }
+        )
+
+        binding.rvEtiquetes.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = etiquetaAdapter
+        }
+
+        binding.botoCrearEtiqueta.setOnClickListener {
+            val editText = EditText(requireContext())
+            AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.etiqueta))
+                .setView(editText)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    val text = editText.text.toString()
+                    viewModel.afegirEtiqueta(text)
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+        }
+
         binding.botoEnrere.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -106,13 +155,30 @@ class CrearPostFragment : Fragment() {
 
     private fun setupObservers() {
         lifecycleScope.launchWhenStarted {
-            viewModel.uiState.collectLatest { state ->
-                when {
-                    state.error != null -> Toast.makeText(requireContext(), state.error, Toast.LENGTH_SHORT).show()
-                    state.postCreat != null -> {
-                        Toast.makeText(requireContext(), getString(R.string.post_creat), Toast.LENGTH_SHORT).show()
-                        findNavController().navigateUp()
+            launch {
+                viewModel.uiState.collectLatest { state ->
+                    when {
+                        state.error != null -> Toast.makeText(
+                            requireContext(),
+                            state.error.asString(requireContext()),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        state.postCreat != null -> {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.post_creat),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            findNavController().navigateUp()
+                        }
                     }
+                }
+            }
+
+            launch {
+                viewModel.etiquetes.collectLatest { etiquetes ->
+                    etiquetaAdapter.updateData(etiquetes)
                 }
             }
         }

@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 } catch (e: Exception) {
                     if (e !is CancellationException) {
-                        Toast.makeText(this@MainActivity, "Error al carregar les preferències", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, getString(R.string.error_carregar_dades), Toast.LENGTH_SHORT).show()
                     }
                 }
             }

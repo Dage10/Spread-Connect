@@ -2,6 +2,7 @@ package viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daviddam.clickconnect.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -9,6 +10,7 @@ import models.EditarPerfilUiState
 import conexio.SupabaseStorage
 import repository.Repository
 import util.PasswordUtil
+import util.UiText
 
 class EditarPerfilViewModel(
     private val repo: Repository = Repository()
@@ -30,7 +32,10 @@ class EditarPerfilViewModel(
                     loading = false
                 )
             } catch (e: Exception) {
-                _uiState.value = EditarPerfilUiState(error = e.message, loading = false)
+                _uiState.value = EditarPerfilUiState(
+                    error = UiText.DynamicString(e.message ?: "Error"),
+                    loading = false
+                )
             }
         }
     }
@@ -48,17 +53,21 @@ class EditarPerfilViewModel(
         avatarImageBytes: ByteArray? = null
     ) {
         if (nom.isBlank() || email.isBlank()) {
-            _uiState.value = _uiState.value.copy(error = "Nom i email son obligatoris")
+            _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.email_nom_obligatoris))
             return
         }
         val usuari = _uiState.value.usuari
         if (!novaContrasenya.isNullOrBlank()) {
             if (contrasenyaAntiga.isNullOrBlank()) {
-                _uiState.value = _uiState.value.copy(error = "Introdueix la contrasenya antiga per canviar-la")
+                _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.introdueix_contrasenya_antiga))
+                return
+            }
+            if(novaContrasenya.length < 8){
+                _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.contrasenya_curta))
                 return
             }
             if (usuari == null || PasswordUtil.sha256(contrasenyaAntiga) != usuari.contrasenya_hash) {
-                _uiState.value = _uiState.value.copy(error = "Contrasenya antiga incorrecta")
+                _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.error_contrasenya_antiga_incorrecta))
                 return
             }
         }
@@ -91,7 +100,10 @@ class EditarPerfilViewModel(
                     error = null
                 )
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(loading = false, error = e.message)
+                _uiState.value = _uiState.value.copy(
+                    loading = false, 
+                    error = UiText.DynamicString(e.message ?: "Error")
+                )
             }
         }
     }

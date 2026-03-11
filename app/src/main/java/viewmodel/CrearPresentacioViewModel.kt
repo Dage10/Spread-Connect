@@ -2,11 +2,13 @@ package viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daviddam.clickconnect.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import models.CrearPresentacioUiState
 import repository.Repository
+import util.UiText
 
 
 class CrearPresentacioViewModel(
@@ -24,7 +26,7 @@ class CrearPresentacioViewModel(
         imatgeUrl: String?
     ) {
         if (titol.isBlank() || contingut.isBlank()) {
-            _uiState.value = CrearPresentacioUiState(error = "Omple tots els camps")
+            _uiState.value = CrearPresentacioUiState(error = UiText.StringResource(R.string.omple_tots_camps))
             return
         }
 
@@ -35,7 +37,7 @@ class CrearPresentacioViewModel(
                 val p = repo.presentacioDao.crearPresentacio(idUsuari, titol, contingut, areaId, imatgeUrl)
                 _uiState.value = CrearPresentacioUiState(presentacioCreada = p)
             } catch (e: Exception) {
-                _uiState.value = CrearPresentacioUiState(error = e.message)
+                _uiState.value = CrearPresentacioUiState(error = UiText.DynamicString(e.message ?: "Error"))
             }
         }
     }

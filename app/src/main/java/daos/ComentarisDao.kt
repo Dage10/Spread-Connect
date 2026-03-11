@@ -1,5 +1,6 @@
 package daos
 
+import com.daviddam.clickconnect.R
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import kotlinx.serialization.json.buildJsonObject
@@ -103,6 +104,6 @@ class ComentarisDao {
                 select()
             }
             .decodeList<Comentari>()
-            .firstOrNull() ?: throw Exception("Error en editar el comentari")
+            .firstOrNull() ?: throw Exception(R.string.error_en_editar_comentari.toString())
     }
 }

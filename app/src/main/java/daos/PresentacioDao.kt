@@ -1,5 +1,6 @@
 package daos
 
+import com.daviddam.clickconnect.R
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import kotlinx.serialization.json.buildJsonObject
@@ -46,7 +47,7 @@ class PresentacioDao {
                     select()
                 }
                 .decodeList<Presentacio>()
-                .firstOrNull() ?: throw Exception("Error en crear la presentació")
+                .firstOrNull() ?: throw Exception(R.string.error_al_crear_presentacio.toString())
         } catch (e: Exception) {
             throw e
         }
@@ -74,7 +75,7 @@ class PresentacioDao {
                     select()
                 }
                 .decodeList<Presentacio>()
-                .firstOrNull() ?: throw Exception("Error en editar la presentació")
+                .firstOrNull() ?: throw Exception(R.string.error_al_editar_la_presentacio.toString())
         } catch (e: Exception) {
             throw e
         }

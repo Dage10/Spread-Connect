@@ -3,11 +3,13 @@ package viewmodel
 import models.LoginUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daviddam.clickconnect.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import repository.Repository
 import sharedPreference.SharedPreference
+import util.UiText
 
 
 class LoginViewModel(
@@ -17,7 +19,7 @@ class LoginViewModel(
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
 
-    fun login(nomUsuari: String, contrasenya: String,context: android.content.Context) {
+    fun login(nomUsuari: String, contrasenya: String, context: android.content.Context) {
         _uiState.value = LoginUiState(loading = true)
 
         viewModelScope.launch {
@@ -27,7 +29,13 @@ class LoginViewModel(
 
                 _uiState.value = LoginUiState(usuari = usuari)
             } catch (e: Exception) {
-                _uiState.value = LoginUiState(error = e.message)
+                // Determine which error message to show based on the exception or message
+                val errorMsg = when {
+                    e.message?.contains(R.string.credenciales_incorrectas.toString()) == true -> 
+                        UiText.StringResource(R.string.credenciales_incorrectas)
+                    else -> UiText.DynamicString(e.message ?: "Unknown error")
+                }
+                _uiState.value = LoginUiState(error = errorMsg)
             }
         }
     }

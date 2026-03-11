@@ -37,6 +37,14 @@ class OblidatContrasenyaFragment : Fragment() {
 
     private lateinit var binding: FragmentOblidatContrasenyaBinding
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentOblidatContrasenyaBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -61,10 +69,10 @@ class OblidatContrasenyaFragment : Fragment() {
             viewModel.uiState.collect { state ->
 
                 binding.textError.text = when {
-                    state.loading -> "Carregant..."
-                    state.error != null -> state.error
-                    state.success && state.step == 2 -> "Correu amb codi enviat, revisa el teu correu."
-                    state.success && state.step == 3 -> "Contrasenya actualitzada"
+                    state.loading -> getString(R.string.carregant)
+                    state.error != null -> state.error.asString(requireContext())
+                    state.success && state.step == 2 -> getString(R.string.correu_codi_enviat)
+                    state.success && state.step == 3 -> getString(R.string.contrasenya_actualitzada)
                     else -> ""
                 }
                 binding.btnEnviar.isEnabled = !state.loading
@@ -78,19 +86,11 @@ class OblidatContrasenyaFragment : Fragment() {
                 binding.btnEnviar.visibility = if (mostrarInputs) View.GONE else View.VISIBLE
 
                 if (state.success && state.step == 3) {
-                    Toast.makeText(requireContext(), "Contrasenya canviada correctament", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.contrasenya_actualitzada), Toast.LENGTH_SHORT).show()
                     findNavController().navigateUp()
                 }
             }
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentOblidatContrasenyaBinding.inflate(inflater, container, false)
-        return binding.root
     }
 
     companion object {

@@ -1,7 +1,9 @@
 package models
 
+import util.UiText
+
 data class CrearPresentacioUiState(
     val loading: Boolean = false,
     val presentacioCreada: Presentacio? = null,
-    val error: String? = null
+    val error: UiText? = null
 )

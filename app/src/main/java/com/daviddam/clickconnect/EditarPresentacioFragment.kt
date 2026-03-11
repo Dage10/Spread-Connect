@@ -55,6 +55,7 @@ class EditarPresentacioFragment : Fragment() {
     private lateinit var binding: FragmentEditarPresentacioBinding
     private val args: EditarPresentacioFragmentArgs by navArgs()
     private val viewModelEditarPresentacio: EditarPresentacioViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -74,6 +75,11 @@ class EditarPresentacioFragment : Fragment() {
             val titol = binding.etTitol.text.toString().trim()
             val contingut = binding.etContingut.text.toString().trim()
 
+            if (titol.isEmpty() || contingut.isEmpty()) {
+                Toast.makeText(requireContext(), getString(R.string.omple_tots_camps), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             lifecycleScope.launch {
                 try {
                     val imatgeUrl = selectedImageUri?.let { uri ->
@@ -84,7 +90,7 @@ class EditarPresentacioFragment : Fragment() {
 
                     viewModelEditarPresentacio.editarPresentacio(presentacioId, titol, contingut, imatgeUrl)
                 } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "${getString(R.string.error)}: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -95,47 +101,24 @@ class EditarPresentacioFragment : Fragment() {
 
         lifecycleScope.launchWhenStarted {
             viewModelEditarPresentacio.uiState.collectLatest { state ->
+                state.error?.let {
+                    Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show()
+                }
 
-                when {
+                if (state.presentacio != null && binding.etTitol.text.isNullOrBlank()) {
+                    binding.etTitol.setText(state.presentacio.titol)
+                    binding.etContingut.setText(state.presentacio.contingut_presentacio)
+                    state.presentacio.imatge_url?.let { url ->
+                        binding.imgPreview.load(url)
+                        binding.imgPreview.visibility = View.VISIBLE
+                    }
+                }
 
-                    state.error != null -> {
-                        Toast.makeText(requireContext(), state.error, Toast.LENGTH_SHORT).show()
-                    }
-                    state.presentacio != null && binding.etTitol.text.isNullOrBlank() -> {
-                        binding.etTitol.setText(state.presentacio.titol)
-                        binding.etContingut.setText(state.presentacio.contingut_presentacio)
-                        state.presentacio.imatge_url?.let { url ->
-                            binding.imgPreview.load(url)
-                            binding.imgPreview.visibility = View.VISIBLE
-                        }
-                    }
-                    state.presentacioActualitzada != null -> {
-                        Toast.makeText(requireContext(), "Presentacio actualitzada", Toast.LENGTH_SHORT).show()
-                        findNavController().navigateUp()
-                    }
+                if (state.presentacioActualitzada != null) {
+                    Toast.makeText(requireContext(), getString(R.string.presentacio_actualitzada), Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
                 }
             }
         }
-    }
-
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment EditarPresentacioFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            EditarPresentacioFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }

@@ -73,8 +73,8 @@ class LoginFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             viewModelLogin.uiState.collect { state ->
                 binding.textError.text = when {
-                    state.loading -> "Carregant..."
-                    state.error != null -> state.error
+                    state.loading -> getString(R.string.carregant)
+                    state.error != null -> state.error.asString(requireContext())
                     state.usuari != null -> {
                         binding.root.post {
                             val action = LoginFragmentDirections.actionLoginFragmentToAreesFragments()

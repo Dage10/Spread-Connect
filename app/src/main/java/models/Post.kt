@@ -16,5 +16,6 @@ data class Post(
     val avatar_url: String? = null,
     val likes: Int = 0,
     val dislikes: Int = 0,
-    val reaccioActual: String? = null
+    val reaccioActual: String? = null,
+    val etiquetes: List<String> = emptyList()
 )

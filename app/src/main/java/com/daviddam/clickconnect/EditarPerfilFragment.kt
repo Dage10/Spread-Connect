@@ -68,7 +68,7 @@ class EditarPerfilFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val idUsuari = SharedPreference.obtenirUsuariLoguejat(requireContext())
         if (idUsuari == null) {
-            Toast.makeText(requireContext(), "Has de fer login", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT).show()
             findNavController().navigateUp()
             return
         }
@@ -115,7 +115,7 @@ class EditarPerfilFragment : Fragment() {
 
         lifecycleScope.launchWhenStarted {
             viewModelEditarPerfil.uiState.collectLatest { state ->
-                state.error?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
+                state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
 
                 if (state.usuari != null && binding.etNom.text.isNullOrBlank()) {
                     binding.etNom.setText(state.usuari.nom_usuari)

@@ -97,18 +97,17 @@ class RegistreFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             viewModelRegistre.uiState.collect { state ->
                 binding.textError.text = when {
-                    state.loading -> "Carregant..."
-                    state.error != null -> state.error
-                    state.usuariCreat != null -> "Usuari creat correctament!"
+                    state.loading -> getString(R.string.carregant)
+                    state.error != null -> state.error.asString(requireContext())
+                    state.usuariCreat != null -> getString(R.string.usuari_creat_correctament)
                     else -> ""
                 }
 
                 binding.btnRegistre.isEnabled = !state.loading
 
                 if (state.usuariCreat != null) {
-                    Toast.makeText(requireContext(), "Registrat correctament", Toast.LENGTH_SHORT).show()
-                    val action = RegistreFragmentDirections.actionRegistreFragmentToLoginFragment()
-                    findNavController().navigate(action)
+                    Toast.makeText(requireContext(), getString(R.string.usuari_creat_correctament), Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(RegistreFragmentDirections.actionRegistreFragmentToLoginFragment())
                 }
             }
         }

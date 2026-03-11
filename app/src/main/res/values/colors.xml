@@ -16,9 +16,9 @@
     <color name="text_on_item">#FFFFFF</color>
     <color name="text_on_form">#FFFFFF</color>
 
-
     <color name="form_card_background">#3B82F6</color>
     <color name="input_field_background">#1E3A8A</color>
 
     <color name="comment_stroke">#000000</color>
+    <color name="tag_background">@color/darkblue</color>
 </resources>

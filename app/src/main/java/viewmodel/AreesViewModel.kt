@@ -2,6 +2,7 @@ package viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daviddam.clickconnect.R
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,7 @@ import repository.Repository
 import util.TranslationUtil
 import models.Presentacio
 import models.Post
+import util.UiText
 
 class AreesViewModel(
     private val repo: Repository = Repository()
@@ -45,7 +47,9 @@ class AreesViewModel(
                             idiomaUsuari = prefs.llenguatge
                         }
                     } catch (e: Exception) {
-                        _uiState.value = _uiState.value.copy(error = "Error en carregar l'usuari: ${e.message}")
+                        _uiState.value = _uiState.value.copy(
+                            error = UiText.StringResource(R.string.error_al_carregar_usuari)
+                        )
                     }
                 }
 
@@ -78,14 +82,16 @@ class AreesViewModel(
                             areaSeleccionada = novaSeleccionada ?: llistaTraduida.firstOrNull()
                         )
                     } catch (e: Exception) {
-                        _uiState.value = _uiState.value.copy(error = "Error en la traducció: ${e.message}")
+                        _uiState.value = _uiState.value.copy(
+                            error = UiText.StringResource(R.string.error_traduccio)
+                        )
                     }
                 }
 
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     loading = false,
-                    error = e.message
+                    error = UiText.DynamicString(e.message ?: "Error")
                 )
             }
         }
@@ -125,12 +131,18 @@ class AreesViewModel(
                         val dislikes = repo.reaccioDao.getDislikes(post.id)
                         val reaccioActual = idUsuariActual?.let { repo.reaccioDao.getReaccioUsuari(post.id, it) }
                         val usuari = usuarisMapa[post.id_usuari]
+                        val tags = try {
+                            repo.postDao.getEtiquetesPost(post.id).map { it.nom }
+                        } catch (_: Exception) {
+                            emptyList()
+                        }
                         post.copy(
                             nom_usuari = usuari?.nom_usuari ?: "Usuari",
                             avatar_url = usuari?.avatar_url,
                             likes = likes,
                             dislikes = dislikes,
-                            reaccioActual = reaccioActual
+                            reaccioActual = reaccioActual,
+                            etiquetes = tags
                         )
                     }
                 }.awaitAll()
@@ -157,7 +169,9 @@ class AreesViewModel(
                     error = null
                 )
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message)
+                _uiState.value = _uiState.value.copy(
+                    error = UiText.DynamicString(e.message ?: "Error")
+                )
             }
         }
     }
@@ -185,7 +199,9 @@ class AreesViewModel(
                     }
                     _uiState.value = _uiState.value.copy(posts = postsActualitzats)
                 } catch (e: Exception) {
-                    _uiState.value = _uiState.value.copy(error = "Error: ${e.message}")
+                    _uiState.value = _uiState.value.copy(
+                        error = UiText.DynamicString("Error: ${e.message}")
+                    )
                 }
             }
         }
@@ -214,7 +230,9 @@ class AreesViewModel(
                     }
                     _uiState.value = _uiState.value.copy(presentacions = presActualitzades)
                 } catch (e: Exception) {
-                    _uiState.value = _uiState.value.copy(error = "Error: ${e.message}")
+                    _uiState.value = _uiState.value.copy(
+                        error = UiText.DynamicString("Error: ${e.message}")
+                    )
                 }
             }
         }

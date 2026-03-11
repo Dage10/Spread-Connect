@@ -106,7 +106,7 @@ class CrearPresentacioFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             viewModel.uiState.collectLatest { state ->
                 when {
-                    state.error != null -> Toast.makeText(requireContext(), state.error, Toast.LENGTH_SHORT).show()
+                    state.error != null -> Toast.makeText(requireContext(), state.error.asString(requireContext()), Toast.LENGTH_SHORT).show()
                     state.presentacioCreada != null -> {
                         Toast.makeText(requireContext(), getString(R.string.presentacio_creada), Toast.LENGTH_SHORT).show()
                         findNavController().navigateUp()

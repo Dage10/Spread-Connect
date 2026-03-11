@@ -1,9 +1,15 @@
 package daos
 
+import com.daviddam.clickconnect.R
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
+import models.Etiqueta
+import models.EtiquetaPost
 import models.Post
 import java.time.Instant
 
@@ -38,7 +44,7 @@ class PostDao {
                 .from("posts")
                 .insert(nouPost) { select() }
                 .decodeList<Post>()
-                .firstOrNull() ?: throw Exception("Error en crear el post")
+                .firstOrNull() ?: throw Exception(R.string.error_en_crear_post.toString())
         } catch (e: Exception) {
             throw e
         }
@@ -61,7 +67,7 @@ class PostDao {
                     select()
                 }
                 .decodeList<Post>()
-                .firstOrNull() ?: throw Exception("Error en editar el post")
+                .firstOrNull() ?: throw Exception(R.string.error_en_editar_post.toString())
         } catch (e: Exception) {
             throw e
         }
@@ -75,5 +81,84 @@ class PostDao {
         } catch (e: Exception) {
             throw e
         }
+    }
+
+    suspend fun getEtiquetesPost(postId: String): List<Etiqueta> =
+        SupabaseClient.client
+            .from("posts_etiquetes")
+            .select(Columns.list("id_post", "id_etiqueta", "etiquetes(id,nom)")) {
+                filter { eq("id_post", postId) }
+            }
+            .decodeList<EtiquetaPost>()
+            .map { row ->
+                Etiqueta(
+                    id = row.etiquetes.id,
+                    nom = row.etiquetes.nom,
+                    idPost = row.id_post
+                )
+            }
+
+    suspend fun crearEtiqueta(nom: String, postId: String): Etiqueta {
+        val existent = SupabaseClient.client
+            .from("etiquetes")
+            .select {
+                filter { eq("nom", nom) }
+            }
+            .decodeList<Etiqueta>()
+            .firstOrNull()
+
+        val etiquetaNoua = existent ?: SupabaseClient.client
+            .from("etiquetes")
+            .insert(
+                buildJsonObject {
+                    put("nom", nom)
+                }
+            ) {
+                select()
+            }
+            .decodeList<Etiqueta>()
+            .first()
+
+        SupabaseClient.client
+            .from("posts_etiquetes")
+            .insert(
+                buildJsonObject {
+                    put("id_post", postId)
+                    put("id_etiqueta", etiquetaNoua.id)
+                }
+            )
+
+        return Etiqueta(
+            id = etiquetaNoua.id,
+            nom = etiquetaNoua.nom,
+            idPost = postId
+        )
+    }
+
+    suspend fun editarEtiqueta(id: String, nom: String): Etiqueta {
+        val data = buildJsonObject { put("nom", nom) }
+        val updatedTag = SupabaseClient.client.from("etiquetes")
+            .update(data) {
+                filter { eq("id", id) }
+                select()
+            }
+            .decodeSingle<JsonObject>()
+
+        return Etiqueta(
+            id = updatedTag["id"]?.jsonPrimitive?.content ?: "",
+            nom = updatedTag["nom"]?.jsonPrimitive?.content ?: "",
+            idPost = ""
+        )
+    }
+
+    suspend fun eliminarEtiqueta(idEtiqueta: String, postId: String) {
+        SupabaseClient.client
+            .from("posts_etiquetes")
+            .delete {
+                filter {
+                    eq("id_etiqueta", idEtiqueta)
+                    eq("id_post", postId)
+                }
+            }
     }
 }

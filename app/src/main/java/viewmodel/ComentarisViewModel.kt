@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import models.ComentarisUiState
 import repository.Repository
+import util.UiText
 
 
 class ComentarisViewModel(
@@ -97,7 +98,10 @@ class ComentarisViewModel(
                     }
                 }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(loading = false, error = e.message)
+                _uiState.value = _uiState.value.copy(
+                    loading = false, 
+                    error = UiText.DynamicString(e.message ?: "Error")
+                )
             }
         }
     }
@@ -134,7 +138,7 @@ class ComentarisViewModel(
                 }
                 carregarDades(targetId, idUsuari, targetType)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message)
+                _uiState.value = _uiState.value.copy(error = UiText.DynamicString(e.message ?: "Error"))
             }
         }
     }
@@ -146,7 +150,7 @@ class ComentarisViewModel(
                 repo.comentarisDao.editarComentari(id, contingut, null)
                 carregarDades(targetId, idUsuari, targetType)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message)
+                _uiState.value = _uiState.value.copy(error = UiText.DynamicString(e.message ?: "Error"))
             }
         }
     }
@@ -157,7 +161,7 @@ class ComentarisViewModel(
                 repo.comentarisDao.eliminarComentari(id)
                 carregarDades(targetId, idUsuari, targetType)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message)
+                _uiState.value = _uiState.value.copy(error = UiText.DynamicString(e.message ?: "Error"))
             }
         }
     }
@@ -168,7 +172,7 @@ class ComentarisViewModel(
                 repo.reaccioDao.canviarReaccioComentari(comentariId, idUsuari, tipus)
                 carregarDades(targetId, idUsuari, targetType)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message)
+                _uiState.value = _uiState.value.copy(error = UiText.DynamicString(e.message ?: "Error"))
             }
         }
     }
@@ -179,7 +183,7 @@ class ComentarisViewModel(
                 repo.reaccioDao.canviarReaccio(postId, idUsuari, tipus)
                 carregarDades(postId, idUsuari, "post")
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message)
+                _uiState.value = _uiState.value.copy(error = UiText.DynamicString(e.message ?: "Error"))
             }
         }
     }
@@ -190,7 +194,7 @@ class ComentarisViewModel(
                 repo.reaccioDao.canviarReaccioPresentacio(presId, idUsuari, tipus)
                 carregarDades(presId, idUsuari, "presentacio")
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message)
+                _uiState.value = _uiState.value.copy(error = UiText.DynamicString(e.message ?: "Error"))
             }
         }
     }

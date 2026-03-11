@@ -174,7 +174,7 @@ class AreesFragments : Fragment() {
 
         lifecycleScope.launchWhenStarted {
             viewModelAreesViewModel.uiState.collectLatest { state ->
-                state.error?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
+                state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
                 binding.tvNomUsuari.text = state.nomUsuari ?: getString(R.string.usuari)
                 binding.imgAvatar.loadImageOrDefault(state.avatarUrl, isProfile = true)
                 totesArees = state.areas
@@ -194,6 +194,7 @@ class AreesFragments : Fragment() {
                     Toast.makeText(requireContext(), getString(R.string.post_eliminat), Toast.LENGTH_SHORT).show()
                     viewModelEliminarPost.resetPostEliminat()
                 }
+                state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
             }
         }
 
@@ -204,6 +205,7 @@ class AreesFragments : Fragment() {
                     Toast.makeText(requireContext(), getString(R.string.presentacio_eliminada), Toast.LENGTH_SHORT).show()
                     viewModelEliminarPresentacio.resetPresentacioEliminada()
                 }
+                state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
             }
         }
 

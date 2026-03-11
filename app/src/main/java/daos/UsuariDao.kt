@@ -1,5 +1,6 @@
 package daos
 
+import com.daviddam.clickconnect.R
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import kotlinx.serialization.json.buildJsonObject
@@ -33,7 +34,7 @@ class UsuariDao {
             .decodeList<Usuari>()
 
         if (existents.isNotEmpty()) {
-            throw Exception("L'usuari ja existeix")
+            throw Exception(R.string.usuari_existent.toString())
         }
 
         val nouUsuari = mapOf(
@@ -49,7 +50,7 @@ class UsuariDao {
                 .decodeList<Usuari>()
                 .firstOrNull() ?: throw Exception("Error en crear l'usuari")
         } catch (e: Exception) {
-            throw Exception("Error al registrar l'usuari: ${e.message}")
+            throw Exception(R.string.error_al_registrar.toString(), e)
         }
     }
 
@@ -67,7 +68,7 @@ class UsuariDao {
                 }
                 .decodeList<Usuari>()
 
-            usuaris.firstOrNull() ?: throw Exception("Credencials incorrectes")
+            usuaris.firstOrNull() ?: throw Exception(R.string.credenciales_incorrectas.toString())
         } catch (e: Exception) {
             throw e
         }
@@ -79,7 +80,7 @@ class UsuariDao {
                 .from("usuaris")
                 .select { filter { eq("id", id) } }
                 .decodeList<Usuari>()
-                .firstOrNull() ?: throw Exception("Usuari no trobat")
+                .firstOrNull() ?: throw Exception(R.string.usuari_no_trobat.toString())
         } catch (e: Exception) {
             throw e
         }
@@ -116,7 +117,7 @@ class UsuariDao {
                     select()
                 }
                 .decodeList<Usuari>()
-                .firstOrNull() ?: throw Exception("Error en actualitzar el perfil")
+                .firstOrNull() ?: throw Exception(R.string.error_en_actualizar_perfil.toString())
             usuariActualitzat
         } catch (e: Exception) {
             throw e
@@ -157,8 +158,8 @@ class UsuariDao {
     }
 
     suspend fun verificarOtpICanviar(email: String, codi: String, novaContrasenya: String) {
-        val guardat = otpCodis[email] ?: throw Exception("No s'ha sol·licitat cap codi")
-        if (guardat != codi) throw Exception("Codi incorrecte")
+        val guardat = otpCodis[email] ?: throw Exception(R.string.codi_no_solicitat.toString())
+        if (guardat != codi) throw Exception(R.string.codi_incorrecte.toString())
 
         val hash = sha256(novaContrasenya)
 
@@ -173,7 +174,7 @@ class UsuariDao {
                 }
                 .decodeList<Usuari>()
         } catch (e: Exception) {
-            throw RuntimeException("Error en verificar OTP i canviar contrasenya: ",e)
+            throw RuntimeException(R.string.error_verificar_otp.toString(),e)
         }
 
         otpCodis.remove(email)

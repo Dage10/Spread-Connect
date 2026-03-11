@@ -116,7 +116,7 @@ class ComentarisFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collectLatest { state ->
-                    state.error?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
+                    state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
                     
                     binding.itemPostPrincipal.root.visibility = View.GONE
                     

@@ -3,12 +3,11 @@ package adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.daviddam.clickconnect.databinding.ItemPostBinding
-import com.daviddam.clickconnect.R
 import models.Post
 import util.ImageExtension.loadImageOrDefault
-
 
 class PostAdapter(
     private var posts: List<Post>,
@@ -25,7 +24,17 @@ class PostAdapter(
         notifyDataSetChanged()
     }
 
-    inner class PostViewHolder(val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class PostViewHolder(val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+        val tagAdapter = PostTagAdapter(emptyList())
+
+        init {
+            binding.rvTags.apply {
+                layoutManager =
+                    LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
+                adapter = tagAdapter
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -50,6 +59,13 @@ class PostAdapter(
             
             imgPost.loadImageOrDefault(post.imatge_url, isProfile = false)
             imgPost.visibility = if (post.imatge_url.isNullOrEmpty()) View.GONE else View.VISIBLE
+
+            if (post.etiquetes.isNotEmpty()) {
+                rvTags.visibility = View.VISIBLE
+                holder.tagAdapter.updateData(post.etiquetes)
+            } else {
+                rvTags.visibility = View.GONE
+            }
 
             textLikeComptador.text = post.likes.toString()
             tvDislikeComptador.text = post.dislikes.toString()

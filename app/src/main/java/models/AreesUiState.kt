@@ -1,5 +1,7 @@
 package models
 
+import util.UiText
+
 data class AreesUiState(
     val loading: Boolean = false,
     val areas: List<Area> = emptyList(),
@@ -8,5 +10,5 @@ data class AreesUiState(
     val presentacions: List<Presentacio> = emptyList(),
     val nomUsuari: String? = null,
     val avatarUrl: String? = null,
-    val error: String? = null
+    val error: UiText? = null
 )
