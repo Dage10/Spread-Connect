@@ -29,9 +29,6 @@ class AreesViewModel(
         _uiState.value = _uiState.value.copy(loading = true)
         viewModelScope.launch {
             try {
-                val llistaOriginal = repo.areaDao.getArees()
-                val primera = llistaOriginal.firstOrNull()
-
                 var nomUsuari: String? = null
                 var avatarUrl: String? = null
                 var idiomaUsuari = "Español"
@@ -48,10 +45,15 @@ class AreesViewModel(
                         }
                     } catch (e: Exception) {
                         _uiState.value = _uiState.value.copy(
-                            error = UiText.StringResource(R.string.error_al_carregar_usuari)
+                            error = UiText.StringResource(R.string.usuari_no_trobat),
+                            loading = false
                         )
+                        return@launch
                     }
                 }
+
+                val llistaOriginal = repo.areaDao.getArees()
+                val primera = llistaOriginal.firstOrNull()
 
                 _uiState.value = _uiState.value.copy(
                     loading = false,

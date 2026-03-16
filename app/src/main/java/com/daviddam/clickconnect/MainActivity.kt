@@ -5,11 +5,14 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import com.daviddam.clickconnect.databinding.ActivityMainBinding
 import androidx.navigation.NavController
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import repository.Repository
 import sharedPreference.SharedPreference
@@ -32,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         carregarIAplicarPreferencies()
+        verificarSessioTempsReal()
     }
 
     private fun carregarIAplicarPreferencies() {
@@ -43,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                     prefs?.let {
                         val tag = when (it.llenguatge) {
                             "Català" -> "ca"
-                            "Castellà" -> "es"
+                            "Español" -> "es"
                             "Anglès" -> "en"
                             else -> "es"
                         }
@@ -63,5 +67,33 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun verificarSessioTempsReal() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (true) {
+                    val idUsuari = SharedPreference.obtenirUsuariLoguejat(this@MainActivity)
+
+                    if (idUsuari != null) {
+                        try {
+                            Repository().usuariDao.getUsuariPerId(idUsuari)
+                        } catch (e: Exception) {
+                            val errorMissatge = e.message
+                            if (errorMissatge == R.string.usuari_no_trobat.toString() || errorMissatge?.contains("404") == true) {
+                                tancarSessioIAnarInici()
+                            }
+                        }
+                    }
+                    delay(1000)
+                }
+            }
+        }
+    }
+
+    private fun tancarSessioIAnarInici() {
+        SharedPreference.tancarSessio(this@MainActivity)
+        navController.navigate(R.id.iniciFragment)
+        Toast.makeText(this@MainActivity, getString(R.string.usuari_no_trobat), Toast.LENGTH_LONG).show()
     }
 }
