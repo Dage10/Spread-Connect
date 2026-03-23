@@ -83,8 +83,14 @@ class EditarPerfilFragment : Fragment() {
             getString(R.string.tema_fosc)
         )
 
-        binding.spinnerIdioma.adapter = ArrayAdapter(requireContext(), R.layout.spinner_item_selected, idiomesLabels)
-        binding.spinnerTema.adapter = ArrayAdapter(requireContext(), R.layout.spinner_item_selected, temesLabels)
+
+        val idiomesAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item_selected, idiomesLabels)
+        idiomesAdapter.setDropDownViewResource(R.layout.spinner_item_dropdown)
+        binding.spinnerIdioma.adapter = idiomesAdapter
+
+        val temesAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item_selected, temesLabels)
+        temesAdapter.setDropDownViewResource(R.layout.spinner_item_dropdown)
+        binding.spinnerTema.adapter = temesAdapter
 
         binding.botoEnrere.setOnClickListener { findNavController().navigateUp() }
         binding.btnCanviarAvatar.setOnClickListener { launcherAvatar.launch("image/*") }

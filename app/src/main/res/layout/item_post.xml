@@ -77,14 +77,6 @@
                 android:textColor="@color/text_on_item"
                 android:layout_marginTop="4dp"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvTags"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:orientation="horizontal"
-                android:visibility="gone" />
-
             <ImageView
                 android:id="@+id/imgPost"
                 android:layout_width="match_parent"
@@ -95,6 +87,14 @@
                 android:layout_marginTop="8dp"
                 android:visibility="gone"
                 android:contentDescription="Imatge del post"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"

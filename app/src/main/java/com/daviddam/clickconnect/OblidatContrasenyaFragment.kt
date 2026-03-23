@@ -62,6 +62,10 @@ class OblidatContrasenyaFragment : Fragment() {
         binding.btnVerificar.setOnClickListener {
             val codi = binding.etCodi.text.toString().trim()
             val novaContra = binding.etNovaContrasenya.text.toString()
+            if(novaContra.length < 8){
+                binding.textError.text = getString(R.string.contrasenya_curta)
+                return@setOnClickListener
+            }
             viewModel.verificarCodi(codi, novaContra)
         }
 

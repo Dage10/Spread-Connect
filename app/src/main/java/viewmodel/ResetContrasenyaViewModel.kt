@@ -29,7 +29,12 @@ class ResetContrasenyaViewModel(
                 repo.usuariDao.enviarOtp(email)
                 _uiState.value = ResetContrasenyaUiState(success = true, step = 2, email = email)
             } catch (e: Exception) {
-                _uiState.value = ResetContrasenyaUiState(error = UiText.DynamicString(e.message ?: "Error"))
+                val errorMsg = when {
+                    e.message?.contains(R.string.usuari_no_trobat.toString()) == true ->
+                        UiText.StringResource(R.string.usuari_no_trobat)
+                    else -> UiText.DynamicString(e.message ?: "Error")
+                }
+                _uiState.value = ResetContrasenyaUiState(error = errorMsg)
             }
         }
     }
@@ -47,9 +52,18 @@ class ResetContrasenyaViewModel(
                 repo.usuariDao.verificarOtpICanviar(emailActual, codi, novaContrasenya)
                 _uiState.value = ResetContrasenyaUiState(success = true, step = 3)
             } catch (e: Exception) {
+                val errorMsg = when {
+                    e.message?.contains(R.string.codi_no_solicitat.toString()) == true ->
+                        UiText.StringResource(R.string.codi_no_solicitat)
+                    e.message?.contains(R.string.codi_incorrecte.toString()) == true ->
+                        UiText.StringResource(R.string.codi_incorrecte)
+                    e.message?.contains(R.string.error_verificar_otp.toString()) == true ->
+                        UiText.StringResource(R.string.error_verificar_otp)
+                    else -> UiText.DynamicString(e.message ?: "Error desconegut")
+                }
                 _uiState.value = _uiState.value.copy(
                     loading = false,
-                    error = UiText.DynamicString(e.message ?: "Error desconegut")
+                    error = errorMsg
                 )
             }
         }

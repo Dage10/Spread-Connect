@@ -19,7 +19,9 @@ import java.time.Instant
 
 class UsuariDao {
 
-    private val otpCodis: MutableMap<String, String> = mutableMapOf()
+    companion object {
+        private val otpCodis: MutableMap<String, String> = mutableMapOf()
+    }
 
     private fun sha256(text: String): String {
         val digest = MessageDigest.getInstance("SHA-256")
@@ -130,7 +132,7 @@ class UsuariDao {
             .select { filter { eq("email", email) } }
             .decodeList<Usuari>()
             .firstOrNull()
-            ?: throw Exception("No s'ha trobat cap usuari amb aquest correu")
+            ?: throw Exception(R.string.usuari_no_trobat.toString())
 
         val codi = (100_000..999_999).random().toString()
         otpCodis[email] = codi
@@ -171,6 +173,7 @@ class UsuariDao {
                     "updated_at" to Instant.now().toString()
                 )) {
                     filter { eq("email", email) }
+                    select()
                 }
                 .decodeList<Usuari>()
         } catch (e: Exception) {
