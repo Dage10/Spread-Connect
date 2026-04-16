@@ -51,8 +51,7 @@ class ReaccioDao {
                         eq("id_usuari", idUsuari)
                     }
                 }
-                .decodeList<Reaccio>()
-                .firstOrNull()
+                .decodeSingleOrNull<Reaccio>()
                 ?.tipus
         } catch (e: Exception) {
             null
@@ -69,8 +68,7 @@ class ReaccioDao {
                         eq("id_usuari", idUsuari)
                     }
                 }
-                .decodeList<Reaccio>()
-                .firstOrNull()
+                .decodeSingleOrNull<Reaccio>()
 
             if (reaccioExistent != null) {
                 if (reaccioExistent.tipus == tipus) {
@@ -150,8 +148,7 @@ class ReaccioDao {
                         eq("id_usuari", idUsuari)
                     }
                 }
-                .decodeList<Reaccio>()
-                .firstOrNull()
+                .decodeSingleOrNull<Reaccio>()
                 ?.tipus
         } catch (e: Exception) {
             null
@@ -168,8 +165,7 @@ class ReaccioDao {
                         eq("id_usuari", idUsuari)
                     }
                 }
-                .decodeList<Reaccio>()
-                .firstOrNull()
+                .decodeSingleOrNull<Reaccio>()
 
             if (reaccioExistent != null) {
                 if (reaccioExistent.tipus == tipus) {
@@ -248,8 +244,7 @@ class ReaccioDao {
                         eq("id_usuari", idUsuari)
                     }
                 }
-                .decodeList<Reaccio>()
-                .firstOrNull()
+                .decodeSingleOrNull<Reaccio>()
                 ?.tipus
         } catch (e: Exception) {
             null
@@ -266,8 +261,7 @@ class ReaccioDao {
                         eq("id_usuari", idUsuari)
                     }
                 }
-                .decodeList<Reaccio>()
-                .firstOrNull()
+                .decodeSingleOrNull<Reaccio>()
 
             if (reaccioExistent != null) {
                 if (reaccioExistent.tipus == tipus) {

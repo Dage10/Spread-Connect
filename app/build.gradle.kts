@@ -68,15 +68,12 @@ dependencies {
     implementation(platform(libs.supabase.bom))
     implementation(libs.supabase.postgrest)
     implementation(libs.supabase.storage)
+    implementation(libs.supabase.auth)
     implementation(libs.ktor.client.android)
     implementation(libs.coil)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
     implementation("com.google.mlkit:translate:17.0.3")
     implementation("androidx.core:core-splashscreen:1.2.0")
-
-    implementation(libs.android.mail)
-    implementation(libs.android.activation)
 }

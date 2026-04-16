@@ -1,6 +1,5 @@
 package daos
 
-import com.daviddam.clickconnect.R
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import kotlinx.serialization.Serializable
@@ -24,18 +23,7 @@ class PreferenciesDao {
             .select {
                 filter { eq("id_usuari", idUsuari) }
             }
-            .decodeList<PreferenciesUsuari>()
-            .firstOrNull()
-
-    suspend fun insertPreferenciesPerDefecte(idUsuari: String) {
-        val body = PreferenciesUpsertBody(
-            id_usuari = idUsuari,
-            llenguatge = "Español",
-            tema = "Clar",
-            rebre_notificacions = true
-        )
-        SupabaseClient.client.from("preferencies_usuari").insert(body)
-    }
+            .decodeSingleOrNull<PreferenciesUsuari>()
 
     suspend fun insertPreferencies(
         idUsuari: String,
@@ -47,8 +35,7 @@ class PreferenciesDao {
         return SupabaseClient.client
             .from("preferencies_usuari")
             .insert(body) { select() }
-            .decodeList<PreferenciesUsuari>()
-            .firstOrNull() ?: throw Exception(R.string.error_en_crear_preferencies.toString())
+            .decodeSingle<PreferenciesUsuari>()
     }
 
     suspend fun updatePreferencies(
@@ -69,8 +56,7 @@ class PreferenciesDao {
                     filter { eq("id_usuari", idUsuari) }
                     select()
                 }
-                .decodeList<PreferenciesUsuari>()
-                .firstOrNull() ?: throw Exception(R.string.error_actualitzar_preferencies.toString())
+                .decodeSingle<PreferenciesUsuari>()
         } catch (e: Exception) {
             throw e
         }

@@ -7,9 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.daviddam.clickconnect.databinding.FragmentOblidatContrasenyaBinding
+import kotlinx.coroutines.launch
 import viewmodel.ResetContrasenyaViewModel
 
 // TODO: Rename parameter arguments, choose names that match
@@ -36,6 +39,7 @@ class OblidatContrasenyaFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentOblidatContrasenyaBinding
+    private val viewModel: ResetContrasenyaViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,8 +51,6 @@ class OblidatContrasenyaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val viewModel: ResetContrasenyaViewModel by viewModels()
 
         binding.botoEnrere.setOnClickListener {
             findNavController().navigateUp()
@@ -62,36 +64,37 @@ class OblidatContrasenyaFragment : Fragment() {
         binding.btnVerificar.setOnClickListener {
             val codi = binding.etCodi.text.toString().trim()
             val novaContra = binding.etNovaContrasenya.text.toString()
-            if(novaContra.length < 8){
+            if (novaContra.length < 8) {
                 binding.textError.text = getString(R.string.contrasenya_curta)
                 return@setOnClickListener
             }
             viewModel.verificarCodi(codi, novaContra)
         }
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.uiState.collect { state ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    binding.textError.text = when {
+                        state.loading -> getString(R.string.carregant)
+                        state.error != null -> state.error.asString(requireContext())
+                        state.success && state.step == 2 -> getString(R.string.correu_codi_enviat)
+                        state.success && state.step == 3 -> getString(R.string.contrasenya_actualitzada)
+                        else -> ""
+                    }
+                    binding.btnEnviar.isEnabled = !state.loading
+                    binding.btnVerificar.isEnabled = !state.loading
 
-                binding.textError.text = when {
-                    state.loading -> getString(R.string.carregant)
-                    state.error != null -> state.error.asString(requireContext())
-                    state.success && state.step == 2 -> getString(R.string.correu_codi_enviat)
-                    state.success && state.step == 3 -> getString(R.string.contrasenya_actualitzada)
-                    else -> ""
-                }
-                binding.btnEnviar.isEnabled = !state.loading
-                binding.btnVerificar.isEnabled = !state.loading
+                    val mostrarInputs = state.step == 2
+                    binding.codiInput.visibility = if (mostrarInputs) View.VISIBLE else View.GONE
+                    binding.novaContrasenyaInput.visibility = if (mostrarInputs) View.VISIBLE else View.GONE
+                    binding.btnVerificar.visibility = if (mostrarInputs) View.VISIBLE else View.GONE
+                    binding.etEmail.isEnabled = !mostrarInputs
+                    binding.btnEnviar.visibility = if (mostrarInputs) View.GONE else View.VISIBLE
 
-                val mostrarInputs = state.step == 2
-                binding.codiInput.visibility = if (mostrarInputs) View.VISIBLE else View.GONE
-                binding.novaContrasenyaInput.visibility = if (mostrarInputs) View.VISIBLE else View.GONE
-                binding.btnVerificar.visibility = if (mostrarInputs) View.VISIBLE else View.GONE
-                binding.etEmail.isEnabled = !mostrarInputs
-                binding.btnEnviar.visibility = if (mostrarInputs) View.GONE else View.VISIBLE
-
-                if (state.success && state.step == 3) {
-                    Toast.makeText(requireContext(), getString(R.string.contrasenya_actualitzada), Toast.LENGTH_SHORT).show()
-                    findNavController().navigateUp()
+                    if (state.success && state.step == 3) {
+                        Toast.makeText(requireContext(), getString(R.string.contrasenya_actualitzada), Toast.LENGTH_SHORT).show()
+                        findNavController().navigateUp()
+                    }
                 }
             }
         }

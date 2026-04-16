@@ -11,11 +11,14 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.daviddam.clickconnect.databinding.FragmentAreesFragmentsBinding
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import models.Area
 import androidx.core.widget.addTextChangedListener
 import sharedPreference.SharedPreference
@@ -91,31 +94,21 @@ class AreesFragments : Fragment() {
         presentacioAdapter = PresentacioAdapter(
             emptyList(),
             idUsuariLoguejat,
-            onEditar = { p ->
-                findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToEditarPresentacioFragment(p.id))
-            },
+            onEditar = { p -> findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToEditarPresentacioFragment(p.id)) },
             onEliminar = { p -> viewModelEliminarPresentacio.eliminarPresentacio(p) },
             onLike = { p -> viewModelAreesViewModel.reaccionarPresentacio(p, "like") },
             onDislike = { p -> viewModelAreesViewModel.reaccionarPresentacio(p, "dislike") },
-            onComentaris = { p ->
-                val action = AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(p.id, "presentacio")
-                findNavController().navigate(action)
-            }
+            onComentaris = { p -> findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(p.id, "presentacio")) }
         )
 
         postAdapter = PostAdapter(
             emptyList(),
             idUsuariLoguejat,
-            onEditar = { p ->
-                findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToEditarPostFragment(p.id))
-            },
+            onEditar = { p -> findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToEditarPostFragment(p.id)) },
             onEliminar = { p -> viewModelEliminarPost.eliminarPost(p) },
             onLike = { p -> viewModelAreesViewModel.reaccionarPost(p, "like") },
             onDislike = { p -> viewModelAreesViewModel.reaccionarPost(p, "dislike") },
-            onComentaris = { p ->
-                val action = AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(p.id, "post")
-                findNavController().navigate(action)
-            }
+            onComentaris = { p -> findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(p.id, "post")) }
         )
 
         binding.rvArees.apply {
@@ -148,64 +141,59 @@ class AreesFragments : Fragment() {
         }
 
         binding.fabAccio.setOnClickListener {
-            val area = viewModelAreesViewModel.uiState.value.areaSeleccionada
-            if (area == null) {
-                Toast.makeText(requireContext(), getString(R.string.selecciona_area), Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (modePresentacions) {
-                findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToCrearPresentacioFragment(area.id))
-            } else {
-                findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToCrearPostFragment(area.id))
-            }
+            val area = viewModelAreesViewModel.uiState.value.areaSeleccionada ?: return@setOnClickListener
+            if (modePresentacions) findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToCrearPresentacioFragment(area.id))
+            else findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToCrearPostFragment(area.id))
         }
 
         binding.etFiltreUsuari.addTextChangedListener {
-            filtreUsuari = it?.toString()?.trim().takeIf { s -> !s.isNullOrEmpty() }
+            filtreUsuari = it?.toString()?.trim().takeIf {
+                s -> !s.isNullOrEmpty()
+            }
             applyFilters()
         }
 
-        binding.etFiltreData.setOnClickListener { showDateDialog() }
-
+        binding.etFiltreData.setOnClickListener {
+            showDateDialog()
+        }
         binding.etFiltreData.addTextChangedListener {
-            filtreData = it?.toString()?.trim().takeIf { s -> !s.isNullOrEmpty() }
+            filtreData = it?.toString()?.trim().takeIf {
+                s -> !s.isNullOrEmpty()
+            }
             applyFilters()
         }
 
-        lifecycleScope.launchWhenStarted {
-            viewModelAreesViewModel.uiState.collectLatest { state ->
-                state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
-                binding.tvNomUsuari.text = state.nomUsuari ?: getString(R.string.usuari)
-                binding.imgAvatar.loadImageOrDefault(state.avatarUrl, isProfile = true)
-                totesArees = state.areas
-                actualitzarAreesPaginades()
-                areesAdapter.setSelected(state.areaSeleccionada?.id)
-                
-                totsPosts = state.posts
-                totsPresentacions = state.presentacions
-                applyFilters()
-            }
-        }
-
-        lifecycleScope.launchWhenStarted {
-            viewModelEliminarPost.uiState.collect { state ->
-                if (state.postEliminat) {
-                    viewModelAreesViewModel.refrescarArea()
-                    Toast.makeText(requireContext(), getString(R.string.post_eliminat), Toast.LENGTH_SHORT).show()
-                    viewModelEliminarPost.resetPostEliminat()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModelAreesViewModel.uiState.collectLatest { state ->
+                        state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
+                        binding.tvNomUsuari.text = state.nomUsuari ?: getString(R.string.usuari)
+                        binding.imgAvatar.loadImageOrDefault(state.avatarUrl, isProfile = true)
+                        totesArees = state.areas
+                        actualitzarAreesPaginades()
+                        areesAdapter.setSelected(state.areaSeleccionada?.id)
+                        totsPosts = state.posts
+                        totsPresentacions = state.presentacions
+                        applyFilters()
+                    }
                 }
-                state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
-            }
-        }
-
-        lifecycleScope.launchWhenStarted {
-            viewModelEliminarPresentacio.uiState.collect { state ->
-                if (state.presentacioEliminada) {
-                    viewModelAreesViewModel.refrescarArea()
-                    Toast.makeText(requireContext(), getString(R.string.presentacio_eliminada), Toast.LENGTH_SHORT).show()
-                    viewModelEliminarPresentacio.resetPresentacioEliminada()
+                launch {
+                    viewModelEliminarPost.uiState.collect { state ->
+                        if (state.postEliminat) {
+                            viewModelAreesViewModel.refrescarArea()
+                            viewModelEliminarPost.resetPostEliminat()
+                        }
+                    }
                 }
-                state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
+                launch {
+                    viewModelEliminarPresentacio.uiState.collect { state ->
+                        if (state.presentacioEliminada) {
+                            viewModelAreesViewModel.refrescarArea()
+                            viewModelEliminarPresentacio.resetPresentacioEliminada()
+                        }
+                    }
+                }
             }
         }
 
@@ -221,35 +209,28 @@ class AreesFragments : Fragment() {
     private fun actualitzarMode() {
         binding.rvPresentacions.visibility = if (modePresentacions) View.VISIBLE else View.GONE
         binding.rvPosts.visibility = if (modePresentacions) View.GONE else View.VISIBLE
-        binding.layoutFiltres.visibility = View.VISIBLE
         applyFilters()
     }
 
     private fun actualitzarAreesPaginades() {
         val fi = (indexInici + maxPerPagina).coerceAtMost(totesArees.size)
         areesAdapter.updateData(if (indexInici < fi) totesArees.subList(indexInici, fi) else emptyList())
-        val hiHaMesDeTres = totesArees.size > maxPerPagina
-        binding.btnPrevArea.visibility = if (hiHaMesDeTres && indexInici > 0) View.VISIBLE else View.INVISIBLE
-        binding.btnNextArea.visibility = if (hiHaMesDeTres && indexInici + maxPerPagina < totesArees.size) View.VISIBLE else View.INVISIBLE
+        val hiHaMes = totesArees.size > maxPerPagina
+        binding.btnPrevArea.visibility = if (hiHaMes && indexInici > 0) View.VISIBLE else View.INVISIBLE
+        binding.btnNextArea.visibility = if (hiHaMes && indexInici + maxPerPagina < totesArees.size) View.VISIBLE else View.INVISIBLE
     }
 
     private fun applyFilters() {
         if (modePresentacions) {
-            var filtrat = totsPresentacions
-            filtreUsuari?.let { usuari ->
-                filtrat = filtrat.filter { it.nom_usuari?.contains(usuari, ignoreCase = true) == true }
-            }
-            filtreData?.let { data ->
-                filtrat = filtrat.filter { it.created_at.startsWith(data) }
+            val filtrat = totsPresentacions.filter { p ->
+                (filtreUsuari == null || p.nom_usuari?.contains(filtreUsuari!!, true) == true) &&
+                (filtreData == null || p.created_at.startsWith(filtreData!!))
             }
             presentacioAdapter.updateData(filtrat)
         } else {
-            var filtrat = totsPosts
-            filtreUsuari?.let { usuari ->
-                filtrat = filtrat.filter { it.nom_usuari?.contains(usuari, ignoreCase = true) == true }
-            }
-            filtreData?.let { data ->
-                filtrat = filtrat.filter { it.created_at.startsWith(data) }
+            val filtrat = totsPosts.filter { p ->
+                (filtreUsuari == null || p.nom_usuari?.contains(filtreUsuari!!, true) == true) &&
+                (filtreData == null || p.created_at.startsWith(filtreData!!))
             }
             postAdapter.updateData(filtrat)
         }
@@ -257,46 +238,40 @@ class AreesFragments : Fragment() {
 
     private fun showDateDialog() {
         val now = java.util.Calendar.getInstance()
-        val year = now.get(java.util.Calendar.YEAR)
-        val month = now.get(java.util.Calendar.MONTH)
-        val day = now.get(java.util.Calendar.DAY_OF_MONTH)
-        val dialog = android.app.DatePickerDialog(requireContext(), { _, y, m, d ->
-            val formatted = String.format("%04d-%02d-%02d", y, m + 1, d)
-            binding.etFiltreData.setText(formatted)
-        }, year, month, day)
-        dialog.setButton(android.app.AlertDialog.BUTTON_NEUTRAL, "Clear") { _, _ ->
-            binding.etFiltreData.setText("")
+        android.app.DatePickerDialog(requireContext(), { _, y, m, d ->
+            binding.etFiltreData.setText(String.format("%04d-%02d-%02d", y, m + 1, d))
+        }, now.get(java.util.Calendar.YEAR), now.get(java.util.Calendar.MONTH), now.get(java.util.Calendar.DAY_OF_MONTH)).apply {
+            setButton(android.app.AlertDialog.BUTTON_NEUTRAL, "Clear") { _, _ -> binding.etFiltreData.setText("") }
+            show()
         }
-        dialog.show()
     }
 
     private fun mostrarMenuUsuari(anchor: View) {
-        val popup = PopupMenu(requireContext(), anchor)
-        popup.menu.add(0, 1, 0, getString(R.string.perfil_usuari))
-        popup.menu.add(0, 2, 1, getString(R.string.tancar_sessio))
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                1 -> findNavController().navigate(R.id.action_areesFragments_to_editarPerfilFragment)
-                2 -> {
-                    SharedPreference.tancarSessio(requireContext())
-                    findNavController().navigate(R.id.iniciFragment)
+        PopupMenu(requireContext(), anchor).apply {
+            menu.add(0, 1, 0, getString(R.string.perfil_usuari))
+            menu.add(0, 2, 1, getString(R.string.tancar_sessio))
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    1 -> findNavController().navigate(R.id.action_areesFragments_to_editarPerfilFragment)
+                    2 -> { SharedPreference.tancarSessio(requireContext()); findNavController().navigate(R.id.iniciFragment) }
                 }
+                true
             }
-            true
+            show()
         }
-        popup.show()
     }
 
     private fun mostrarSubmenuArea(anchor: View) {
-        val popup = PopupMenu(requireContext(), anchor)
-        popup.menu.add(0, 1, 0, getString(R.string.posts))
-        popup.menu.add(0, 2, 1, getString(R.string.presentacions))
-        popup.setOnMenuItemClickListener { item ->
-            modePresentacions = (item.itemId == 2)
-            actualitzarMode()
-            true
+        PopupMenu(requireContext(), anchor).apply {
+            menu.add(0, 1, 0, getString(R.string.veure_posts))
+            menu.add(0, 2, 1, getString(R.string.veure_presentacions))
+            setOnMenuItemClickListener { item ->
+                modePresentacions = (item.itemId == 2)
+                actualitzarMode()
+                true
+            }
+            show()
         }
-        popup.show()
     }
 
     companion object {

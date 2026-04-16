@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.daviddam.clickconnect.databinding.FragmentRegistreBinding
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,19 +42,18 @@ class RegistreFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    ): View {
         binding = FragmentRegistreBinding.inflate(inflater, container, false)
         return binding.root
     }
+
+    private val viewModelRegistre: viewmodel.RegistreViewModel by viewModels()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val viewModelRegistre: viewmodel.RegistreViewModel by viewModels()
 
-        binding.botoEnrere.setOnClickListener {
-            findNavController().navigateUp()
-        }
+        binding.botoEnrere.setOnClickListener { findNavController().navigateUp() }
 
         binding.btnRegistre.setOnClickListener {
             val campUsuari = binding.etUsuari.text.toString().trim()
@@ -88,26 +90,31 @@ class RegistreFragment : Fragment() {
                 binding.textError.text = getString(R.string.contrasenya_molt_llarga)
                 return@setOnClickListener
             }
-
-            binding.btnRegistre.isEnabled = false
             
             viewModelRegistre.registre(campUsuari, campEmail, campContrasenya, campRepetir)
         }
 
-        lifecycleScope.launchWhenStarted {
-            viewModelRegistre.uiState.collect { state ->
-                binding.textError.text = when {
-                    state.loading -> getString(R.string.carregant)
-                    state.error != null -> state.error.asString(requireContext())
-                    state.usuariCreat != null -> getString(R.string.usuari_creat_correctament)
-                    else -> ""
-                }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModelRegistre.uiState.collect { state ->
+                    binding.btnRegistre.isEnabled = !state.loading
+                    binding.textError.text = when {
+                        state.loading -> getString(R.string.carregant)
+                        state.error != null -> state.error.asString(requireContext())
+                        else -> ""
+                    }
 
-                binding.btnRegistre.isEnabled = !state.loading
+                    binding.btnRegistre.isEnabled = !state.loading
 
-                if (state.usuariCreat != null) {
-                    Toast.makeText(requireContext(), getString(R.string.usuari_creat_correctament), Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(RegistreFragmentDirections.actionRegistreFragmentToLoginFragment())
+                    if (state.isSuccess) {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.usuari_creat_correctament),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        findNavController().navigate(RegistreFragmentDirections.actionRegistreFragmentToLoginFragment())
+                    }
+
                 }
             }
         }

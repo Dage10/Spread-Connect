@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.daviddam.clickconnect.databinding.FragmentEditarPerfilBinding
 import kotlinx.coroutines.flow.collectLatest
+import models.EditarPerfilUiState
 import sharedPreference.SharedPreference
 import util.ImageExtension.loadImageOrDefault
 import util.PreferenciesApplier
@@ -44,6 +45,8 @@ class EditarPerfilFragment : Fragment() {
     private var param2: String? = null
 
     private lateinit var binding: FragmentEditarPerfilBinding
+
+    private var lastState: EditarPerfilUiState? = null
     private val viewModelEditarPerfil: EditarPerfilViewModel by viewModels()
 
     private val idiomesKeys = listOf("Català", "Español", "Anglès")
@@ -103,7 +106,6 @@ class EditarPerfilFragment : Fragment() {
             viewModelEditarPerfil.guardarCanvis(
                 idUsuari, 
                 binding.etNom.text.toString().trim(),
-                binding.etEmail.text.toString().trim(),
                 binding.etDescripcio.text.toString().trim().ifBlank { null },
                 binding.etContrasenyaAntiga.text.toString().trim().ifBlank { null },
                 binding.etContrasenya.text.toString().trim().ifBlank { null },
@@ -121,11 +123,12 @@ class EditarPerfilFragment : Fragment() {
 
         lifecycleScope.launchWhenStarted {
             viewModelEditarPerfil.uiState.collectLatest { state ->
+                lastState = state
                 state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
 
                 if (state.usuari != null && binding.etNom.text.isNullOrBlank()) {
                     binding.etNom.setText(state.usuari.nom_usuari)
-                    binding.etEmail.setText(state.usuari.email)
+                    binding.tvEmail.text = state.usuari!!.email
                     binding.etDescripcio.setText(state.usuari.descripcio ?: "")
                     binding.imgAvatar.loadImageOrDefault(state.usuari.avatar_url, isProfile = true)
 

@@ -1,9 +1,9 @@
 package daos
 
-import com.daviddam.clickconnect.R
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -15,150 +15,66 @@ import java.time.Instant
 
 class PostDao {
 
-    suspend fun getPostsPerArea(areaId: String): List<Post> =
-        SupabaseClient.client
+    private val json = Json { ignoreUnknownKeys = true }
+
+    suspend fun getPostsAmbUsuari(areaId: String): List<Post> {
+        val rows = SupabaseClient.client
             .from("posts")
-            .select { filter { eq("area_id", areaId) } }
-            .decodeList()
+            .select(Columns.list("id", "id_usuari", "titol", "descripcio", "area_id", "created_at", "updated_at", "imatge_url", "usuaris(nom_usuari, avatar_url)")) {
+                filter { eq("area_id", areaId) }
+            }
+
+        return rows.decodeList<JsonObject>().map { row ->
+            val usuari = row["usuaris"] as? JsonObject
+            val base = json.decodeFromJsonElement(Post.serializer(), row)
+            base.copy(
+                nom_usuari = usuari?.get("nom_usuari")?.jsonPrimitive?.content,
+                avatar_url = usuari?.get("avatar_url")?.jsonPrimitive?.content
+            )
+        }
+    }
 
     suspend fun getPostPerId(id: String): Post =
-        SupabaseClient.client
-            .from("posts")
+        SupabaseClient.client.from("posts")
             .select { filter { eq("id", id) } }
-            .decodeList<Post>()
-            .first()
+            .decodeSingle()
 
-    suspend fun crearPost(idUsuari: String, titol: String, descripcio: String, areaId: String, imatgeUrl: String?): Post {
+    suspend fun crearPost(idUsuari: String, titol: String, desc: String, areaId: String, img: String?): Post {
         val nouPost = buildJsonObject {
-            put("id_usuari", idUsuari)
-            put("titol", titol)
-            put("descripcio", descripcio)
-            put("area_id", areaId)
-            if (imatgeUrl != null) {
-                put("imatge_url", imatgeUrl)
-            }
+            put("id_usuari", idUsuari); put("titol", titol); put("descripcio", desc); put("area_id", areaId)
+            img?.let { put("imatge_url", it) }
         }
-
-        return try {
-            SupabaseClient.client
-                .from("posts")
-                .insert(nouPost) { select() }
-                .decodeList<Post>()
-                .firstOrNull() ?: throw Exception(R.string.error_en_crear_post.toString())
-        } catch (e: Exception) {
-            throw e
-        }
+        return SupabaseClient.client.from("posts").insert(nouPost) { select() }.decodeSingle()
     }
 
-    suspend fun editarPost(idPost: String, titol: String, descripcio: String, imatgeUrl: String?): Post {
+    suspend fun editarPost(id: String, titol: String, desc: String, img: String?): Post {
         val data = buildJsonObject {
-            put("titol", titol)
-            put("descripcio", descripcio)
-            put("updated_at", Instant.now().toString())
-            if (imatgeUrl != null) {
-                put("imatge_url", imatgeUrl)
-            }
+            put("titol", titol); put("descripcio", desc); put("updated_at", Instant.now().toString())
+            img?.let { put("imatge_url", it) }
         }
-        return try {
-            SupabaseClient.client
-                .from("posts")
-                .update(data) {
-                    filter { eq("id", idPost) }
-                    select()
-                }
-                .decodeList<Post>()
-                .firstOrNull() ?: throw Exception(R.string.error_en_editar_post.toString())
-        } catch (e: Exception) {
-            throw e
-        }
+        return SupabaseClient.client.from("posts").update(data) { filter { eq("id", id) }; select() }.decodeSingle()
     }
 
-    suspend fun eliminarPost(idPost: String) {
-        try {
-            SupabaseClient.client
-                .from("posts")
-                .delete { filter { eq("id", idPost) } }
-        } catch (e: Exception) {
-            throw e
-        }
-    }
+    suspend fun eliminarPost(id: String) = SupabaseClient.client.from("posts").delete { filter { eq("id", id) } }
 
     suspend fun getEtiquetesPost(postId: String): List<Etiqueta> =
-        SupabaseClient.client
-            .from("posts_etiquetes")
-            .select(Columns.list("id_post", "id_etiqueta", "etiquetes(id,nom)")) {
-                filter { eq("id_post", postId) }
-            }
+        SupabaseClient.client.from("posts_etiquetes")
+            .select(Columns.list("id_post", "id_etiqueta", "etiquetes(id,nom)")) { filter { eq("id_post", postId) } }
             .decodeList<EtiquetaPost>()
-            .map { row ->
-                Etiqueta(
-                    id = row.etiquetes.id,
-                    nom = row.etiquetes.nom,
-                    idPost = row.id_post
-                )
-            }
+            .map { Etiqueta(it.etiquetes.id, it.etiquetes.nom, it.id_post) }
 
     suspend fun crearEtiqueta(nom: String, postId: String): Etiqueta {
-        val existent = SupabaseClient.client
-            .from("etiquetes")
-            .select {
-                filter { eq("nom", nom) }
-            }
-            .decodeList<Etiqueta>()
-            .firstOrNull()
-
-        val etiquetaNoua = existent ?: SupabaseClient.client
-            .from("etiquetes")
-            .insert(
-                buildJsonObject {
-                    put("nom", nom)
-                }
-            ) {
-                select()
-            }
-            .decodeList<Etiqueta>()
-            .first()
-
-        SupabaseClient.client
-            .from("posts_etiquetes")
-            .insert(
-                buildJsonObject {
-                    put("id_post", postId)
-                    put("id_etiqueta", etiquetaNoua.id)
-                }
-            )
-
-        return Etiqueta(
-            id = etiquetaNoua.id,
-            nom = etiquetaNoua.nom,
-            idPost = postId
-        )
+        val existent = SupabaseClient.client.from("etiquetes").select { filter { eq("nom", nom) } }.decodeSingleOrNull<Etiqueta>()
+        val tag = existent ?: SupabaseClient.client.from("etiquetes").insert(buildJsonObject { put("nom", nom) }) { select() }.decodeSingle()
+        SupabaseClient.client.from("posts_etiquetes").insert(buildJsonObject { put("id_post", postId); put("id_etiqueta", tag.id) })
+        return Etiqueta(tag.id, tag.nom, postId)
     }
 
     suspend fun editarEtiqueta(id: String, nom: String): Etiqueta {
-        val data = buildJsonObject { put("nom", nom) }
-        val updatedTag = SupabaseClient.client.from("etiquetes")
-            .update(data) {
-                filter { eq("id", id) }
-                select()
-            }
-            .decodeSingle<JsonObject>()
-
-        return Etiqueta(
-            id = updatedTag["id"]?.jsonPrimitive?.content ?: "",
-            nom = updatedTag["nom"]?.jsonPrimitive?.content ?: "",
-            idPost = ""
-        )
+        val updated = SupabaseClient.client.from("etiquetes").update(buildJsonObject { put("nom", nom) }) { filter { eq("id", id) }; select() }.decodeSingle<JsonObject>()
+        return Etiqueta(updated["id"]?.jsonPrimitive?.content ?: "", updated["nom"]?.jsonPrimitive?.content ?: "", "")
     }
 
-    suspend fun eliminarEtiqueta(idEtiqueta: String, postId: String) {
-        SupabaseClient.client
-            .from("posts_etiquetes")
-            .delete {
-                filter {
-                    eq("id_etiqueta", idEtiqueta)
-                    eq("id_post", postId)
-                }
-            }
-    }
+    suspend fun eliminarEtiqueta(idTag: String, idPost: String) =
+        SupabaseClient.client.from("posts_etiquetes").delete { filter { eq("id_etiqueta", idTag); eq("id_post", idPost) } }
 }

@@ -19,23 +19,23 @@ class LoginViewModel(
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
 
-    fun login(nomUsuari: String, contrasenya: String, context: android.content.Context) {
+    fun login(email: String, contrasenya: String, context: android.content.Context) {
+
+        if (email.isBlank() || contrasenya.isBlank()) {
+            _uiState.value = LoginUiState(error = UiText.StringResource(R.string.omple_tots_camps))
+            return
+        }
+
         _uiState.value = LoginUiState(loading = true)
 
         viewModelScope.launch {
             try {
-                val usuari = repo.usuariDao.loginUsuari(nomUsuari, contrasenya)
+                val usuari = repo.usuariDao.loginUsuari(email, contrasenya)
                 SharedPreference.guardarUsuariLoguejat(context, usuari.id)
 
                 _uiState.value = LoginUiState(usuari = usuari)
-            } catch (e: Exception) {
-                // Determine which error message to show based on the exception or message
-                val errorMsg = when {
-                    e.message?.contains(R.string.credenciales_incorrectas.toString()) == true -> 
-                        UiText.StringResource(R.string.credenciales_incorrectas)
-                    else -> UiText.DynamicString(e.message ?: "Unknown error")
-                }
-                _uiState.value = LoginUiState(error = errorMsg)
+            } catch (_: Exception) {
+                _uiState.value = LoginUiState(error = UiText.StringResource(R.string.credenciales_incorrectas))
             }
         }
     }

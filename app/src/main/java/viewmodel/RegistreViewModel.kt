@@ -1,4 +1,5 @@
 package viewmodel
+
 import models.RegistreUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,6 +17,16 @@ class RegistreViewModel(
     private val _uiState = MutableStateFlow(RegistreUiState())
     val uiState: StateFlow<RegistreUiState> = _uiState
 
+    private fun isUsuariExistentError(e: Exception): Boolean {
+        val msg = (e.message ?: "").lowercase()
+        return msg.contains("already registered") ||
+            msg.contains("user already") ||
+            msg.contains("already exists") ||
+            msg.contains("duplicate key") ||
+            msg.contains("23505") ||
+            msg.contains("unique constraint")
+    }
+
     fun registre(nom: String, email: String, pass: String, repetir: String) {
 
         if (pass != repetir) {
@@ -27,16 +38,15 @@ class RegistreViewModel(
 
         viewModelScope.launch {
             try {
-                val usuari = repo.usuariDao.registreUsuari(nom, email, pass)
-                repo.preferenciesDao.insertPreferenciesPerDefecte(usuari.id)
-                _uiState.value = RegistreUiState(usuariCreat = usuari)
+                repo.usuariDao.registreUsuari(nom, email, pass)
+                _uiState.value = RegistreUiState(isSuccess = true)
             } catch (e: Exception) {
-                val errorMsg = when {
-                    e.message?.contains(R.string.usuari_existent.toString()) == true -> 
-                        UiText.StringResource(R.string.usuari_existent)
-                    else -> UiText.DynamicString(e.message ?: "Error en el registre")
+                val uiError = if (isUsuariExistentError(e)) {
+                    UiText.StringResource(R.string.usuari_existent)
+                } else {
+                    UiText.StringResource(R.string.error_al_registrar)
                 }
-                _uiState.value = RegistreUiState(error = errorMsg)
+                _uiState.value = RegistreUiState(error = uiError)
             }
         }
     }

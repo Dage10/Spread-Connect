@@ -4,6 +4,6 @@ import util.UiText
 
 data class RegistreUiState(
     val loading: Boolean = false,
-    val usuariCreat: Usuari? = null,
+    val isSuccess: Boolean = false,
     val error: UiText? = null
 )

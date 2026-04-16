@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import models.EditarPerfilUiState
 import conexio.SupabaseStorage
 import repository.Repository
-import util.PasswordUtil
 import util.UiText
 
 class EditarPerfilViewModel(
@@ -43,7 +42,6 @@ class EditarPerfilViewModel(
     fun guardarCanvis(
         idUsuari: String,
         nom: String,
-        email: String,
         descripcio: String?,
         contrasenyaAntiga: String?,
         novaContrasenya: String?,
@@ -52,24 +50,9 @@ class EditarPerfilViewModel(
         rebreNotificacions: Boolean,
         avatarImageBytes: ByteArray? = null
     ) {
-        if (nom.isBlank() || email.isBlank()) {
+        if (nom.isBlank()) {
             _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.email_nom_obligatoris))
             return
-        }
-        val usuari = _uiState.value.usuari
-        if (!novaContrasenya.isNullOrBlank()) {
-            if (contrasenyaAntiga.isNullOrBlank()) {
-                _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.introdueix_contrasenya_antiga))
-                return
-            }
-            if(novaContrasenya.length < 8){
-                _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.contrasenya_curta))
-                return
-            }
-            if (usuari == null || PasswordUtil.sha256(contrasenyaAntiga) != usuari.contrasenya_hash) {
-                _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.error_contrasenya_antiga_incorrecta))
-                return
-            }
         }
 
         _uiState.value = _uiState.value.copy(loading = true, error = null)
@@ -82,12 +65,11 @@ class EditarPerfilViewModel(
                     avatarUrl = SupabaseStorage.penjarAvatar(idUsuari, avatarImageBytes)
                 }
 
-                val u = repo.usuariDao.actualitzarPerfil(
-                    idUsuari, nom, email, descripcio, novaContrasenya, avatarUrl
+                val usuari = repo.usuariDao.actualitzarPerfil(
+                    idUsuari, nom, descripcio, novaContrasenya, avatarUrl,contrasenyaAntiga,_uiState.value.usuari!!.email
                 )
 
-                val hasPrefs = _uiState.value.preferencies != null
-                val prefs = if (hasPrefs) {
+                val prefs = if (_uiState.value.preferencies != null) {
                     repo.preferenciesDao.updatePreferencies(idUsuari, llenguatge, tema, rebreNotificacions)
                 } else {
                     repo.preferenciesDao.insertPreferencies(idUsuari, llenguatge, tema, rebreNotificacions)
@@ -95,7 +77,13 @@ class EditarPerfilViewModel(
 
                 _uiState.value = _uiState.value.copy(
                     loading = false,
-                    usuariActualitzat = u,
+                    usuariActualitzat = usuari,
+                    preferenciesActualitzades = prefs
+                )
+
+                _uiState.value = _uiState.value.copy(
+                    loading = false,
+                    usuariActualitzat = usuari,
                     preferenciesActualitzades = prefs,
                     error = null
                 )

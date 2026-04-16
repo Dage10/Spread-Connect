@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.daviddam.clickconnect.databinding.FragmentLoginBinding
-import kotlin.getValue
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,6 +45,7 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -54,35 +57,28 @@ class LoginFragment : Fragment() {
         }
 
         binding.btnLogin.setOnClickListener {
-            val usuari = binding.etUsuari.text.toString().trim()
+            val email = binding.etUsuari.text.toString().trim()
             val contrasenya = binding.etContrasenya.text.toString().trim()
-
-            if (usuari.isEmpty() || contrasenya.isEmpty()) {
-                binding.textError.text = getString(R.string.omple_tots_camps)
-                return@setOnClickListener
-            }
-
-            viewModelLogin.login(usuari, contrasenya, requireContext())
+            viewModelLogin.login(email, contrasenya, requireContext())
         }
 
         binding.btnOblidat.setOnClickListener {
-            val action = LoginFragmentDirections.actionLoginFragmentToOblidatContrasenyaFragment()
-            findNavController().navigate(action)
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToOblidatContrasenyaFragment())
         }
 
-        lifecycleScope.launchWhenStarted {
-            viewModelLogin.uiState.collect { state ->
-                binding.textError.text = when {
-                    state.loading -> getString(R.string.carregant)
-                    state.error != null -> state.error.asString(requireContext())
-                    state.usuari != null -> {
-                        binding.root.post {
-                            val action = LoginFragmentDirections.actionLoginFragmentToAreesFragments()
-                            findNavController().navigate(action)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModelLogin.uiState.collect { state ->
+                    binding.textError.text = when {
+                        state.loading -> getString(R.string.carregant)
+                        state.error != null -> state.error.asString(requireContext())
+                        state.usuari != null -> {
+                            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToAreesFragments())
+                            ""
                         }
-                        ""
+                        else -> ""
                     }
-                    else -> ""
+                    binding.btnLogin.isEnabled = !state.loading
                 }
             }
         }
