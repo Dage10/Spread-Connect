@@ -39,6 +39,23 @@ class PostDao {
             .select { filter { eq("id", id) } }
             .decodeSingle()
 
+    suspend fun getPostsPerUsuari(idUsuari: String): List<Post> {
+        val rows = SupabaseClient.client
+            .from("posts")
+            .select(Columns.list("id", "id_usuari", "titol", "descripcio", "area_id", "created_at", "updated_at", "imatge_url", "usuaris(nom_usuari, avatar_url)")) {
+                filter { eq("id_usuari", idUsuari) }
+            }
+
+        return rows.decodeList<JsonObject>().map { row ->
+            val usuari = row["usuaris"] as? JsonObject
+            val base = json.decodeFromJsonElement(Post.serializer(), row)
+            base.copy(
+                nom_usuari = usuari?.get("nom_usuari")?.jsonPrimitive?.content,
+                avatar_url = usuari?.get("avatar_url")?.jsonPrimitive?.content
+            )
+        }
+    }
+
     suspend fun crearPost(idUsuari: String, titol: String, desc: String, areaId: String, img: String?): Post {
         val nouPost = buildJsonObject {
             put("id_usuari", idUsuari); put("titol", titol); put("descripcio", desc); put("area_id", areaId)

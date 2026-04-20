@@ -97,4 +97,13 @@
     <string name="error_carregar_dades">Error in loading data</string>
     <string name="correu_codi_enviat">Code sent, check your email.</string>
     <string name="contrasenya_actualitzada">Password updated</string>
+    <string name="seguidors">Followers</string>
+    <string name="ultims_posts">Ultimos posts:</string>
+    <string name="ultimes_presentacions">Ultimas presentaciones:</string>
+    <string name="sessio_no_trobada">Session not found</string>
+    <string name="email_no_disponible">Email not available</string>
+    <string name="introduir_contra_antiga">You need to enter the old password to change the password.</string>
+    <string name="seguint">Following</string>
+    <string name="enviar_missatge">Send message</string>
+    <string name="seguir">Follow</string>
 </resources>

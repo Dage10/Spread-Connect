@@ -97,4 +97,13 @@
     <string name="error_carregar_dades">Error al cargar los datos</string>
     <string name="correu_codi_enviat">Correo con código enviado, revisa tu correo.</string>
     <string name="contrasenya_actualitzada">Contraseña actualizada</string>
+    <string name="seguidors">Seguidores</string>
+    <string name="ultims_posts">Last posts:</string>
+    <string name="ultimes_presentacions">Last presentations:</string>
+    <string name="sessio_no_trobada">Session no encontrada</string>
+    <string name="email_no_disponible">Email no disponible</string>
+    <string name="introduir_contra_antiga">Has d\'introudir la contrasenya antigua per canviar la contrasenya.</string>
+    <string name="seguint">Siguiendo</string>
+    <string name="enviar_missatge">Enviar mensaje</string>
+    <string name="seguir">Seguir</string>
 </resources>

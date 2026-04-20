@@ -53,6 +53,14 @@
         android:label="AreesFragments">
 
         <action
+            android:id="@+id/action_areesFragments_to_perfilFragment"
+            app:destination="@id/perfilFragment">
+            <argument
+                android:name="idUsuari"
+                app:argType="string" />
+        </action>
+
+        <action
             android:id="@+id/action_areesFragments_to_editarPerfilFragment"
             app:destination="@id/editarPerfilFragment" />
 
@@ -100,6 +108,27 @@
                 android:defaultValue="post" />
         </action>
 
+    </fragment>
+
+    <fragment
+        android:id="@+id/perfilFragment"
+        android:name="com.daviddam.clickconnect.PerfilFragment"
+        android:label="Perfil"
+        tools:layout="@layout/fragment_perfil">
+        <argument
+            android:name="idUsuari"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_perfilFragment_to_comentarisFragment"
+            app:destination="@id/comentarisFragment">
+            <argument
+                android:name="targetId"
+                app:argType="string" />
+            <argument
+                android:name="targetType"
+                app:argType="string"
+                android:defaultValue="post" />
+        </action>
     </fragment>
 
     <fragment
@@ -168,6 +197,13 @@
         <action
             android:id="@+id/action_comentarisFragment_self"
             app:destination="@id/comentarisFragment" />
+        <action
+            android:id="@+id/action_comentarisFragment_to_perfilFragment"
+            app:destination="@id/perfilFragment">
+            <argument
+                android:name="idUsuari"
+                app:argType="string" />
+        </action>
     </fragment>
 
 </navigation>

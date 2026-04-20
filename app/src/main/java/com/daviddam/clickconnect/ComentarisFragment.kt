@@ -80,6 +80,10 @@ class ComentarisFragment : Fragment() {
             onRespostes = { parentComment ->
                 val action = ComentarisFragmentDirections.actionComentarisFragmentSelf(parentComment.id, "comment")
                 findNavController().navigate(action)
+            },
+            onUserClick = { idUsuari ->
+                val action = ComentarisFragmentDirections.actionComentarisFragmentToPerfilFragment(idUsuari)
+                findNavController().navigate(action)
             }
         )
 
@@ -148,11 +152,20 @@ class ComentarisFragment : Fragment() {
             textLikeComptador.text = post.likes.toString()
             tvDislikeComptador.text = post.dislikes.toString()
             
+            btnEditar.visibility = View.GONE
+            btnEliminar.visibility = View.GONE
+            btnComentaris.visibility = View.GONE
+            rvTags.visibility = View.GONE
+
             if (post.reaccioActual == "like") btnLike.setColorFilter(android.graphics.Color.RED) else btnLike.clearColorFilter()
             if (post.reaccioActual == "dislike") btnDislike.setColorFilter(android.graphics.Color.BLUE) else btnDislike.clearColorFilter()
 
             btnLike.setOnClickListener { idUsuariLoguejat?.let { u -> viewModel.reaccionarPost(post.id, u, "like") } }
             btnDislike.setOnClickListener { idUsuariLoguejat?.let { u -> viewModel.reaccionarPost(post.id, u, "dislike") } }
+            imgAvatarUser.setOnClickListener {
+                val action = ComentarisFragmentDirections.actionComentarisFragmentToPerfilFragment(post.id_usuari)
+                findNavController().navigate(action)
+            }
         }
     }
 
@@ -170,11 +183,20 @@ class ComentarisFragment : Fragment() {
             textLikeComptador.text = pres.likes.toString()
             tvDislikeComptador.text = pres.dislikes.toString()
 
+            btnEditar.visibility = View.GONE
+            btnEliminar.visibility = View.GONE
+            btnComentaris.visibility = View.GONE
+            rvTags.visibility = View.GONE
+
             if (pres.reaccioActual == "like") btnLike.setColorFilter(android.graphics.Color.RED) else btnLike.clearColorFilter()
             if (pres.reaccioActual == "dislike") btnDislike.setColorFilter(android.graphics.Color.BLUE) else btnDislike.clearColorFilter()
 
             btnLike.setOnClickListener { idUsuariLoguejat?.let { u -> viewModel.reaccionarPresentacio(pres.id, u, "like") } }
             btnDislike.setOnClickListener { idUsuariLoguejat?.let { u -> viewModel.reaccionarPresentacio(pres.id, u, "dislike") } }
+            imgAvatarUser.setOnClickListener {
+                val action = ComentarisFragmentDirections.actionComentarisFragmentToPerfilFragment(pres.id_usuari)
+                findNavController().navigate(action)
+            }
         }
     }
 
@@ -191,6 +213,11 @@ class ComentarisFragment : Fragment() {
             imgPost.visibility = if (comment.imatge_url.isNullOrEmpty()) View.GONE else View.VISIBLE
             textLikeComptador.text = comment.likes.toString()
             tvDislikeComptador.text = comment.dislikes.toString()
+
+            btnEditar.visibility = View.GONE
+            btnEliminar.visibility = View.GONE
+            btnComentaris.visibility = View.GONE
+            rvTags.visibility = View.GONE
 
             if (comment.reaccioActual == "like") btnLike.setColorFilter(android.graphics.Color.RED) else btnLike.clearColorFilter()
             if (comment.reaccioActual == "dislike") btnDislike.setColorFilter(android.graphics.Color.BLUE) else btnDislike.clearColorFilter()

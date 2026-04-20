@@ -38,7 +38,9 @@ class UsuariDao {
     suspend fun loginUsuari(identificador: String, contrasenya: String): Usuari {
         val emailFinal = if (identificador.contains("@")) identificador else {
             SupabaseClient.client.from("usuaris")
-                .select { filter { eq("nom_usuari", identificador) } }
+                .select {
+                    filter { eq("nom_usuari", identificador) }
+                }
                 .decodeSingleOrNull<Usuari>()?.email ?: throw Exception("USUARI_NO_TROBAT")
         }
 
@@ -52,10 +54,34 @@ class UsuariDao {
     }
 
     suspend fun getUsuariPerId(id: String): Usuari =
-        SupabaseClient.client.from("usuaris").select { filter { eq("id", id) } }.decodeSingle()
+        SupabaseClient.client
+            .from("usuaris")
+            .select {
+                filter { eq("id", id) }
+            }.decodeSingle()
 
-    suspend fun actualitzarPerfil(id: String, nom: String, desc: String?, pass: String?, avatar: String?,contrasenyaAntiga: String?,emailAntic: String): Usuari {
+    suspend fun actualitzarPerfil(id: String, nom: String, desc: String?, pass: String?, avatar: String?,contrasenyaAntiga: String?): Usuari {
         if (!pass.isNullOrBlank()) {
+
+            if (contrasenyaAntiga.isNullOrBlank()) {
+                throw Exception("INTRODUIR_CONTRASENYA_ANTIGA")
+            }
+
+            val usuariAuth = SupabaseClient.client.auth.currentUserOrNull()
+                ?: throw Exception("SESSIO_NO_TROBADA")
+
+            val emailActual = usuariAuth.email
+                ?: throw Exception("EMAIL_NO_DISPONIBLE")
+
+            try {
+                SupabaseClient.client.auth.signInWith(Email) {
+                    this.email = emailActual
+                    this.password = contrasenyaAntiga
+                }
+            } catch (e: Exception) {
+                throw Exception("CONTRASENYA_ANTIGA_INCORRECTA")
+            }
+
             SupabaseClient.client.auth.updateUser {
                 this.password = pass
             }

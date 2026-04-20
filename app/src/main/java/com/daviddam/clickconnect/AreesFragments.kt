@@ -80,6 +80,7 @@ class AreesFragments : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val idUsuariLoguejat = SharedPreference.obtenirUsuariLoguejat(requireContext())
 
+        binding.tvNomUsuari.text = ""
         binding.layoutUsuari.setOnClickListener { mostrarMenuUsuari(it) }
 
         areesAdapter = AreesAdapter(emptyList()) { area, v ->
@@ -98,7 +99,8 @@ class AreesFragments : Fragment() {
             onEliminar = { p -> viewModelEliminarPresentacio.eliminarPresentacio(p) },
             onLike = { p -> viewModelAreesViewModel.reaccionarPresentacio(p, "like") },
             onDislike = { p -> viewModelAreesViewModel.reaccionarPresentacio(p, "dislike") },
-            onComentaris = { p -> findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(p.id, "presentacio")) }
+            onComentaris = { p -> findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(p.id, "presentacio")) },
+            onUserClick = { idUsuari -> findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToPerfilFragment(idUsuari)) }
         )
 
         postAdapter = PostAdapter(
@@ -108,7 +110,8 @@ class AreesFragments : Fragment() {
             onEliminar = { p -> viewModelEliminarPost.eliminarPost(p) },
             onLike = { p -> viewModelAreesViewModel.reaccionarPost(p, "like") },
             onDislike = { p -> viewModelAreesViewModel.reaccionarPost(p, "dislike") },
-            onComentaris = { p -> findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(p.id, "post")) }
+            onComentaris = { p -> findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(p.id, "post")) },
+            onUserClick = { idUsuari -> findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToPerfilFragment(idUsuari)) }
         )
 
         binding.rvArees.apply {
@@ -147,19 +150,13 @@ class AreesFragments : Fragment() {
         }
 
         binding.etFiltreUsuari.addTextChangedListener {
-            filtreUsuari = it?.toString()?.trim().takeIf {
-                s -> !s.isNullOrEmpty()
-            }
+            filtreUsuari = it?.toString()?.trim().takeIf { s -> !s.isNullOrEmpty() }
             applyFilters()
         }
 
-        binding.etFiltreData.setOnClickListener {
-            showDateDialog()
-        }
+        binding.etFiltreData.setOnClickListener { showDateDialog() }
         binding.etFiltreData.addTextChangedListener {
-            filtreData = it?.toString()?.trim().takeIf {
-                s -> !s.isNullOrEmpty()
-            }
+            filtreData = it?.toString()?.trim().takeIf { s -> !s.isNullOrEmpty() }
             applyFilters()
         }
 
@@ -168,7 +165,7 @@ class AreesFragments : Fragment() {
                 launch {
                     viewModelAreesViewModel.uiState.collectLatest { state ->
                         state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
-                        binding.tvNomUsuari.text = state.nomUsuari ?: getString(R.string.usuari)
+                        binding.tvNomUsuari.text = state.nomUsuari ?: ""
                         binding.imgAvatar.loadImageOrDefault(state.avatarUrl, isProfile = true)
                         totesArees = state.areas
                         actualitzarAreesPaginades()

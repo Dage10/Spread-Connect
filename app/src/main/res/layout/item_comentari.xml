@@ -39,15 +39,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Usuari"
-                    android:textStyle="bold"
                     android:textColor="@color/text_on_item"/>
 
                 <TextView
                     android:id="@+id/tvData"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2025-01-01"
                     android:textColor="@color/text_on_item"
                     android:textSize="12sp"/>
 
@@ -55,7 +52,6 @@
                     android:id="@+id/tvHora"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="15:00"
                     android:textColor="@color/text_on_item"
                     android:textSize="12sp"
                     android:layout_marginStart="4dp"/>
@@ -66,7 +62,6 @@
                 android:id="@+id/tvContingut"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Contingut"
                 android:textSize="16sp"
                 android:textColor="@color/text_on_item"
                 android:layout_marginTop="4dp"/>

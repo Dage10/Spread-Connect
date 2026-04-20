@@ -16,7 +16,9 @@ class PresentacioAdapter(
     private val onEliminar: (Presentacio) -> Unit,
     private val onLike: (Presentacio) -> Unit = {},
     private val onDislike: (Presentacio) -> Unit = {},
-    private val onComentaris: (Presentacio) -> Unit = {}
+    private val onComentaris: (Presentacio) -> Unit = {},
+    private val onUserClick: (String) -> Unit = {},
+    private val mostrarBotons: Boolean = true
 ) : RecyclerView.Adapter<PresentacioAdapter.PresentacioViewHolder>() {
 
     fun updateData(nous: List<Presentacio>) {
@@ -65,14 +67,16 @@ class PresentacioAdapter(
                 btnDislike.clearColorFilter()
             }
 
-            btnEditar.visibility = if (esDelMateixUsuari) View.VISIBLE else View.GONE
-            btnEliminar.visibility = if (esDelMateixUsuari) View.VISIBLE else View.GONE
+            btnEditar.visibility = if (esDelMateixUsuari && mostrarBotons) View.VISIBLE else View.GONE
+            btnEliminar.visibility = if (esDelMateixUsuari && mostrarBotons) View.VISIBLE else View.GONE
 
             btnEditar.setOnClickListener { onEditar(presentacio) }
             btnEliminar.setOnClickListener { onEliminar(presentacio) }
             btnLike.setOnClickListener { onLike(presentacio) }
             btnDislike.setOnClickListener { onDislike(presentacio) }
             btnComentaris.setOnClickListener { onComentaris(presentacio) }
+            imgAvatarUser.setOnClickListener { onUserClick(presentacio.id_usuari) }
+            tvUsuari.setOnClickListener { onUserClick(presentacio.id_usuari) }
         }
     }
 

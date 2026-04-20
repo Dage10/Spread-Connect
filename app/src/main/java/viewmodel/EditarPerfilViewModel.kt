@@ -66,7 +66,7 @@ class EditarPerfilViewModel(
                 }
 
                 val usuari = repo.usuariDao.actualitzarPerfil(
-                    idUsuari, nom, descripcio, novaContrasenya, avatarUrl,contrasenyaAntiga,_uiState.value.usuari!!.email
+                    idUsuari, nom, descripcio, novaContrasenya, avatarUrl,contrasenyaAntiga
                 )
 
                 val prefs = if (_uiState.value.preferencies != null) {
@@ -88,9 +88,28 @@ class EditarPerfilViewModel(
                     error = null
                 )
             } catch (e: Exception) {
+
+                val uiError = when (e.message) {
+
+                    "INTRODUIR_CONTRASENYA_ANTIGA" ->
+                        UiText.StringResource(R.string.introdueix_contrasenya_antiga)
+
+                    "SESSIO_NO_TROBADA" ->
+                        UiText.StringResource(R.string.sessio_no_trobada)
+
+                    "EMAIL_NO_DISPONIBLE" ->
+                        UiText.StringResource(R.string.email_no_disponible)
+
+                    "CONTRASENYA_ANTIGA_INCORRECTA" ->
+                        UiText.StringResource(R.string.error_contrasenya_antiga_incorrecta)
+
+                    else ->
+                        UiText.DynamicString(e.message ?: "Error")
+                }
+
                 _uiState.value = _uiState.value.copy(
-                    loading = false, 
-                    error = UiText.DynamicString(e.message ?: "Error")
+                    loading = false,
+                    error = uiError
                 )
             }
         }

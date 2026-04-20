@@ -15,7 +15,8 @@ class ComentarisAdapter(
     private val onEliminar: (Comentari) -> Unit,
     private val onLike: (Comentari) -> Unit = {},
     private val onDislike: (Comentari) -> Unit = {},
-    private val onRespostes: (Comentari) -> Unit = {}
+    private val onRespostes: (Comentari) -> Unit = {},
+    private val onUserClick: (String) -> Unit = {}
 ): RecyclerView.Adapter<ComentarisAdapter.ComentariViewHolder>() {
 
     fun updateData(nous: List<Comentari>) {
@@ -72,6 +73,9 @@ class ComentarisAdapter(
             btnEditar.setOnClickListener { onEditar(comentari) }
             btnEliminar.setOnClickListener { onEliminar(comentari) }
             btnComentari.setOnClickListener { onRespostes(comentari) }
+            
+            imgAvatarUser.setOnClickListener { onUserClick(comentari.id_usuari) }
+            tvUsuari.setOnClickListener { onUserClick(comentari.id_usuari) }
         }
     }
 

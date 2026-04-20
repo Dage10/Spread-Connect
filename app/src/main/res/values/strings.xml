@@ -96,4 +96,13 @@
     <string name="introdueix_contrasenya_nova">Introdueix la contrasenya nova</string>
     <string name="correu_codi_enviat">Correu amb codi enviat, revisa el teu correu.</string>
     <string name="contrasenya_actualitzada">Contrasenya actualitzada</string>
+    <string name="seguidors">Seguidors</string>
+    <string name="ultims_posts">Ultims posts:</string>
+    <string name="ultimes_presentacions">Ultimes presentacions:</string>
+    <string name="sessio_no_trobada">Sessio no trobada</string>
+    <string name="email_no_disponible">Email no disponible</string>
+    <string name="introduir_contra_antiga">Has d\'introudir la contrasenya antigua per canviar la contrasenya.</string>
+    <string name="seguint">Seguint</string>
+    <string name="enviar_missatge">Enviar missatge</string>
+    <string name="seguir">Seguir</string>
 </resources>

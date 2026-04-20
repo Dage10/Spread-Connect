@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.daviddam.clickconnect.databinding.FragmentEditarPerfilBinding
 import kotlinx.coroutines.flow.collectLatest
-import models.EditarPerfilUiState
 import sharedPreference.SharedPreference
 import util.ImageExtension.loadImageOrDefault
 import util.PreferenciesApplier
@@ -45,8 +44,6 @@ class EditarPerfilFragment : Fragment() {
     private var param2: String? = null
 
     private lateinit var binding: FragmentEditarPerfilBinding
-
-    private var lastState: EditarPerfilUiState? = null
     private val viewModelEditarPerfil: EditarPerfilViewModel by viewModels()
 
     private val idiomesKeys = listOf("Català", "Español", "Anglès")
@@ -123,7 +120,6 @@ class EditarPerfilFragment : Fragment() {
 
         lifecycleScope.launchWhenStarted {
             viewModelEditarPerfil.uiState.collectLatest { state ->
-                lastState = state
                 state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
 
                 if (state.usuari != null && binding.etNom.text.isNullOrBlank()) {

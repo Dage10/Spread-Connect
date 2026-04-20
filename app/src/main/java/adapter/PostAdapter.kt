@@ -16,7 +16,9 @@ class PostAdapter(
     private val onEliminar: (Post) -> Unit,
     private val onLike: (Post) -> Unit = {},
     private val onDislike: (Post) -> Unit = {},
-    private val onComentaris: (Post) -> Unit = {}
+    private val onComentaris: (Post) -> Unit = {},
+    private val onUserClick: (String) -> Unit = {},
+    private val mostrarBotons: Boolean = true
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     fun updateData(nous: List<Post>) {
@@ -82,14 +84,17 @@ class PostAdapter(
                 btnDislike.clearColorFilter()
             }
 
-            btnEditar.visibility = if (esDelMateixUsuari) View.VISIBLE else View.GONE
-            btnEliminar.visibility = if (esDelMateixUsuari) View.VISIBLE else View.GONE
+            btnEditar.visibility = if (esDelMateixUsuari && mostrarBotons) View.VISIBLE else View.GONE
+            btnEliminar.visibility = if (esDelMateixUsuari && mostrarBotons) View.VISIBLE else View.GONE
 
             btnLike.setOnClickListener { onLike(post) }
             btnDislike.setOnClickListener { onDislike(post) }
             btnEditar.setOnClickListener { onEditar(post) }
             btnEliminar.setOnClickListener { onEliminar(post) }
             btnComentaris.setOnClickListener { onComentaris(post) }
+            btnComentaris.visibility = if (mostrarBotons) View.VISIBLE else View.GONE
+            imgAvatarUser.setOnClickListener { onUserClick(post.id_usuari) }
+            tvUsuari.setOnClickListener { onUserClick(post.id_usuari) }
         }
     }
 

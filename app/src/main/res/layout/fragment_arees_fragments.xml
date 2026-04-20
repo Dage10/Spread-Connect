@@ -34,7 +34,6 @@
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/white"
                     android:textSize="24sp"
-                    android:text="Usuari"
                     android:textStyle="bold"
                     android:layout_marginStart="8dp" />
                 <ImageView
