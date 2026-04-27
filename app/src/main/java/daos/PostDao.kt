@@ -69,7 +69,12 @@ class PostDao {
             put("titol", titol); put("descripcio", desc); put("updated_at", Instant.now().toString())
             img?.let { put("imatge_url", it) }
         }
-        return SupabaseClient.client.from("posts").update(data) { filter { eq("id", id) }; select() }.decodeSingle()
+        SupabaseClient.client
+            .from("posts")
+            .update(data) {
+                filter { eq("id", id) }
+            }
+        return getPostPerId(id)
     }
 
     suspend fun eliminarPost(id: String) = SupabaseClient.client.from("posts").delete { filter { eq("id", id) } }
@@ -88,8 +93,15 @@ class PostDao {
     }
 
     suspend fun editarEtiqueta(id: String, nom: String): Etiqueta {
-        val updated = SupabaseClient.client.from("etiquetes").update(buildJsonObject { put("nom", nom) }) { filter { eq("id", id) }; select() }.decodeSingle<JsonObject>()
-        return Etiqueta(updated["id"]?.jsonPrimitive?.content ?: "", updated["nom"]?.jsonPrimitive?.content ?: "", "")
+        SupabaseClient.client.from("etiquetes")
+            .update(buildJsonObject { put("nom", nom) }) {
+                filter { eq("id", id) }
+            }
+        return SupabaseClient.client.from("etiquetes")
+            .select {
+                filter { eq("id", id) }
+            }
+            .decodeSingle<Etiqueta>()
     }
 
     suspend fun eliminarEtiqueta(idTag: String, idPost: String) =

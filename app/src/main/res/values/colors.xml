@@ -21,4 +21,16 @@
 
     <color name="comment_stroke">#000000</color>
     <color name="tag_background">@color/darkblue</color>
+
+    <color name="bottom_nav_background">#3B82F6</color>
+    <color name="bottom_nav_item">#B3D4FC</color>
+    <color name="bottom_nav_selected_item">#FFFFFF</color>
+
+    <color name="missatge_rebut_background">#1E3A8A</color>
+    <color name="missatge_rebut_text">#FFFFFF</color>
+    <color name="text_chats">#000000</color>
+    <color name="fons_boto_afegir">#3B82F6</color>
+    <color name="btn_chat">#1E3A8A</color>
+    <color name="fons_boto_afegir_comentaris">#1E3A8A</color>
+    <color name="text_historial">#000000</color>
 </resources>

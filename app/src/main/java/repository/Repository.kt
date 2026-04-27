@@ -8,6 +8,8 @@ import daos.ReaccioDao
 import daos.UsuariDao
 import daos.ComentarisDao
 import daos.SeguimentDao
+import daos.MissatgeriaDao
+import daos.HistorialDao
 
 class Repository (
     val usuariDao: UsuariDao = UsuariDao(),
@@ -17,5 +19,7 @@ class Repository (
     val preferenciesDao: PreferenciesDao = PreferenciesDao(),
     val reaccioDao: ReaccioDao = ReaccioDao(),
     val comentarisDao: ComentarisDao = ComentarisDao(),
-    val seguimentDao: SeguimentDao = SeguimentDao()
+    val seguimentDao: SeguimentDao = SeguimentDao(),
+    val missatgeriaDao: MissatgeriaDao = MissatgeriaDao(),
+    val historialDao: HistorialDao = HistorialDao()
 )

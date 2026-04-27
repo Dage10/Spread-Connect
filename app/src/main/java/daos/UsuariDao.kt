@@ -94,12 +94,12 @@ class UsuariDao {
             avatar?.let { put("avatar_url", it) }
         }
 
-        return SupabaseClient.client.from("usuaris")
+        SupabaseClient.client.from("usuaris")
             .update(data) {
                 filter { eq("id", id) }
-                select()
             }
-            .decodeSingle()
+
+        return getUsuariPerId(id)
     }
 
     suspend fun enviarResetPassword(email: String) = SupabaseClient.client.auth.resetPasswordForEmail(email)

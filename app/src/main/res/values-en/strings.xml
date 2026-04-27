@@ -73,7 +73,7 @@
     <string name="usuari_molt_llarg">The user cannot exceed 30 characters</string>
     <string name="contrasenya_molt_llarga">The password cannot exceed 255 characters</string>
     <string name="etiqueta">Tag</string>
-    <string name="email_nom_obligatoris">Email and name are required</string>
+    <string name="nom_obligatori">Name is required</string>
     <string name="introdueix_contrasenya_antiga">Enter the old password</string>
     <string name="introdueix_contrasenya_nova">Enter the new password</string>
     <string name="error_traduccio">Error in the translation</string>
@@ -98,12 +98,24 @@
     <string name="correu_codi_enviat">Code sent, check your email.</string>
     <string name="contrasenya_actualitzada">Password updated</string>
     <string name="seguidors">Followers</string>
-    <string name="ultims_posts">Ultimos posts:</string>
-    <string name="ultimes_presentacions">Ultimas presentaciones:</string>
+    <string name="ultims_posts">Last posts:</string>
+    <string name="ultimes_presentacions">Last presentations:</string>
+    <string name="total_posts">Total posts:</string>
+    <string name="total_presentacions">Total presentations:</string>
     <string name="sessio_no_trobada">Session not found</string>
     <string name="email_no_disponible">Email not available</string>
     <string name="introduir_contra_antiga">You need to enter the old password to change the password.</string>
     <string name="seguint">Following</string>
+    <string name="estadistiques">Statistics</string>
+    <string name="comentaris">Comments:</string>
+    <string name="ultim_post">Last post:</string>
+    <string name="ultim_presentacio">Last presentation:</string>
+    <string name="postMesInteraccions">Post with most interactions:</string>
     <string name="enviar_missatge">Send message</string>
     <string name="seguir">Follow</string>
+    <string name="posts_menu_item">Posts</string>
+    <string name="historial_menu_item">History</string>
+    <string name="chat_menu_item">Chat</string>
+    <string name="chats_titol">Your chats: </string>
+    <string name="no_converses">You don\'t have conversations</string>
 </resources>

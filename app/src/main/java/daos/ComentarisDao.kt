@@ -93,11 +93,10 @@ class ComentarisDao {
             put("contingut", contingut); put("updated_at", Instant.now().toString())
             imatgeUrl?.let { put("imatge_url", it) }
         }
-        return SupabaseClient.client
-            .from("comentaris")
+        SupabaseClient.client.from("comentaris")
             .update(dades) {
-                filter { eq("id", id)}
-                select()
-            }.decodeSingle()
+                filter { eq("id", id) }
+            }
+        return getComentariPerId(id)
     }
 }

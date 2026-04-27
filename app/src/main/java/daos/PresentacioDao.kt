@@ -65,7 +65,12 @@ class PresentacioDao {
             put("titol", titol); put("contingut_presentacio", contingut); put("updated_at", Instant.now().toString())
             img?.let { put("imatge_url", it) }
         }
-        return SupabaseClient.client.from("presentacions").update(data) { filter { eq("id", id) }; select() }.decodeSingle()
+        SupabaseClient.client
+            .from("presentacions")
+            .update(data) {
+                filter { eq("id", id) }
+            }
+        return getPresentacioPerId(id)
     }
 
     suspend fun eliminarPresentacio(id: String) = SupabaseClient.client.from("presentacions").delete { filter { eq("id", id) } }

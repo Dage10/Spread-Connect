@@ -149,6 +149,19 @@ class AreesFragments : Fragment() {
             else findNavController().navigate(AreesFragmentsDirections.actionAreesFragmentsToCrearPostFragment(area.id))
         }
 
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.areesFragments -> true
+                R.id.chatsFragment -> {
+                    findNavController().navigate(R.id.chatsFragment); true
+                }
+                R.id.historialFragment -> {
+                    findNavController().navigate(R.id.historialFragment); true
+                }
+                else -> false
+            }
+        }
+
         binding.etFiltreUsuari.addTextChangedListener {
             filtreUsuari = it?.toString()?.trim().takeIf { s -> !s.isNullOrEmpty() }
             applyFilters()
@@ -178,6 +191,7 @@ class AreesFragments : Fragment() {
                 launch {
                     viewModelEliminarPost.uiState.collect { state ->
                         if (state.postEliminat) {
+                            Toast.makeText(requireContext(), getString(R.string.post_eliminat), Toast.LENGTH_SHORT).show()
                             viewModelAreesViewModel.refrescarArea()
                             viewModelEliminarPost.resetPostEliminat()
                         }
@@ -186,6 +200,7 @@ class AreesFragments : Fragment() {
                 launch {
                     viewModelEliminarPresentacio.uiState.collect { state ->
                         if (state.presentacioEliminada) {
+                            Toast.makeText(requireContext(), getString(R.string.presentacio_eliminada), Toast.LENGTH_SHORT).show()
                             viewModelAreesViewModel.refrescarArea()
                             viewModelEliminarPresentacio.resetPresentacioEliminada()
                         }

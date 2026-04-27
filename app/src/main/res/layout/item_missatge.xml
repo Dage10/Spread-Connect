@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:id="@+id/messageContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_missatge"
+            android:padding="12dp"
+            android:maxWidth="280dp">
+
+            <ImageView
+                android:id="@+id/ivImatge"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:visibility="gone"
+                android:scaleType="centerCrop"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tvMissatge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_on_item"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tvHora"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_on_item"
+                android:textSize="12sp"
+                android:layout_gravity="end"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

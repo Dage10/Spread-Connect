@@ -53,7 +53,7 @@ class PostAdapter(
             tvUsuari.text = post.nom_usuari ?: "Usuari"
             tvData.text = post.created_at.take(10)
             if (post.created_at.length >= 16) {
-                tvHora.text = post.created_at.substring(11, 16)
+                tvHora.text = post.created_at.take(16).takeLast(5)
             }
 
             tvTitol.text = post.titol

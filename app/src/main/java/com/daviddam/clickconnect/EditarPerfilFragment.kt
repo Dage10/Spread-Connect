@@ -124,7 +124,6 @@ class EditarPerfilFragment : Fragment() {
 
                 if (state.usuari != null && binding.etNom.text.isNullOrBlank()) {
                     binding.etNom.setText(state.usuari.nom_usuari)
-                    binding.tvEmail.text = state.usuari!!.email
                     binding.etDescripcio.setText(state.usuari.descripcio ?: "")
                     binding.imgAvatar.loadImageOrDefault(state.usuari.avatar_url, isProfile = true)
 
@@ -133,6 +132,9 @@ class EditarPerfilFragment : Fragment() {
                         binding.spinnerTema.setSelection(temesKeys.indexOf(prefs.tema).coerceAtLeast(0))
                         binding.switchNotificacions.isChecked = prefs.rebre_notificacions
                     }
+                }
+                state.usuari?.let {
+                    binding.tvEmail.text = it.email
                 }
 
                 if (state.usuariActualitzat != null) {

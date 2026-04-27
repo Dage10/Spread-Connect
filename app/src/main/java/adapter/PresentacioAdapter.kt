@@ -45,7 +45,7 @@ class PresentacioAdapter(
             tvDescripcio.text = presentacio.contingut_presentacio
             tvData.text = presentacio.created_at.take(10)
             if (presentacio.created_at.length >= 16) {
-                tvHora.text = presentacio.created_at.substring(11, 16)
+                tvHora.text = presentacio.created_at.take(16).takeLast(5)
             }
             
             imgAvatarUser.loadImageOrDefault(presentacio.avatar_url, isProfile = true)

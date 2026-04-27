@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.daviddam.clickconnect.databinding.FragmentPerfilBinding
 import adapter.PostAdapter
 import adapter.PresentacioAdapter
+import repository.Repository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import sharedPreference.SharedPreference
@@ -40,6 +41,7 @@ class PerfilFragment : Fragment() {
     private lateinit var binding: FragmentPerfilBinding
     private lateinit var postAdapter: PostAdapter
     private lateinit var presentacioAdapter: PresentacioAdapter
+    private val repo = Repository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,6 +107,23 @@ class PerfilFragment : Fragment() {
         binding.btnSeguir.setOnClickListener {
             idUsuariLoguejat?.let { idLoguejat ->
                 viewModel.toggleSeguir(idLoguejat)
+            } ?: Toast.makeText(requireContext(), getString(R.string.login), Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnEnviarMissatge.setOnClickListener {
+            idUsuariLoguejat?.let { idLoguejat ->
+                val usuari = viewModel.uiState.value.usuari
+                usuari?.let { u ->
+                    lifecycleScope.launch {
+                        try {
+                            val conversaExisteix = repo.missatgeriaDao.trobarConversaExistents(idLoguejat, u.id)
+                            val conversa = conversaExisteix ?: repo.missatgeriaDao.crearConversa(idLoguejat, u.id)
+                            findNavController().navigate(PerfilFragmentDirections.actionPerfilFragmentToChatFragment(conversa.id))
+                        } catch (e: Exception) {
+                            Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             } ?: Toast.makeText(requireContext(), getString(R.string.login), Toast.LENGTH_SHORT).show()
         }
 

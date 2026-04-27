@@ -44,21 +44,20 @@ class PreferenciesDao {
         tema: String,
         rebreNotificacions: Boolean
     ): PreferenciesUsuari {
-        val data = buildJsonObject {
-            put("llenguatge", llenguatge)
-            put("tema", tema)
-            put("rebre_notificacions", rebreNotificacions)
-        }
-        return try {
+        val prefs = getPerUsuari(idUsuari)
+        return if (prefs != null) {
+            val data = buildJsonObject {
+                put("llenguatge", llenguatge)
+                put("tema", tema)
+                put("rebre_notificacions", rebreNotificacions)
+            }
             SupabaseClient.client
                 .from("preferencies_usuari")
-                .update(data) {
-                    filter { eq("id_usuari", idUsuari) }
-                    select()
-                }
-                .decodeSingle<PreferenciesUsuari>()
-        } catch (e: Exception) {
-            throw e
+                .update(data) { filter { eq("id_usuari", idUsuari) } }
+
+            return getPerUsuari(idUsuari)!!
+        } else {
+            insertPreferencies(idUsuari, llenguatge, tema, rebreNotificacions)
         }
     }
 }

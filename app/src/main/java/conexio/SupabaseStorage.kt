@@ -11,6 +11,7 @@ object SupabaseStorage {
     private const val BUCKET_POSTS = "posts"
     private const val BUCKET_PRESENTACIONS = "presentacions"
     private const val BUCKET_COMENTARIS = "comentaris"
+    private const val BUCKET_MISSATGES = "missatges"
 
     private fun buildPublicUrl(bucket: String, path: String): String {
         return "$SUPABASE_URL/storage/v1/object/public/$bucket/$path"
@@ -33,7 +34,7 @@ object SupabaseStorage {
     }
 
     suspend fun penjarAvatar(idUsuari: String, bytes: ByteArray): String {
-        return penjarArxiu(BUCKET_AVATARS, "$idUsuari.jpg", bytes, upsert = true)
+        return penjarArxiu(BUCKET_AVATARS, "$idUsuari/avatar.jpg", bytes, upsert = true)
     }
 
     suspend fun penjarPostImatge(uri: Uri, readBytes: (Uri) -> ByteArray): String {
@@ -49,5 +50,10 @@ object SupabaseStorage {
     suspend fun penjarComentariImatge(uri: Uri, readBytes: (Uri) -> ByteArray): String {
         val bytes = readBytes(uri)
         return penjarArxiu(BUCKET_COMENTARIS, "${UUID.randomUUID()}.jpg", bytes)
+    }
+
+    suspend fun penjarMissatgeImatge(uri: Uri, readBytes: (Uri) -> ByteArray): String {
+        val bytes = readBytes(uri)
+        return penjarArxiu(BUCKET_MISSATGES, "${UUID.randomUUID()}.jpg", bytes)
     }
 }

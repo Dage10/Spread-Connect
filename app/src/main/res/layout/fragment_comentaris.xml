@@ -112,7 +112,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:background="@color/fons_boto_afegir_comentaris"
                     android:src="@drawable/afegir"
                     app:tint="@color/white" />
 

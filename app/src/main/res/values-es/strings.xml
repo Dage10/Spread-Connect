@@ -73,7 +73,7 @@
     <string name="usuari_molt_llarg">El usuario no puede superar los 30 caracteres</string>
     <string name="contrasenya_molt_llarga">La contraseña no puede superar los 255 caracteres</string>
     <string name="etiqueta">Etiqueta</string>
-    <string name="email_nom_obligatoris">Email y nombre son obligatorios</string>
+    <string name="nom_obligatori">Nombre obligatorio</string>
     <string name="introdueix_contrasenya_antiga">Introduce la contraseña antigua</string>
     <string name="introdueix_contrasenya_nova">Introduce la nueva contraseña</string>
     <string name="error_traduccio">Error en la traducción</string>
@@ -98,12 +98,24 @@
     <string name="correu_codi_enviat">Correo con código enviado, revisa tu correo.</string>
     <string name="contrasenya_actualitzada">Contraseña actualizada</string>
     <string name="seguidors">Seguidores</string>
-    <string name="ultims_posts">Last posts:</string>
-    <string name="ultimes_presentacions">Last presentations:</string>
+    <string name="ultims_posts">Ultimos posts:</string>
+    <string name="ultimes_presentacions">Ultimas presentaciones:</string>
+    <string name="total_posts">Total posts:</string>
+    <string name="total_presentacions">Total presentaciones:</string>
     <string name="sessio_no_trobada">Session no encontrada</string>
     <string name="email_no_disponible">Email no disponible</string>
-    <string name="introduir_contra_antiga">Has d\'introudir la contrasenya antigua per canviar la contrasenya.</string>
+    <string name="introduir_contra_antiga">Tienes que introducir la contraseña antigua para poder cambiar la contraseña.</string>
     <string name="seguint">Siguiendo</string>
+    <string name="estadistiques">Estadísticas</string>
+    <string name="comentaris">Comentarios:</string>
+    <string name="ultim_post">Último post:</string>
+    <string name="ultim_presentacio">Última presentación:</string>
+    <string name="postMesInteraccions">Post con más interacciones:</string>
     <string name="enviar_missatge">Enviar mensaje</string>
     <string name="seguir">Seguir</string>
+    <string name="posts_menu_item">Posts</string>
+    <string name="historial_menu_item">Historial</string>
+    <string name="chat_menu_item">Chat</string>
+    <string name="chats_titol">Tus chats: </string>
+    <string name="no_converses">No tienes conversaciones</string>
 </resources>

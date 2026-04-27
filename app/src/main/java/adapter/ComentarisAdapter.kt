@@ -42,7 +42,7 @@ class ComentarisAdapter(
 
             tvData.text = comentari.created_at.take(10)
             if (comentari.created_at.length >= 16) {
-                tvHora.text = comentari.created_at.substring(11, 16)
+                tvHora.text = comentari.created_at.take(16).takeLast(5)
             }
 
             tvContingut.text = comentari.contingut

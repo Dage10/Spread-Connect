@@ -51,7 +51,12 @@ class EditarPerfilViewModel(
         avatarImageBytes: ByteArray? = null
     ) {
         if (nom.isBlank()) {
-            _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.email_nom_obligatoris))
+            _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.nom_obligatori))
+            return
+        }
+
+        if (!novaContrasenya.isNullOrBlank() && novaContrasenya.length < 8) {
+            _uiState.value = _uiState.value.copy(error = UiText.StringResource(R.string.contrasenya_curta))
             return
         }
 
@@ -65,25 +70,20 @@ class EditarPerfilViewModel(
                     avatarUrl = SupabaseStorage.penjarAvatar(idUsuari, avatarImageBytes)
                 }
 
-                val usuari = repo.usuariDao.actualitzarPerfil(
-                    idUsuari, nom, descripcio, novaContrasenya, avatarUrl,contrasenyaAntiga
-                )
+                repo.usuariDao.actualitzarPerfil(idUsuari, nom, descripcio, novaContrasenya, avatarUrl,contrasenyaAntiga)
 
-                val prefs = if (_uiState.value.preferencies != null) {
-                    repo.preferenciesDao.updatePreferencies(idUsuari, llenguatge, tema, rebreNotificacions)
-                } else {
-                    repo.preferenciesDao.insertPreferencies(idUsuari, llenguatge, tema, rebreNotificacions)
-                }
+                val prefs = repo.preferenciesDao.updatePreferencies(idUsuari, llenguatge, tema, rebreNotificacions)
+                val usuariActualitzat = repo.usuariDao.getUsuariPerId(idUsuari)
 
                 _uiState.value = _uiState.value.copy(
                     loading = false,
-                    usuariActualitzat = usuari,
+                    usuariActualitzat = usuariActualitzat,
                     preferenciesActualitzades = prefs
                 )
 
                 _uiState.value = _uiState.value.copy(
                     loading = false,
-                    usuariActualitzat = usuari,
+                    usuariActualitzat = usuariActualitzat,
                     preferenciesActualitzades = prefs,
                     error = null
                 )

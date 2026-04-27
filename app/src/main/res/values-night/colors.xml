@@ -13,4 +13,9 @@
     <color name="text_on_form">#FFFFFF</color>
     <color name="tag_background">@color/blue</color>
     <color name="comment_stroke">#FFFFFF</color>
+    <color name="btn_chat">#3B82F6</color>
+    <color name="text_chats">#FFFFFF</color>
+    <color name="fons_boto_afegir">#1E3A8A</color>
+    <color name="fons_boto_afegir_comentaris">#3B82F6</color>
+    <color name="text_historial">#FFFFFF</color>
 </resources>

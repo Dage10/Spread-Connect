@@ -144,7 +144,7 @@ class ComentarisFragment : Fragment() {
             imgAvatarUser.loadImageOrDefault(post.avatar_url, isProfile = true)
             tvUsuari.text = post.nom_usuari ?: getString(R.string.usuari)
             tvData.text = post.created_at.take(10)
-            tvHora.text = if (post.created_at.length >= 16) post.created_at.substring(11, 16) else ""
+            tvHora.text = if (post.created_at.length >= 16) post.created_at.take(16).takeLast(5) else ""
             tvTitol.text = post.titol
             tvDescripcio.text = post.descripcio
             imgPost.loadImageOrDefault(post.imatge_url, isProfile = false)
@@ -175,7 +175,7 @@ class ComentarisFragment : Fragment() {
             imgAvatarUser.loadImageOrDefault(pres.avatar_url, isProfile = true)
             tvUsuari.text = pres.nom_usuari ?: getString(R.string.usuari)
             tvData.text = pres.created_at.take(10)
-            tvHora.text = if (pres.created_at.length >= 16) pres.created_at.substring(11, 16) else ""
+            tvHora.text = if (pres.created_at.length >= 16) pres.created_at.take(16).takeLast(5) else ""
             tvTitol.text = pres.titol
             tvDescripcio.text = pres.contingut_presentacio
             imgPost.loadImageOrDefault(pres.imatge_url, isProfile = false)
@@ -206,7 +206,7 @@ class ComentarisFragment : Fragment() {
             imgAvatarUser.loadImageOrDefault(comment.avatar_url, isProfile = true)
             tvUsuari.text = comment.nom_usuari ?: getString(R.string.usuari)
             tvData.text = comment.created_at.take(10)
-            tvHora.text = if (comment.created_at.length >= 16) comment.created_at.substring(11, 16) else ""
+            tvHora.text = if (comment.created_at.length >= 16) comment.created_at.take(16).takeLast(5) else ""
             tvTitol.visibility = View.GONE
             tvDescripcio.text = comment.contingut
             imgPost.loadImageOrDefault(comment.imatge_url, isProfile = false)

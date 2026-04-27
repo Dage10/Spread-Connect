@@ -72,7 +72,7 @@
     <string name="usuari_molt_llarg">L\'usuari no pot superar els 30 càracters</string>
     <string name="contrasenya_molt_llarga">La contrasenya no pot superar els 255 càracters</string>
     <string name="etiqueta">Etiqueta</string>
-    <string name="email_nom_obligatoris">Email i nom obligatoris</string>
+    <string name="nom_obligatori">Nom obligatori</string>
     <string name="introdueix_contrasenya_antiga">Introdueix la contrasenya antiga per canviar-la</string>
     <string name="error_traduccio">Error en la traducció</string>
     <string name="error_al_carregar_usuari">Error al carregar l\'usuari</string>
@@ -99,10 +99,22 @@
     <string name="seguidors">Seguidors</string>
     <string name="ultims_posts">Ultims posts:</string>
     <string name="ultimes_presentacions">Ultimes presentacions:</string>
+    <string name="total_posts">Total posts:</string>
+    <string name="total_presentacions">Total presentacions:</string>
     <string name="sessio_no_trobada">Sessio no trobada</string>
     <string name="email_no_disponible">Email no disponible</string>
     <string name="introduir_contra_antiga">Has d\'introudir la contrasenya antigua per canviar la contrasenya.</string>
     <string name="seguint">Seguint</string>
+    <string name="estadistiques">Estadistiques</string>
+    <string name="comentaris">Comentaris:</string>
+    <string name="ultim_post">Ultim post:</string>
+    <string name="ultim_presentacio">Ultima presentacio:</string>
+    <string name="postMesInteraccions">Post amb mes interaccions:</string>
     <string name="enviar_missatge">Enviar missatge</string>
     <string name="seguir">Seguir</string>
+    <string name="posts_menu_item">Posts</string>
+    <string name="historial_menu_item">Historial</string>
+    <string name="chat_menu_item">Xat</string>
+    <string name="chats_titol">Els teus xats: </string>
+    <string name="no_converses">No tens converses</string>
 </resources>

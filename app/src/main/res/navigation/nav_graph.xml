@@ -129,6 +129,13 @@
                 app:argType="string"
                 android:defaultValue="post" />
         </action>
+        <action
+            android:id="@+id/action_perfilFragment_to_chatFragment"
+            app:destination="@id/chatFragment">
+            <argument
+                android:name="idConversa"
+                app:argType="string" />
+        </action>
     </fragment>
 
     <fragment
@@ -205,5 +212,32 @@
                 app:argType="string" />
         </action>
     </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.daviddam.clickconnect.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" >
+        <argument
+            android:name="idConversa"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_chatFragment_to_chatsFragment"
+            app:destination="@id/chatsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatsFragment"
+        android:name="com.daviddam.clickconnect.ChatsFragment"
+        android:label="fragment_chats"
+        tools:layout="@layout/fragment_chats" >
+        <action
+            android:id="@+id/action_chatsFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historialFragment"
+        android:name="com.daviddam.clickconnect.HistorialFragment"
+        android:label="Historial"
+        tools:layout="@layout/fragment_historial" />
 
 </navigation>
