@@ -3,7 +3,7 @@ package util
 import android.widget.ImageView
 import coil.load
 import coil.transform.CircleCropTransformation
-import com.daviddam.clickconnect.R
+import com.daviddam.spreadconnect.R
 
 object ImageExtension {
     fun ImageView.loadImageOrDefault(

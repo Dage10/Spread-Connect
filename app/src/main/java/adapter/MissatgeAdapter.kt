@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.daviddam.clickconnect.R
-import com.daviddam.clickconnect.databinding.ItemMissatgeBinding
+import com.daviddam.spreadconnect.R
+import com.daviddam.spreadconnect.databinding.ItemMissatgeBinding
 import models.Missatge
 import util.ImageExtension.loadImageOrDefault
 import java.time.LocalDate

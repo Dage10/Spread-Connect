@@ -3,7 +3,7 @@ package adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.daviddam.clickconnect.databinding.ItemEtiquetaBinding
+import com.daviddam.spreadconnect.databinding.ItemEtiquetaBinding
 
 class EtiquetaAdapter(
     private var llistaEtiquetes: List<String>,

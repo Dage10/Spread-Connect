@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.daviddam.clickconnect.databinding.ItemPostBinding
+import com.daviddam.spreadconnect.databinding.ItemPostBinding
 import models.Post
 import util.ImageExtension.loadImageOrDefault
 

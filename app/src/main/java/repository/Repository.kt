@@ -10,6 +10,7 @@ import daos.ComentarisDao
 import daos.SeguimentDao
 import daos.MissatgeriaDao
 import daos.HistorialDao
+import daos.NotificacioDao
 
 class Repository (
     val usuariDao: UsuariDao = UsuariDao(),
@@ -21,5 +22,6 @@ class Repository (
     val comentarisDao: ComentarisDao = ComentarisDao(),
     val seguimentDao: SeguimentDao = SeguimentDao(),
     val missatgeriaDao: MissatgeriaDao = MissatgeriaDao(),
-    val historialDao: HistorialDao = HistorialDao()
+    val historialDao: HistorialDao = HistorialDao(),
+    val notificacioDao: NotificacioDao = NotificacioDao()
 )

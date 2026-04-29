@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import android.net.Uri
 import android.os.Bundle
@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
-import com.daviddam.clickconnect.databinding.FragmentCrearPresentacioBinding
+import com.daviddam.spreadconnect.databinding.FragmentCrearPresentacioBinding
 import conexio.SupabaseStorage
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

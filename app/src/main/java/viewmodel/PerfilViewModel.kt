@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import models.PerfilUiState
 import repository.Repository
 import util.UiText
-import com.daviddam.clickconnect.R
+import com.daviddam.spreadconnect.R
 
 class PerfilViewModel(
     private val repo: Repository = Repository()

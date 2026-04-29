@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.daviddam.clickconnect.R
-import com.daviddam.clickconnect.databinding.ItemHistorialBinding
+import com.daviddam.spreadconnect.R
+import com.daviddam.spreadconnect.databinding.ItemHistorialBinding
 import models.ActivitatHistorial
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

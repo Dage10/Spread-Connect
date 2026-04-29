@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import adapter.AreesAdapter
 import adapter.PostAdapter
@@ -16,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.daviddam.clickconnect.databinding.FragmentAreesFragmentsBinding
+import com.daviddam.spreadconnect.databinding.FragmentAreesFragmentsBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import models.Area

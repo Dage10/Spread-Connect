@@ -3,7 +3,7 @@ package adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.daviddam.clickconnect.databinding.ItemConversaBinding
+import com.daviddam.spreadconnect.databinding.ItemConversaBinding
 import models.Conversa
 import util.ImageExtension.loadImageOrDefault
 import java.time.LocalDate

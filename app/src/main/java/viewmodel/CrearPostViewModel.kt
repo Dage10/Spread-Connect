@@ -2,7 +2,7 @@ package viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daviddam.clickconnect.R
+import com.daviddam.spreadconnect.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -31,7 +31,16 @@ class CrearPostViewModel(
         _etiquetes.value -= nom
     }
 
-    fun crearPost(idUsuari: String, areaId: String, titol: String, descripcio: String, imatgeUrl: String? = null) {
+    fun crearPost(
+        idUsuari: String,
+        areaId: String,
+        titol: String,
+        descripcio: String,
+        imatgeUrl: String? = null,
+        tipusNotificacio: String? = null,
+        missatgeNotificacio: String? = null,
+        targetType: String? = "post"
+    ) {
         if (titol.isBlank() || descripcio.isBlank()) {
             _uiState.value = CrearPostUiState(error = UiText.StringResource(R.string.omple_tots_camps))
             return
@@ -44,6 +53,19 @@ class CrearPostViewModel(
                 val post = repo.postDao.crearPost(idUsuari, titol, descripcio, areaId, imatgeUrl)
                 _etiquetes.value.forEach { nomEtiqueta ->
                     repo.postDao.crearEtiqueta(nomEtiqueta, post.id)
+                }
+                if (!tipusNotificacio.isNullOrBlank() && !missatgeNotificacio.isNullOrBlank()) {
+                    try {
+                        repo.notificacioDao.notificarSeguidors(
+                            autorId = idUsuari,
+                            tipus = tipusNotificacio,
+                            missatge = missatgeNotificacio,
+                            idTarget = post.id,
+                            targetType = targetType
+                        )
+                    } catch (_: Exception) {
+
+                    }
                 }
                 _uiState.value = CrearPostUiState(postCreat = post)
             } catch (e: Exception) {

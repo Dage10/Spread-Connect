@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.daviddam.clickconnect.databinding.FragmentComentarisBinding
+import com.daviddam.spreadconnect.databinding.FragmentComentarisBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collectLatest
 import sharedPreference.SharedPreference

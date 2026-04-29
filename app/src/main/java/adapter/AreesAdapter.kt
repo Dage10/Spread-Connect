@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.daviddam.clickconnect.databinding.ItemAreaBinding
+import com.daviddam.spreadconnect.databinding.ItemAreaBinding
 import models.Area
 import androidx.core.content.ContextCompat
-import com.daviddam.clickconnect.R
+import com.daviddam.spreadconnect.R
 
 class AreesAdapter(
     private var llistaArees: List<Area>,

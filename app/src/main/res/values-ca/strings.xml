@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Click&amp;Connect</string>
+    <string name="app_name">Spread&amp;Connect</string>
     <string name="registrat">Registra\'t</string>
     <string name="contrasenya">Contrasenya</string>
     <string name="login">Iniciar Sessió</string>
@@ -118,4 +118,6 @@
     <string name="chat_menu_item">Xat</string>
     <string name="chats_titol">Els teus xats: </string>
     <string name="no_converses">No tens converses</string>
+    <string name="tipus_notificacio_post">Nou post</string>
+    <string name="missatge_notificacio_post">Nou post: %1$s</string>
 </resources>

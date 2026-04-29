@@ -28,6 +28,16 @@ class SeguimentDao {
         0
     }
 
+    suspend fun getSeguidors(idUsuari: String): List<String> = try {
+        SupabaseClient.client
+            .from("seguiments")
+            .select { filter { eq("id_seguit", idUsuari) } }
+            .decodeList<Seguiment>()
+            .map { it.id_seguidor }
+    } catch (e: Exception) {
+        emptyList()
+    }
+
     suspend fun isSeguint(idSeguidor: String, idSeguit: String): Boolean = try {
         SupabaseClient.client
             .from("seguiments")

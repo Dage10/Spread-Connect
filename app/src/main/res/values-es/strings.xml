@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Click&amp;Connect</string>
+    <string name="app_name">Spread&amp;Connect</string>
     <string name="login">Iniciar Sesión</string>
     <string name="registrat">Regístrate</string>
     <string name="contrasenya">Contraseña</string>
@@ -118,4 +118,6 @@
     <string name="chat_menu_item">Chat</string>
     <string name="chats_titol">Tus chats: </string>
     <string name="no_converses">No tienes conversaciones</string>
+    <string name="tipus_notificacio_post">Nuevo post</string>
+    <string name="missatge_notificacio_post">Nuevo post: </string>
 </resources>

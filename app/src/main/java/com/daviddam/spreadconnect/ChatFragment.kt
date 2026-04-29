@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import android.net.Uri
 import android.os.Bundle
@@ -16,7 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import conexio.SupabaseStorage
-import com.daviddam.clickconnect.databinding.FragmentChatBinding
+import com.daviddam.spreadconnect.databinding.FragmentChatBinding
 import adapter.MissatgeAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

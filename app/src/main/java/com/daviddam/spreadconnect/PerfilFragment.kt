@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.daviddam.clickconnect.databinding.FragmentPerfilBinding
+import com.daviddam.spreadconnect.databinding.FragmentPerfilBinding
 import adapter.PostAdapter
 import adapter.PresentacioAdapter
 import repository.Repository

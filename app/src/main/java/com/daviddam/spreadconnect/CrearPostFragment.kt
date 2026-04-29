@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import android.net.Uri
 import android.os.Bundle
@@ -17,7 +17,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import adapter.EtiquetaAdapter
-import com.daviddam.clickconnect.databinding.FragmentCrearPostBinding
+import android.annotation.SuppressLint
+import com.daviddam.spreadconnect.databinding.FragmentCrearPostBinding
 import conexio.SupabaseStorage
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -76,6 +77,7 @@ class CrearPostFragment : Fragment() {
         setupObservers()
     }
 
+    @SuppressLint("StringFormatInvalid")
     private fun setupClickListeners(idUsuari: String) {
         binding.btnSeleccionarImatge.setOnClickListener {
             imagePickerLauncher.launch("image/*")
@@ -97,7 +99,17 @@ class CrearPostFragment : Fragment() {
                             requireContext().contentResolver.openInputStream(u)?.use { it.readBytes() } ?: byteArrayOf()
                         }
                     }
-                    viewModel.crearPost(idUsuari, args.areaId, titol, desc, imatgeUrl)
+                    val tipusNotificacio = getString(R.string.tipus_notificacio_post)
+                    val missatgeNotificacio = getString(R.string.missatge_notificacio_post, titol)
+                    viewModel.crearPost(
+                        idUsuari,
+                        args.areaId,
+                        titol,
+                        desc,
+                        imatgeUrl,
+                        tipusNotificacio,
+                        missatgeNotificacio
+                    )
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_LONG).show()
                 }

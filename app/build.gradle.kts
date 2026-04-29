@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.daviddam.clickconnect"
+    namespace = "com.daviddam.spreadconnect"
     compileSdk = 36
 
     defaultConfig {

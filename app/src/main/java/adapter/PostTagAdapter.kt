@@ -3,7 +3,7 @@ package adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.daviddam.clickconnect.databinding.ItemPostTagBinding
+import com.daviddam.spreadconnect.databinding.ItemPostTagBinding
 
 class PostTagAdapter(
     private var tags: List<String>

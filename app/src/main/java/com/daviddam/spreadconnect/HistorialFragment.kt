@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.daviddam.clickconnect.databinding.FragmentHistorialBinding
+import com.daviddam.spreadconnect.databinding.FragmentHistorialBinding
 import adapter.HistorialAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

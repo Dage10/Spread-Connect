@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/iniciFragment"
-        android:name="com.daviddam.clickconnect.IniciFragment"
+        android:name="com.daviddam.spreadconnect.IniciFragment"
         android:label="fragment_inici"
         tools:layout="@layout/fragment_inici" >
         <action
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.daviddam.clickconnect.LoginFragment"
+        android:name="com.daviddam.spreadconnect.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -39,7 +39,7 @@
 
     <fragment
         android:id="@+id/registreFragment"
-        android:name="com.daviddam.clickconnect.RegistreFragment"
+        android:name="com.daviddam.spreadconnect.RegistreFragment"
         android:label="fragment_registre"
         tools:layout="@layout/fragment_registre" >
         <action
@@ -49,7 +49,7 @@
 
     <fragment
         android:id="@+id/areesFragments"
-        android:name="com.daviddam.clickconnect.AreesFragments"
+        android:name="com.daviddam.spreadconnect.AreesFragments"
         android:label="AreesFragments">
 
         <action
@@ -112,7 +112,7 @@
 
     <fragment
         android:id="@+id/perfilFragment"
-        android:name="com.daviddam.clickconnect.PerfilFragment"
+        android:name="com.daviddam.spreadconnect.PerfilFragment"
         android:label="Perfil"
         tools:layout="@layout/fragment_perfil">
         <argument
@@ -140,13 +140,13 @@
 
     <fragment
         android:id="@+id/editarPerfilFragment"
-        android:name="com.daviddam.clickconnect.EditarPerfilFragment"
+        android:name="com.daviddam.spreadconnect.EditarPerfilFragment"
         android:label="Editar Perfil"
         tools:layout="@layout/fragment_editar_perfil" />
 
     <fragment
         android:id="@+id/crearPostFragment"
-        android:name="com.daviddam.clickconnect.CrearPostFragment"
+        android:name="com.daviddam.spreadconnect.CrearPostFragment"
         android:label="Crear Post"
         tools:layout="@layout/fragment_crear_post">
         <argument
@@ -156,7 +156,7 @@
 
     <fragment
         android:id="@+id/editarPostFragment"
-        android:name="com.daviddam.clickconnect.EditarPostFragment"
+        android:name="com.daviddam.spreadconnect.EditarPostFragment"
         android:label="Editar Post"
         tools:layout="@layout/fragment_editar_post">
         <argument
@@ -166,7 +166,7 @@
 
     <fragment
         android:id="@+id/crearPresentacioFragment"
-        android:name="com.daviddam.clickconnect.CrearPresentacioFragment"
+        android:name="com.daviddam.spreadconnect.CrearPresentacioFragment"
         android:label="Crear Presentació"
         tools:layout="@layout/fragment_crear_presentacio">
         <argument
@@ -176,7 +176,7 @@
 
     <fragment
         android:id="@+id/editarPresentacioFragment"
-        android:name="com.daviddam.clickconnect.EditarPresentacioFragment"
+        android:name="com.daviddam.spreadconnect.EditarPresentacioFragment"
         android:label="Editar Presentació"
         tools:layout="@layout/fragment_editar_presentacio">
         <argument
@@ -185,13 +185,13 @@
     </fragment>
     <fragment
         android:id="@+id/oblidatContrasenyaFragment"
-        android:name="com.daviddam.clickconnect.OblidatContrasenyaFragment"
+        android:name="com.daviddam.spreadconnect.OblidatContrasenyaFragment"
         android:label="fragment_oblidat_contrasenya"
         tools:layout="@layout/fragment_oblidat_contrasenya" />
 
     <fragment
         android:id="@+id/comentarisFragment"
-        android:name="com.daviddam.clickconnect.ComentarisFragment"
+        android:name="com.daviddam.spreadconnect.ComentarisFragment"
         android:label="Comentaris"
         tools:layout="@layout/fragment_comentaris">
         <argument
@@ -214,7 +214,7 @@
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
-        android:name="com.daviddam.clickconnect.ChatFragment"
+        android:name="com.daviddam.spreadconnect.ChatFragment"
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" >
         <argument
@@ -226,7 +226,7 @@
     </fragment>
     <fragment
         android:id="@+id/chatsFragment"
-        android:name="com.daviddam.clickconnect.ChatsFragment"
+        android:name="com.daviddam.spreadconnect.ChatsFragment"
         android:label="fragment_chats"
         tools:layout="@layout/fragment_chats" >
         <action
@@ -236,7 +236,7 @@
 
     <fragment
         android:id="@+id/historialFragment"
-        android:name="com.daviddam.clickconnect.HistorialFragment"
+        android:name="com.daviddam.spreadconnect.HistorialFragment"
         android:label="Historial"
         tools:layout="@layout/fragment_historial" />
 

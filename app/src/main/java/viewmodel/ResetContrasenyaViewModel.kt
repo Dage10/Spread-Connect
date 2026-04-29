@@ -3,7 +3,7 @@ package viewmodel
 import models.ResetContrasenyaUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daviddam.clickconnect.R
+import com.daviddam.spreadconnect.R
 import conexio.SupabaseClient
 import io.github.jan.supabase.auth.OtpType
 import io.github.jan.supabase.auth.auth

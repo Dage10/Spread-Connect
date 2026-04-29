@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import android.net.Uri
 import android.os.Bundle
@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.daviddam.clickconnect.databinding.FragmentEditarPerfilBinding
+import com.daviddam.spreadconnect.databinding.FragmentEditarPerfilBinding
 import kotlinx.coroutines.flow.collectLatest
 import sharedPreference.SharedPreference
 import util.ImageExtension.loadImageOrDefault

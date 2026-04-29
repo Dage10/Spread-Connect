@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.daviddam.clickconnect.databinding.FragmentIniciBinding
+import com.daviddam.spreadconnect.databinding.FragmentIniciBinding
 import sharedPreference.SharedPreference
 
 // TODO: Rename parameter arguments, choose names that match

@@ -3,7 +3,7 @@ package viewmodel
 import models.LoginUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daviddam.clickconnect.R
+import com.daviddam.spreadconnect.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

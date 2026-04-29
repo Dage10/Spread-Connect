@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import android.os.Bundle
 import android.util.Patterns
@@ -12,7 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.daviddam.clickconnect.databinding.FragmentRegistreBinding
+import com.daviddam.spreadconnect.databinding.FragmentRegistreBinding
 import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match

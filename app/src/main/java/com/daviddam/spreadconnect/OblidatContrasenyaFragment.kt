@@ -1,4 +1,4 @@
-package com.daviddam.clickconnect
+package com.daviddam.spreadconnect
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,7 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.daviddam.clickconnect.databinding.FragmentOblidatContrasenyaBinding
+import com.daviddam.spreadconnect.databinding.FragmentOblidatContrasenyaBinding
 import kotlinx.coroutines.launch
 import viewmodel.ResetContrasenyaViewModel
 
