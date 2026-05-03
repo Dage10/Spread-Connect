@@ -120,4 +120,6 @@
     <string name="no_converses">No tens converses</string>
     <string name="tipus_notificacio_post">Nou post</string>
     <string name="missatge_notificacio_post">Nou post: %1$s</string>
+    <string name="notificacions_permis_configuracio">Per activar les notificacions, has d\'anar a la configuració de l\'aplicació i concedir el permís manualment.</string>
+    <string name="anar_a_configuracio">Anar a Configuració</string>
 </resources>

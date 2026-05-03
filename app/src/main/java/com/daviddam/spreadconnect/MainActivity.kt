@@ -6,8 +6,8 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -16,21 +16,30 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import com.daviddam.spreadconnect.databinding.ActivityMainBinding
 import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import conexio.SupabaseClient
+import com.google.firebase.messaging.FirebaseMessaging
+import daos.FcmTokenDao
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.status.SessionStatus
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import repository.Repository
 import sharedPreference.SharedPreference
 import util.NotificationHelper
-
-private const val REQUEST_CODE_POST_NOTIFICATIONS = 1001
+import util.PreferenciesApplier
+import util.SessionManager
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private val repo = Repository()
+
+    private val requestPermisLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { estaPermes: Boolean ->
+        syncNotificacioPreferenciesAmbPermisos(estaPermes)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
         NotificationHelper.crearNotificacioCanal(this)
         demanarPermisNotificacions()
+        sincronitzarTokenFcmSiCal()
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.mainContainer) as NavHostFragment
         navController = navHostFragment.navController
@@ -64,29 +74,83 @@ class MainActivity : AppCompatActivity() {
     private fun handleNotificationIntent(intent: android.content.Intent?) {
         val targetId = intent?.getStringExtra("targetId")
         val targetType = intent?.getStringExtra("targetType")
-        if (targetId != null && targetType != null) {
+        if (!targetId.isNullOrBlank() && !targetType.isNullOrBlank()) {
+            if (SharedPreference.obtenirUsuariLoguejat(this).isNullOrBlank()) {
+                Toast.makeText(this, getString(R.string.usuari_no_trobat), Toast.LENGTH_LONG).show()
+                return
+            }
             navegarAComentaris(targetId, targetType)
         }
     }
 
     private fun navegarAComentaris(targetId: String, targetType: String) {
-        val action: NavDirections = when (targetType) {
-            "post" -> AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(targetId, "post")
-            "presentacio" -> AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(targetId, "presentacio")
-            else -> AreesFragmentsDirections.actionAreesFragmentsToComentarisFragment(targetId, "post")
+        val args = Bundle().apply {
+            putString("targetId", targetId)
+            putString("targetType", targetType)
         }
-        navController.navigate(action)
+        navController.navigate(R.id.comentarisFragment, args)
     }
 
     private fun demanarPermisNotificacions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permes = ContextCompat.checkSelfPermission(
                 this,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                REQUEST_CODE_POST_NOTIFICATIONS
-            )
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (permes) {
+                syncNotificacioPreferenciesAmbPermisos(true)
+            } else {
+                requestPermisLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    private fun syncNotificacioPreferenciesAmbPermisos(estaPermes: Boolean) {
+        if (!SharedPreference.estaLoguejat(this)) return
+
+        val idUsuari = SharedPreference.obtenirUsuariLoguejat(this) ?: return
+        lifecycleScope.launch {
+            try {
+                val prefs = repo.preferenciesDao.getPerUsuari(idUsuari)
+                if (prefs == null) {
+                    repo.preferenciesDao.insertPreferencies(
+                        idUsuari,
+                        "Español",
+                        "Clar",
+                        estaPermes
+                    )
+                }
+            } catch (_: Exception) {
+
+            }
+        }
+    }
+
+    private fun sincronitzarTokenFcmSiCal() {
+        val idUsuari = SharedPreference.obtenirUsuariLoguejat(this) ?: return
+        val tokenLocal = SharedPreference.obtenirFcmToken(this)
+
+        if (!tokenLocal.isNullOrBlank()) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    FcmTokenDao.guardarTokenFcm(idUsuari, tokenLocal)
+                } catch (_: Exception) {
+
+                }
+            }
+            return
+        }
+
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+            if (token.isNullOrBlank()) return@addOnSuccessListener
+            SharedPreference.guardarFcmToken(this, token)
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    FcmTokenDao.guardarTokenFcm(idUsuari, token)
+                } catch (_: Exception) {
+                }
+            }
         }
     }
 
@@ -105,10 +169,15 @@ class MainActivity : AppCompatActivity() {
                 if (prefs?.rebre_notificacions == true) {
                     val notificacions = repo.notificacioDao.getNotificacionsSenseVeure(idUsuari)
                     notificacions.forEach { notification ->
+                        val (title, text) = NotificationHelper.buildNotificacioContinngut(
+                            this@MainActivity,
+                            notification.tipus,
+                            notification.missatge
+                        )
                         NotificationHelper.mostrarNotificacio(
                             this@MainActivity,
-                            getString(R.string.notificacions),
-                            notification.missatge,
+                            title,
+                            text,
                             notificacioId = notification.id.hashCode(),
                             idTarget = notification.id_target,
                             targetTipus = notification.target_type
@@ -127,19 +196,8 @@ class MainActivity : AppCompatActivity() {
             try {
                 val prefs = repo.preferenciesDao.getPerUsuari(idUsuari)
                 prefs?.let {
-                    val tag = when (it.llenguatge) {
-                        "Català" -> "ca"
-                        "Anglès" -> "en"
-                        else -> "es"
-                    }
-                    androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(
-                        androidx.core.os.LocaleListCompat.forLanguageTags(tag)
-                    )
-                    val mode = if (it.tema == "Fosc") 
-                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES 
-                    else 
-                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
-                    androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(mode)
+                    PreferenciesApplier.applyLanguage(it.llenguatge)
+                    PreferenciesApplier.applyTheme(it.tema)
                 }
             } catch (_: Exception) {}
         }
@@ -160,8 +218,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun tancarSessioIAnarInici() {
-        SharedPreference.tancarSessio(this@MainActivity)
-        navController.navigate(R.id.iniciFragment)
-        Toast.makeText(this, getString(R.string.usuari_no_trobat), Toast.LENGTH_LONG).show()
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                SessionManager.tancarSessio(this@MainActivity)
+            }
+            navController.navigate(R.id.iniciFragment)
+            Toast.makeText(this@MainActivity, getString(R.string.usuari_no_trobat), Toast.LENGTH_LONG).show()
+        }
     }
 }

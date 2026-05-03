@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "59629591782",
+    "project_id": "notificacionsspread-connect",
+    "storage_bucket": "notificacionsspread-connect.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59629591782:android:bf35d27c8230c3c3502f27",
+        "android_client_info": {
+          "package_name": "com.daviddam.spreadconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbJIEPN1YSiF8l-B_wgJVT81-died6_B8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
