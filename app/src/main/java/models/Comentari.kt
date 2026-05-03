@@ -17,5 +17,6 @@ data class Comentari(
     val avatar_url: String? = null,
     val likes: Int = 0,
     val dislikes: Int = 0,
-    val reaccioActual: String? = null
+    val reaccioActual: String? = null,
+    val numRespostes: Int = 0
 )

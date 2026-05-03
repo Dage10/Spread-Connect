@@ -16,5 +16,6 @@ data class Presentacio(
     val avatar_url: String? = null,
     val likes: Int = 0,
     val dislikes: Int = 0,
-    val reaccioActual: String? = null
+    val reaccioActual: String? = null,
+    val numComentaris: Int = 0
 )

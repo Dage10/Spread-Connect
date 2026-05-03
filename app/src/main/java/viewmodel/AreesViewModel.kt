@@ -39,7 +39,7 @@ class AreesViewModel(
                         if (prefs != null) {
                             idiomaUsuari = prefs.llenguatge
                         }
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         _uiState.value = _uiState.value.copy(
                             error = UiText.StringResource(R.string.usuari_no_trobat),
                             loading = false
@@ -79,7 +79,7 @@ class AreesViewModel(
                             areas = llistaTraduida,
                             areaSeleccionada = novaSeleccionada ?: llistaTraduida.firstOrNull()
                         )
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         _uiState.value = _uiState.value.copy(
                             error = UiText.StringResource(R.string.error_traduccio)
                         )
@@ -115,11 +115,13 @@ class AreesViewModel(
                     val dislikes = repo.reaccioDao.getDislikes(post.id)
                     val reaccioActual = idUsuariActual?.let { repo.reaccioDao.getReaccioUsuari(post.id, it) }
                     val tags = try { repo.postDao.getEtiquetesPost(post.id).map { it.nom } } catch (_: Exception) { emptyList() }
+                    val numComentaris = try { repo.comentarisDao.getNumComentarisPost(post.id) } catch (_: Exception) { 0 }
                     
                     post.copy(
                         likes = likes,
                         dislikes = dislikes,
                         reaccioActual = reaccioActual,
+                        numComentaris = numComentaris,
                         etiquetes = tags
                     )
                 }
@@ -128,11 +130,13 @@ class AreesViewModel(
                     val likes = repo.reaccioDao.getLikesPresentacio(pres.id)
                     val dislikes = repo.reaccioDao.getDislikesPresentacio(pres.id)
                     val reaccioActual = idUsuariActual?.let { repo.reaccioDao.getReaccioUsuariPresentacio(pres.id, it) }
+                    val numComentaris = try { repo.comentarisDao.getNumComentarisPresentacio(pres.id) } catch (_: Exception) { 0 }
                     
                     pres.copy(
                         likes = likes,
                         dislikes = dislikes,
-                        reaccioActual = reaccioActual
+                        reaccioActual = reaccioActual,
+                        numComentaris = numComentaris
                     )
                 }
 

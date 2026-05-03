@@ -30,8 +30,22 @@ class PerfilViewModel(
                     false
                 }
 
-                val posts = try { repo.postDao.getPostsPerUsuari(idUsuari) } catch (e: Exception) { emptyList() }
-                val presentacions = try { repo.presentacioDao.getPresentacionsPerUsuari(idUsuari) } catch (e: Exception) { emptyList() }
+                val posts = try {
+                    repo.postDao.getPostsPerUsuari(idUsuari).map { post ->
+                        val numComentaris = try { repo.comentarisDao.getNumComentarisPost(post.id) } catch (_: Exception) { 0 }
+                        post.copy(numComentaris = numComentaris)
+                    }
+                } catch (_: Exception) {
+                    emptyList()
+                }
+                val presentacions = try {
+                    repo.presentacioDao.getPresentacionsPerUsuari(idUsuari).map { pres ->
+                        val numComentaris = try { repo.comentarisDao.getNumComentarisPresentacio(pres.id) } catch (_: Exception) { 0 }
+                        pres.copy(numComentaris = numComentaris)
+                    }
+                } catch (_: Exception) {
+                    emptyList()
+                }
 
                 _uiState.value = PerfilUiState(
                     usuari = usuari,
@@ -42,7 +56,7 @@ class PerfilViewModel(
                     presentacions = presentacions,
                     loading = false
                 )
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _uiState.value = PerfilUiState(
                     error = UiText.StringResource(R.string.error_carregar_dades),
                     loading = false

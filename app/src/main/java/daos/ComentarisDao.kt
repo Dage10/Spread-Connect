@@ -15,6 +15,46 @@ class ComentarisDao {
 
     private val json = Json { ignoreUnknownKeys = true }
 
+    suspend fun getNumComentarisPost(idPost: String): Int {
+        return try {
+            SupabaseClient.client
+                .from("comentaris")
+                .select {
+                    filter {
+                        eq("id_post", idPost)
+                    }
+                }
+                .decodeList<Comentari>()
+                .size
+        } catch (_: Exception) {
+            0
+        }
+    }
+
+    suspend fun getNumComentarisPresentacio(idPresentacio: String): Int {
+        return try {
+            SupabaseClient.client
+                .from("comentaris")
+                .select {
+                    filter {
+                        eq("id_presentacio", idPresentacio)
+                    }
+                }
+                .decodeList<Comentari>()
+                .size
+        } catch (_: Exception) {
+            0
+        }
+    }
+
+    suspend fun getNumRespostes(comentariId: String): Int {
+        return SupabaseClient.client
+            .from("comentaris")
+            .select(Columns.list("id")) { filter { eq("id_comentari_pare", comentariId) } }
+            .decodeList<JsonObject>()
+            .size
+    }
+
     suspend fun getComentarisPost(idPost: String): List<Comentari> =
         getComentarisAmbUsuari("id_post", idPost)
 

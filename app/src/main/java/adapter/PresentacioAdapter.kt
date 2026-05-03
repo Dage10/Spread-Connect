@@ -53,6 +53,7 @@ class PresentacioAdapter(
 
             textLikeComptador.text = presentacio.likes.toString()
             textDislikeComptador.text = presentacio.dislikes.toString()
+            textComentarisComptador.text = presentacio.numComentaris.toString()
 
             if (presentacio.reaccioActual == "like") {
                 btnLike.setColorFilter(android.graphics.Color.RED)

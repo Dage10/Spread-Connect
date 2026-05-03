@@ -78,7 +78,7 @@ class UsuariDao {
                     this.email = emailActual
                     this.password = contrasenyaAntiga
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 throw Exception("CONTRASENYA_ANTIGA_INCORRECTA")
             }
 

@@ -151,10 +151,12 @@ class ComentarisFragment : Fragment() {
             imgPost.visibility = if (post.imatge_url.isNullOrEmpty()) View.GONE else View.VISIBLE
             textLikeComptador.text = post.likes.toString()
             tvDislikeComptador.text = post.dislikes.toString()
+            textComentarisComptador.text = post.numComentaris.toString()
             
             btnEditar.visibility = View.GONE
             btnEliminar.visibility = View.GONE
             btnComentaris.visibility = View.GONE
+            textComentarisComptador.visibility = View.GONE
             rvTags.visibility = View.GONE
 
             if (post.reaccioActual == "like") btnLike.setColorFilter(android.graphics.Color.RED) else btnLike.clearColorFilter()
@@ -182,10 +184,12 @@ class ComentarisFragment : Fragment() {
             imgPost.visibility = if (pres.imatge_url.isNullOrEmpty()) View.GONE else View.VISIBLE
             textLikeComptador.text = pres.likes.toString()
             tvDislikeComptador.text = pres.dislikes.toString()
+            textComentarisComptador.text = pres.numComentaris.toString()
 
             btnEditar.visibility = View.GONE
             btnEliminar.visibility = View.GONE
             btnComentaris.visibility = View.GONE
+            textComentarisComptador.visibility = View.GONE
             rvTags.visibility = View.GONE
 
             if (pres.reaccioActual == "like") btnLike.setColorFilter(android.graphics.Color.RED) else btnLike.clearColorFilter()
@@ -213,6 +217,7 @@ class ComentarisFragment : Fragment() {
             imgPost.visibility = if (comment.imatge_url.isNullOrEmpty()) View.GONE else View.VISIBLE
             textLikeComptador.text = comment.likes.toString()
             tvDislikeComptador.text = comment.dislikes.toString()
+            textComentarisComptador.visibility = View.GONE
 
             btnEditar.visibility = View.GONE
             btnEliminar.visibility = View.GONE

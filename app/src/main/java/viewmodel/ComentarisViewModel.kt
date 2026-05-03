@@ -36,7 +36,8 @@ class ComentarisViewModel(
                             avatar_url = usuariPost.avatar_url,
                             likes = likesPost,
                             dislikes = dislikesPost,
-                            reaccioActual = reaccioPost
+                            reaccioActual = reaccioPost,
+                            numComentaris = try { repo.comentarisDao.getNumComentarisPost(targetId) } catch (_: Exception) { 0 }
                         )
 
                         val comentarisRaw = repo.comentarisDao.getComentarisPost(targetId)
@@ -60,7 +61,8 @@ class ComentarisViewModel(
                             avatar_url = usuariPres.avatar_url,
                             likes = likesPres,
                             dislikes = dislikesPres,
-                            reaccioActual = reaccioPres
+                            reaccioActual = reaccioPres,
+                            numComentaris = try { repo.comentarisDao.getNumComentarisPresentacio(targetId) } catch (_: Exception) { 0 }
                         )
 
                         val comentarisRaw = repo.comentarisDao.getComentarisPresentacio(targetId)
@@ -113,15 +115,17 @@ class ComentarisViewModel(
                 val likes = repo.reaccioDao.getLikesComentari(comentari.id)
                 val dislikes = repo.reaccioDao.getDislikesComentari(comentari.id)
                 val reaccioActual = idUsuariLoguejat?.let { repo.reaccioDao.getReaccioUsuariComentari(comentari.id, it) }
+                val numRespostes = try { repo.comentarisDao.getNumRespostes(comentari.id) } catch (_: Exception) { 0 }
                 
                 comentari.copy(
                     nom_usuari = usuari.nom_usuari, 
                     avatar_url = usuari.avatar_url,
                     likes = likes,
                     dislikes = dislikes,
-                    reaccioActual = reaccioActual
+                    reaccioActual = reaccioActual,
+                    numRespostes = numRespostes
                 )
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 comentari
             }
         }

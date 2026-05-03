@@ -30,7 +30,7 @@ class ResetContrasenyaViewModel(
             try {
                 repo.usuariDao.enviarResetPassword(email)
                 _uiState.value = ResetContrasenyaUiState(success = true, step = 2, email = email)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _uiState.value = ResetContrasenyaUiState(error = UiText.StringResource(R.string.error))
             }
         }

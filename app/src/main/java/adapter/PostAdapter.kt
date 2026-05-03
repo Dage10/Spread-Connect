@@ -71,6 +71,7 @@ class PostAdapter(
 
             textLikeComptador.text = post.likes.toString()
             tvDislikeComptador.text = post.dislikes.toString()
+            textComentarisComptador.text = post.numComentaris.toString()
             
             if (post.reaccioActual == "like") {
                 btnLike.setColorFilter(android.graphics.Color.RED)

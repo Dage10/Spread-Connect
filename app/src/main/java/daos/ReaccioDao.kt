@@ -19,7 +19,7 @@ class ReaccioDao {
                 }
                 .decodeList<Reaccio>()
                 .size
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             0
         }
     }
@@ -36,7 +36,7 @@ class ReaccioDao {
                 }
                 .decodeList<Reaccio>()
                 .size
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             0
         }
     }
@@ -53,7 +53,7 @@ class ReaccioDao {
                 }
                 .decodeSingleOrNull<Reaccio>()
                 ?.tipus
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -116,7 +116,7 @@ class ReaccioDao {
                 }
                 .decodeList<Reaccio>()
                 .size
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             0
         }
     }
@@ -133,7 +133,7 @@ class ReaccioDao {
                 }
                 .decodeList<Reaccio>()
                 .size
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             0
         }
     }
@@ -150,7 +150,7 @@ class ReaccioDao {
                 }
                 .decodeSingleOrNull<Reaccio>()
                 ?.tipus
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -212,7 +212,7 @@ class ReaccioDao {
                 }
                 .decodeList<Reaccio>()
                 .size
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             0
         }
     }
@@ -229,7 +229,7 @@ class ReaccioDao {
                 }
                 .decodeList<Reaccio>()
                 .size
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             0
         }
     }
@@ -246,7 +246,7 @@ class ReaccioDao {
                 }
                 .decodeSingleOrNull<Reaccio>()
                 ?.tipus
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

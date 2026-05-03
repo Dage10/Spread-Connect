@@ -14,7 +14,7 @@ class SeguimentDao {
             .select { filter { eq("id_seguit", idUsuari) } }
             .decodeList<Seguiment>()
             .size
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         0
     }
 
@@ -24,7 +24,7 @@ class SeguimentDao {
             .select { filter { eq("id_seguidor", idUsuari) } }
             .decodeList<Seguiment>()
             .size
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         0
     }
 
@@ -34,7 +34,7 @@ class SeguimentDao {
             .select { filter { eq("id_seguit", idUsuari) } }
             .decodeList<Seguiment>()
             .map { it.id_seguidor }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         emptyList()
     }
 
@@ -47,7 +47,7 @@ class SeguimentDao {
                     eq("id_seguit", idSeguit)
                 }
             }.decodeSingleOrNull<Seguiment>() != null
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         false
     }
 

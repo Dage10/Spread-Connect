@@ -52,6 +52,7 @@ class ComentarisAdapter(
 
             textLikeComptador.text = comentari.likes.toString()
             textDislikeComptador.text = comentari.dislikes.toString()
+            textRespostesComptador.text = comentari.numRespostes.toString()
 
             if (comentari.reaccioActual == "like") {
                 btnLike.setColorFilter(android.graphics.Color.RED)
