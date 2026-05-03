@@ -1,7 +1,12 @@
 package com.daviddam.spreadconnect
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,12 +14,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.daviddam.spreadconnect.databinding.FragmentEditarPerfilBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import sharedPreference.SharedPreference
+import util.SessionManager
 import util.ImageExtension.loadImageOrDefault
 import util.PreferenciesApplier
 import viewmodel.EditarPerfilViewModel
@@ -45,6 +55,8 @@ class EditarPerfilFragment : Fragment() {
 
     private lateinit var binding: FragmentEditarPerfilBinding
     private val viewModelEditarPerfil: EditarPerfilViewModel by viewModels()
+    private var canviSwitchPerCodi = false
+    private var valorNotificacionsBD: Boolean? = null
 
     private val idiomesKeys = listOf("Català", "Español", "Anglès")
     private val temesKeys = listOf("Clar", "Fosc")
@@ -114,8 +126,34 @@ class EditarPerfilFragment : Fragment() {
         }
 
         binding.btnEliminar.setOnClickListener {
-            SharedPreference.tancarSessio(requireContext())
-            findNavController().navigate(R.id.iniciFragment)
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    SessionManager.tancarSessio(requireContext())
+                }
+                findNavController().navigate(R.id.iniciFragment)
+            }
+        }
+
+        binding.switchNotificacions.setOnCheckedChangeListener { _, isChecked ->
+            if (canviSwitchPerCodi) return@setOnCheckedChangeListener
+
+            if (isChecked && !tePermisNotificacions()) {
+                canviSwitchPerCodi = true
+                binding.switchNotificacions.isChecked = false
+                canviSwitchPerCodi = false
+
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.notificacions))
+                    .setMessage(getString(R.string.notificacions_permis_configuracio))
+                    .setPositiveButton(getString(R.string.anar_a_configuracio)) { _, _ ->
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", requireContext().packageName, null)
+                        }
+                        startActivity(intent)
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            }
         }
 
         lifecycleScope.launchWhenStarted {
@@ -128,9 +166,14 @@ class EditarPerfilFragment : Fragment() {
                     binding.imgAvatar.loadImageOrDefault(state.usuari.avatar_url, isProfile = true)
 
                     state.preferencies?.let { prefs ->
+                        valorNotificacionsBD = prefs.rebre_notificacions
                         binding.spinnerIdioma.setSelection(idiomesKeys.indexOf(prefs.llenguatge).coerceAtLeast(0))
                         binding.spinnerTema.setSelection(temesKeys.indexOf(prefs.tema).coerceAtLeast(0))
-                        binding.switchNotificacions.isChecked = prefs.rebre_notificacions
+
+                        val permisRealment = tePermisNotificacions()
+                        canviSwitchPerCodi = true
+                        binding.switchNotificacions.isChecked = prefs.rebre_notificacions && permisRealment
+                        canviSwitchPerCodi = false
                     }
                 }
                 state.usuari?.let {
@@ -149,6 +192,29 @@ class EditarPerfilFragment : Fragment() {
         }
 
         viewModelEditarPerfil.carregarUsuari(idUsuari)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::binding.isInitialized) {
+            valorNotificacionsBD?.let { prefValue ->
+                val permisRealment = tePermisNotificacions()
+                canviSwitchPerCodi = true
+                binding.switchNotificacions.isChecked = prefValue && permisRealment
+                canviSwitchPerCodi = false
+            }
+        }
+    }
+
+    private fun tePermisNotificacions(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
     }
 
     companion object {

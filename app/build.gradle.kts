@@ -6,6 +6,7 @@ plugins {
     kotlin("kapt")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.androidx.navigation.safeargs)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -13,7 +14,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.daviddam.clickconnect"
+        applicationId = "com.daviddam.spreadconnect"
         minSdk = 27
         targetSdk = 36
         versionCode = 1
@@ -76,4 +77,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
     implementation("com.google.mlkit:translate:17.0.3")
     implementation("androidx.core:core-splashscreen:1.2.0")
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
+    implementation("com.google.firebase:firebase-messaging")
 }

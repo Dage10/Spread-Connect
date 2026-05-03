@@ -119,5 +119,7 @@
     <string name="chats_titol">Tus chats: </string>
     <string name="no_converses">No tienes conversaciones</string>
     <string name="tipus_notificacio_post">Nuevo post</string>
-    <string name="missatge_notificacio_post">Nuevo post: </string>
+    <string name="missatge_notificacio_post">Nuevo post: %1$s</string>
+    <string name="notificacions_permis_configuracio">Para activar las notificaciones, tienes que ir a la configuración de la aplicación y conceder el permiso manualmente.</string>
+    <string name="anar_a_configuracio">Ir a Configuración</string>
 </resources>

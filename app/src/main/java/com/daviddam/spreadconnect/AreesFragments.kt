@@ -17,11 +17,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.daviddam.spreadconnect.databinding.FragmentAreesFragmentsBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import models.Area
 import androidx.core.widget.addTextChangedListener
 import sharedPreference.SharedPreference
+import util.SessionManager
 import util.ImageExtension.loadImageOrDefault
 import viewmodel.AreesViewModel
 import viewmodel.EditarPostViewModel
@@ -265,7 +268,14 @@ class AreesFragments : Fragment() {
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     1 -> findNavController().navigate(R.id.action_areesFragments_to_editarPerfilFragment)
-                    2 -> { SharedPreference.tancarSessio(requireContext()); findNavController().navigate(R.id.iniciFragment) }
+                    2 -> {
+                        lifecycleScope.launch {
+                            withContext(Dispatchers.IO) {
+                                SessionManager.tancarSessio(requireContext())
+                            }
+                            findNavController().navigate(R.id.iniciFragment)
+                        }
+                    }
                 }
                 true
             }

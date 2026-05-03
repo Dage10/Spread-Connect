@@ -53,6 +53,8 @@
     <string name="selecciona_area">Selecciona una àrea</string>
     <string name="oblidat_contrasenya">Heu oblidat la contrasenya?</string>
     <string name="notificacions">Notificacions</string>
+    <string name="notificacions_permis_configuracio">Per activar les notificacions, has d\'anar a la configuració de l\'aplicació i concedir el permís manualment.</string>
+    <string name="anar_a_configuracio">Anar a Configuració</string>
     <string name="idioma_catala">Catala</string>
     <string name="idioma_castella">Castellà</string>
     <string name="idioma_angles">Anglès</string>

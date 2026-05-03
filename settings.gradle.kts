@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Click&Connect"
+rootProject.name = "Spread&Connect"
 include(":app")
  

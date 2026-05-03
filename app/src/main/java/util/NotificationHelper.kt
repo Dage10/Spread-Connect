@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -28,6 +27,25 @@ object NotificationHelper {
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         manager?.createNotificationChannel(channel)
+    }
+
+    fun buildNotificacioContinngut(context: Context, tipus: String, missatge: String?): Pair<String, String> {
+        val normalizedType = when (tipus.lowercase()) {
+            "post", "nou post", "nuevo post", "new post" -> "post"
+            else -> tipus
+        }
+
+        val title = when (normalizedType) {
+            "post" -> context.getString(R.string.tipus_notificacio_post)
+            else -> tipus.ifBlank { context.getString(R.string.notificacions) }
+        }
+
+        val messageText = when (normalizedType) {
+            "post" -> context.getString(R.string.missatge_notificacio_post, missatge.orEmpty())
+            else -> missatge.orEmpty()
+        }
+
+        return title to messageText
     }
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)

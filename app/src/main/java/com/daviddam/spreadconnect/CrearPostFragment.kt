@@ -99,8 +99,7 @@ class CrearPostFragment : Fragment() {
                             requireContext().contentResolver.openInputStream(u)?.use { it.readBytes() } ?: byteArrayOf()
                         }
                     }
-                    val tipusNotificacio = getString(R.string.tipus_notificacio_post)
-                    val missatgeNotificacio = getString(R.string.missatge_notificacio_post, titol)
+                    val tipusNotificacio = "post"
                     viewModel.crearPost(
                         idUsuari,
                         args.areaId,
@@ -108,9 +107,9 @@ class CrearPostFragment : Fragment() {
                         desc,
                         imatgeUrl,
                         tipusNotificacio,
-                        missatgeNotificacio
+                        titol
                     )
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_LONG).show()
                 }
             }
