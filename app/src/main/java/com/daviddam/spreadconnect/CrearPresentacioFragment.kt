@@ -9,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
@@ -103,13 +105,24 @@ class CrearPresentacioFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.uiState.collectLatest { state ->
-                when {
-                    state.error != null -> Toast.makeText(requireContext(), state.error.asString(requireContext()), Toast.LENGTH_SHORT).show()
-                    state.presentacioCreada != null -> {
-                        Toast.makeText(requireContext(), getString(R.string.presentacio_creada), Toast.LENGTH_SHORT).show()
-                        findNavController().navigateUp()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collectLatest { state ->
+                    when {
+                        state.error != null -> Toast.makeText(
+                            requireContext(),
+                            state.error.asString(requireContext()),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        state.presentacioCreada != null -> {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.presentacio_creada),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            findNavController().navigateUp()
+                        }
                     }
                 }
             }

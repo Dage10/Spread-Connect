@@ -1,21 +1,21 @@
 [versions]
-agp = "8.13.2"
-kotlin = "2.3.10"
-coreKtx = "1.17.0"
+agp = "9.0.1"
+kotlin = "2.3.21"
+coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 appcompat = "1.7.1"
 material = "1.13.0"
-activity = "1.12.3"
+activity = "1.13.0"
 constraintlayout = "2.2.1"
-navigationFragmentKtx = "2.9.7"
-navigationUiKtx = "2.9.7"
-ktor = "3.4.0"
-supabase = "3.3.0"
+navigationFragmentKtx = "2.9.8"
+navigationUiKtx = "2.9.8"
+ktor = "3.4.3"
+supabase = "3.6.0"
 coroutines = "1.10.2"
-navigation = "2.9.7"
-androidMail = "1.6.8"
+navigation = "2.9.8"
+lifecycleRuntimeKtx = "2.10.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,9 +33,10 @@ supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 supabase-storage = { module = "io.github.jan-tennert.supabase:storage-kt" }
 supabase-auth = { module = "io.github.jan-tennert.supabase:auth-kt" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
-coil = { group = "io.coil-kt", name = "coil", version = "2.5.0" }
+coil = { group = "io.coil-kt", name = "coil", version = "2.7.0" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

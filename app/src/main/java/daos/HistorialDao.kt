@@ -4,101 +4,86 @@ import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.Serializable
 import models.ActivitatHistorial
 import models.PostInteraccio
 
 class HistorialDao {
 
-    private fun JsonObject.getString(key: String): String? {
-        return (this[key] as? JsonPrimitive)?.content
-    }
+    @Serializable
+    private data class PostRow(
+        val id: String,
+        val titol: String? = null,
+        val descripcio: String? = null,
+        val created_at: String = ""
+    )
+
+    @Serializable
+    private data class ReaccioRow(
+        val id_post: String? = null,
+        val tipus: String
+    )
+
+    @Serializable
+    private data class PresentacioRow(
+        val id: String,
+        val titol: String? = null,
+        val contingut_presentacio: String? = null,
+        val created_at: String = ""
+    )
 
     suspend fun getHistorialUsuari(idUsuari: String): List<ActivitatHistorial> {
         val resultat = mutableListOf<ActivitatHistorial>()
 
-        val posts = SupabaseClient.client
-            .from("posts")
-            .select(Columns.list("id", "id_usuari", "titol", "descripcio", "created_at")) {
-                filter {
-                    eq("id_usuari", idUsuari)
-                }
+        val posts = SupabaseClient.client.from("posts")
+            .select(Columns.list("id", "titol", "descripcio", "created_at")) {
+                filter { eq("id_usuari", idUsuari) }
             }
-            .decodeList<JsonObject>()
+            .decodeList<PostRow>()
 
         resultat.add(
-            ActivitatHistorial(
-                id = "total_posts",
-                id_usuari = idUsuari,
-                tipus = "total_posts",
-                num_posts = posts.size
-            )
+            ActivitatHistorial(id = "total_posts", id_usuari = idUsuari, tipus = "total_posts", num_posts = posts.size)
         )
 
-        val postIds = posts.mapNotNull { it.getString("id") }
+        val postIds = posts.map { it.id }
+
         val reaccions = if (postIds.isNotEmpty()) {
-            SupabaseClient.client
-                .from("reaccions_posts")
-                .select(Columns.list("id_post", "tipus")) {
-                    filter {
-                        isIn("id_post", postIds)
-                    }
-                }
-                .decodeList<JsonObject>()
+            SupabaseClient.client.from("reaccions_posts")
+                .select(Columns.list("id_post", "tipus")) { filter { isIn("id_post", postIds) } }
+                .decodeList<ReaccioRow>()
         } else emptyList()
 
-        val reaccionsPerPost = reaccions.groupBy { it.getString("id_post") }
+        val reaccionsPerPost = reaccions.groupBy { it.id_post }
 
-        val postMesInteraccions = posts.mapNotNull { post ->
-            val postId = post.getString("id") ?: return@mapNotNull null
-            val titol = post.getString("titol")
-            val contingut = post.getString("descripcio")
-            val createdAt = post.getString("created_at") ?: ""
-
-            val r = reaccionsPerPost[postId].orEmpty()
-            val likes = r.count { it.getString("tipus") == "like" }
-            val dislikes = r.count { it.getString("tipus") == "dislike" }
-            val total = likes + dislikes
-
-            PostInteraccio(postId, titol, contingut, createdAt, likes, dislikes, total)
-        }.maxWithOrNull(compareBy({ it.totalInteraccions }, { it.createdAt }))
-
-        if (postMesInteraccions != null) {
+        posts.mapNotNull { post ->
+            val r = reaccionsPerPost[post.id].orEmpty()
+            val likes = r.count { it.tipus == "like" }
+            val dislikes = r.count { it.tipus == "dislike" }
+            PostInteraccio(post.id, post.titol, post.descripcio, post.created_at, likes, dislikes, likes + dislikes)
+        }.maxWithOrNull(compareBy({ it.totalInteraccions }, { it.createdAt }))?.let {
             resultat.add(
                 ActivitatHistorial(
-                    id = postMesInteraccions.id,
-                    id_usuari = idUsuari,
-                    tipus = "post_mes_interaccions",
-                    titol_post = postMesInteraccions.titol,
-                    contingut = postMesInteraccions.contingut,
-                    created_at = postMesInteraccions.createdAt,
-                    num_likes = postMesInteraccions.likes,
-                    num_dislikes = postMesInteraccions.dislikes
+                    id = it.id, id_usuari = idUsuari, tipus = "post_mes_interaccions",
+                    titol_post = it.titol, contingut = it.contingut, created_at = it.createdAt,
+                    num_likes = it.likes, num_dislikes = it.dislikes
                 )
             )
         }
 
-        posts.maxByOrNull { it.getString("created_at") ?: "" }?.let { ultimPost ->
+        posts.maxByOrNull { it.created_at }?.let {
             resultat.add(
                 ActivitatHistorial(
-                    id = ultimPost.getString("id") ?: "",
-                    id_usuari = idUsuari,
-                    tipus = "ultim_post",
-                    titol_post = ultimPost.getString("titol"),
-                    contingut = ultimPost.getString("descripcio"),
-                    created_at = ultimPost.getString("created_at") ?: ""
+                    id = it.id, id_usuari = idUsuari, tipus = "ultim_post",
+                    titol_post = it.titol, contingut = it.descripcio, created_at = it.created_at
                 )
             )
         }
 
-        val presentacions = SupabaseClient.client
-            .from("presentacions")
-            .select(Columns.list("id", "id_usuari", "titol", "contingut_presentacio", "created_at")) {
-                filter {
-                    eq("id_usuari", idUsuari)
-                }
+        val presentacions = SupabaseClient.client.from("presentacions")
+            .select(Columns.list("id", "titol", "contingut_presentacio", "created_at")) {
+                filter { eq("id_usuari", idUsuari) }
             }
-            .decodeList<JsonObject>()
+            .decodeList<PresentacioRow>()
 
         resultat.add(
             ActivitatHistorial(
@@ -109,15 +94,15 @@ class HistorialDao {
             )
         )
 
-        presentacions.maxByOrNull { it.getString("created_at") ?: "" }?.let { ultimaPresentacio ->
+        presentacions.maxByOrNull { it.created_at }?.let {
             resultat.add(
                 ActivitatHistorial(
-                    id = ultimaPresentacio.getString("id") ?: "",
+                    id = it.id,
                     id_usuari = idUsuari,
                     tipus = "ultim_presentacio",
-                    titol_presentacio = ultimaPresentacio.getString("titol"),
-                    contingut = ultimaPresentacio.getString("contingut_presentacio"),
-                    created_at = ultimaPresentacio.getString("created_at") ?: ""
+                    titol_presentacio = it.titol,
+                    contingut = it.contingut_presentacio,
+                    created_at = it.created_at
                 )
             )
         }

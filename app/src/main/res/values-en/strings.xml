@@ -122,4 +122,5 @@
     <string name="missatge_notificacio_post">New post: %1$s</string>
     <string name="notificacions_permis_configuracio">To activate notifications, you need to go to the application settings and grant the permission manually.</string>
     <string name="anar_a_configuracio">Go to Settings</string>
+    <string name="sessio_tancada">Logout completado</string>
 </resources>

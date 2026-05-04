@@ -300,7 +300,7 @@
                         app:cornerRadius="16dp" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnEliminar"
+                        android:id="@+id/btnTancarSessio"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:layout_marginTop="12dp"

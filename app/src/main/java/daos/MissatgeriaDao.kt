@@ -3,9 +3,8 @@ package daos
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
-import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import models.Conversa
 import models.Missatge
@@ -13,58 +12,54 @@ import models.UsuariConversa
 
 class MissatgeriaDao {
 
+    @Serializable
+    private data class ConversaIdRow(val id_conversa: String)
+
+    @Serializable
+    private data class ConversaIdUsuariRow(val id_usuari: String)
+
+    @Serializable
+    private data class ConversaUsuariRow(
+        val id_conversa: String,
+        val id_usuari: String,
+        val usuaris: UsuariConversa? = null
+    )
+
     suspend fun getConversesUsuari(idUsuari: String): List<Conversa> {
-        val conversesIds = SupabaseClient.client
-            .from("conversa_usuaris")
-            .select(Columns.list("id_conversa")) {
-                filter {
-                    eq("id_usuari", idUsuari)
-                }
+        val conversesIds = SupabaseClient.client.from("conversa_usuaris")
+            .select(Columns.list("id_conversa")) { filter {
+                eq("id_usuari", idUsuari) }
             }
-            .decodeList<JsonObject>()
-            .mapNotNull { it["id_conversa"]?.jsonPrimitive?.content }
+            .decodeList<ConversaIdRow>()
+            .map { it.id_conversa }
 
         if (conversesIds.isEmpty()) return emptyList()
 
-        val totsElsUsuaris = SupabaseClient.client
-            .from("conversa_usuaris")
-            .select(Columns.list("id_conversa", "id_usuari", "usuaris(nom_usuari, avatar_url)")) {
+        val totsElsUsuaris = SupabaseClient.client.from("conversa_usuaris")
+            .select(Columns.raw("id_conversa, id_usuari, usuaris(nom_usuari, avatar_url)")) {
                 filter {
                     isIn("id_conversa", conversesIds)
                 }
             }
-            .decodeList<JsonObject>()
+            .decodeList<ConversaUsuariRow>()
 
-        val totsMissatges = SupabaseClient.client
-            .from("missatges")
+        val totsMissatges = SupabaseClient.client.from("missatges")
             .select(Columns.list("id", "id_conversa", "id_usuari", "contingut", "imatge_url", "created_at")) {
                 filter { isIn("id_conversa", conversesIds) }
             }
             .decodeList<Missatge>()
 
         val usuarisPerConversa = totsElsUsuaris.groupBy(
-            keySelector = { it["id_conversa"]?.jsonPrimitive?.content ?: "" },
-            valueTransform = { row ->
-                val usuariObj = row["usuaris"] as? JsonObject
-                UsuariConversa(
-                    id_usuari = row["id_usuari"]?.jsonPrimitive?.content ?: "",
-                    nom_usuari = usuariObj?.get("nom_usuari")?.jsonPrimitive?.content,
-                    avatar_url = usuariObj?.get("avatar_url")?.jsonPrimitive?.content
-                )
-            }
+            keySelector = { it.id_conversa },
+            valueTransform = { UsuariConversa(it.id_usuari, it.usuaris?.nom_usuari, it.usuaris?.avatar_url) }
         )
 
         val ultimMissatgePerConversa = totsMissatges
             .groupBy { it.id_conversa }
-            .mapValues { (_, missatges) -> missatges.maxByOrNull { it.created_at } }
+            .mapValues { (_, m) -> m.maxByOrNull { it.created_at } }
 
         return conversesIds.map { id ->
-            Conversa(
-                id = id,
-                created_at = "",
-                usuaris = usuarisPerConversa[id] ?: emptyList(),
-                ultim_missatge = ultimMissatgePerConversa[id]
-            )
+            Conversa(id = id, created_at = "", usuaris = usuarisPerConversa[id] ?: emptyList(), ultim_missatge = ultimMissatgePerConversa[id])
         }.sortedByDescending { it.ultim_missatge?.created_at }
     }
 
@@ -79,7 +74,7 @@ class MissatgeriaDao {
                 }
                 .decodeList<Missatge>()
                 .sortedBy { it.created_at }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }
@@ -116,72 +111,52 @@ class MissatgeriaDao {
             }.decodeSingle()
     }
 
-    suspend fun getAltreUsuariConversa(idConversa: String, idUsuariActual: String): UsuariConversa? {
-        return try {
-            val usuarisEnConversa = SupabaseClient.client
-                .from("conversa_usuaris")
-                .select(Columns.list("id_usuari")) {
-                    filter {
-                        eq("id_conversa", idConversa)
-                    }
+    suspend fun getAltreUsuariConversa(idConversa: String, idUsuariActual: String): UsuariConversa? = try {
+        val idAltre = SupabaseClient.client.from("conversa_usuaris")
+            .select(Columns.list("id_usuari")) {
+                filter {
+                    eq("id_conversa", idConversa)
                 }
-                .decodeList<JsonObject>()
-                .mapNotNull { it["id_usuari"]?.jsonPrimitive?.content }
-                .filter { it != idUsuariActual }
-
-            val idAltre = usuarisEnConversa.firstOrNull() ?: return null
-
-            val altreUsuari = SupabaseClient.client
-                .from("usuaris")
-                .select(Columns.list("nom_usuari, avatar_url")) {
-                    filter {
-                        eq("id", idAltre)
-                    }
-                }
-                .decodeSingleOrNull<JsonObject>()
-
-            UsuariConversa(
-                id_usuari = idAltre,
-                nom_usuari = altreUsuari?.get("nom_usuari")?.jsonPrimitive?.content,
-                avatar_url = altreUsuari?.get("avatar_url")?.jsonPrimitive?.content
-            )
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    suspend fun trobarConversaExistents(idUsuari1: String, idUsuari2: String): Conversa? {
-        return try {
-            val usuaris1 = SupabaseClient.client
-                .from("conversa_usuaris")
-                .select(Columns.list("id_conversa")) {
-                    filter {
-                        eq("id_usuari", idUsuari1)
-                    }
-                }
-                .decodeList<JsonObject>()
-                .mapNotNull { it["id_conversa"]?.jsonPrimitive?.content }
-
-            val usuaris2 = SupabaseClient.client
-                .from("conversa_usuaris")
-                .select(Columns.list("id_conversa")) {
-                    filter {
-                        eq("id_usuari", idUsuari2)
-                    }
-                }
-                .decodeList<JsonObject>()
-                .mapNotNull { it["id_conversa"]?.jsonPrimitive?.content }
-
-            val idComu = usuaris1.intersect(usuaris2.toSet()).firstOrNull()
-
-            idComu?.let {
-                SupabaseClient.client
-                    .from("converses")
-                    .select {
-                        filter { eq("id", it) }
-                    }
-                    .decodeSingleOrNull<Conversa>()
             }
-        } catch (e: Exception) { null }
+            .decodeList<ConversaIdUsuariRow>()
+            .map { it.id_usuari }
+            .firstOrNull { it != idUsuariActual } ?: return null
+
+        SupabaseClient.client.from("usuaris")
+            .select(Columns.raw("id, nom_usuari, avatar_url")) {
+                filter {
+                    eq("id", idAltre)
+                }
+            }
+            .decodeSingleOrNull<UsuariConversa>()
+    } catch (_: Exception) {
+        null
     }
+
+    suspend fun trobarConversaExistents(idUsuari1: String, idUsuari2: String): Conversa? = try {
+        val ids1 = SupabaseClient.client.from("conversa_usuaris")
+            .select(Columns.list("id_conversa")) {
+                filter {
+                    eq("id_usuari", idUsuari1)
+                }
+            }
+            .decodeList<ConversaIdRow>().map { it.id_conversa }.toSet()
+
+        val ids2 = SupabaseClient.client.from("conversa_usuaris")
+            .select(Columns.list("id_conversa")) {
+                filter {
+                    eq("id_usuari", idUsuari2)
+                }
+            }
+            .decodeList<ConversaIdRow>().map { it.id_conversa }.toSet()
+
+        val idComu = ids1.intersect(ids2).firstOrNull() ?: return null
+
+        SupabaseClient.client.from("converses")
+            .select { filter { eq("id", idComu) } }
+            .decodeSingleOrNull()
+    } catch (_: Exception) {
+        null
+    }
+
 }

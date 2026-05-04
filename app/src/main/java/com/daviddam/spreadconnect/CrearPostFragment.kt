@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import adapter.EtiquetaAdapter
 import android.annotation.SuppressLint
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.daviddam.spreadconnect.databinding.FragmentCrearPostBinding
 import conexio.SupabaseStorage
 import kotlinx.coroutines.flow.collectLatest
@@ -165,31 +167,33 @@ class CrearPostFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        lifecycleScope.launchWhenStarted {
-            launch {
-                viewModel.uiState.collectLatest { state ->
-                    when {
-                        state.error != null -> Toast.makeText(
-                            requireContext(),
-                            state.error.asString(requireContext()),
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        state.postCreat != null -> {
-                            Toast.makeText(
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.uiState.collectLatest { state ->
+                        when {
+                            state.error != null -> Toast.makeText(
                                 requireContext(),
-                                getString(R.string.post_creat),
+                                state.error.asString(requireContext()),
                                 Toast.LENGTH_SHORT
                             ).show()
-                            findNavController().navigateUp()
+
+                            state.postCreat != null -> {
+                                Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.post_creat),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                findNavController().navigateUp()
+                            }
                         }
                     }
                 }
-            }
 
-            launch {
-                viewModel.etiquetes.collectLatest { etiquetes ->
-                    etiquetaAdapter.updateData(etiquetes)
+                launch {
+                    viewModel.etiquetes.collectLatest { etiquetes ->
+                        etiquetaAdapter.updateData(etiquetes)
+                    }
                 }
             }
         }

@@ -1,7 +1,5 @@
 package models
 
-import models.Post
-import models.Presentacio
 import util.UiText
 
 data class PerfilUiState(

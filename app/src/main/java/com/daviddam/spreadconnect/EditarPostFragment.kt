@@ -16,6 +16,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import adapter.EtiquetaAdapter
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import coil.load
 import com.daviddam.spreadconnect.databinding.FragmentEditarPostBinding
 import conexio.SupabaseStorage
@@ -149,38 +151,44 @@ class EditarPostFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        lifecycleScope.launchWhenStarted {
-            launch {
-                viewModelEditarPost.uiState.collectLatest { state ->
-                    when {
-                        state.error != null -> {
-                            Toast.makeText(requireContext(), state.error.asString(requireContext()), Toast.LENGTH_SHORT).show()
-                        }
-
-                        state.post != null && binding.etTitol.text.isNullOrBlank() -> {
-                            binding.etTitol.setText(state.post.titol)
-                            binding.etDescripcio.setText(state.post.descripcio)
-                            state.post.imatge_url?.let { url ->
-                                binding.imgPreview.load(url)
-                                binding.imgPreview.visibility = View.VISIBLE
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModelEditarPost.uiState.collectLatest { state ->
+                        when {
+                            state.error != null -> {
+                                Toast.makeText(
+                                    requireContext(),
+                                    state.error.asString(requireContext()),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-                        }
 
-                        state.postActualitzat != null -> {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.post_actualitzat),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            findNavController().navigateUp()
+                            state.post != null && binding.etTitol.text.isNullOrBlank() -> {
+                                binding.etTitol.setText(state.post.titol)
+                                binding.etDescripcio.setText(state.post.descripcio)
+                                state.post.imatge_url?.let { url ->
+                                    binding.imgPreview.load(url)
+                                    binding.imgPreview.visibility = View.VISIBLE
+                                }
+                            }
+
+                            state.postActualitzat != null -> {
+                                Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.post_actualitzat),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                findNavController().navigateUp()
+                            }
                         }
                     }
                 }
-            }
 
-            launch {
-                viewModelEditarPost.etiquetes.collectLatest { etiquetes ->
-                    etiquetaAdapter.updateData(etiquetes.map { it.nom })
+                launch {
+                    viewModelEditarPost.etiquetes.collectLatest { etiquetes ->
+                        etiquetaAdapter.updateData(etiquetes.map { it.nom })
+                    }
                 }
             }
         }

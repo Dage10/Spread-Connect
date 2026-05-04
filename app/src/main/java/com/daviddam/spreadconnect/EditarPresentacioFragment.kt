@@ -9,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
@@ -99,24 +101,34 @@ class EditarPresentacioFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        lifecycleScope.launchWhenStarted {
-            viewModelEditarPresentacio.uiState.collectLatest { state ->
-                state.error?.let {
-                    Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show()
-                }
-
-                if (state.presentacio != null && binding.etTitol.text.isNullOrBlank()) {
-                    binding.etTitol.setText(state.presentacio.titol)
-                    binding.etContingut.setText(state.presentacio.contingut_presentacio)
-                    state.presentacio.imatge_url?.let { url ->
-                        binding.imgPreview.load(url)
-                        binding.imgPreview.visibility = View.VISIBLE
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModelEditarPresentacio.uiState.collectLatest { state ->
+                    state.error?.let {
+                        Toast.makeText(
+                            requireContext(),
+                            it.asString(requireContext()),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                }
 
-                if (state.presentacioActualitzada != null) {
-                    Toast.makeText(requireContext(), getString(R.string.presentacio_actualitzada), Toast.LENGTH_SHORT).show()
-                    findNavController().navigateUp()
+                    if (state.presentacio != null && binding.etTitol.text.isNullOrBlank()) {
+                        binding.etTitol.setText(state.presentacio.titol)
+                        binding.etContingut.setText(state.presentacio.contingut_presentacio)
+                        state.presentacio.imatge_url?.let { url ->
+                            binding.imgPreview.load(url)
+                            binding.imgPreview.visibility = View.VISIBLE
+                        }
+                    }
+
+                    if (state.presentacioActualitzada != null) {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.presentacio_actualitzada),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        findNavController().navigateUp()
+                    }
                 }
             }
         }

@@ -223,7 +223,7 @@ class MainActivity : AppCompatActivity() {
                 SessionManager.tancarSessio(this@MainActivity)
             }
             navController.navigate(R.id.iniciFragment)
-            Toast.makeText(this@MainActivity, getString(R.string.usuari_no_trobat), Toast.LENGTH_LONG).show()
+            Toast.makeText(this@MainActivity, getString(R.string.sessio_tancada), Toast.LENGTH_LONG).show()
         }
     }
 }

@@ -3,54 +3,59 @@ package daos
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import models.Presentacio
 import java.time.Instant
 
 class PresentacioDao {
 
-    private val json = Json { ignoreUnknownKeys = true }
+    @Serializable
+    private data class PresentacioAmbUsuari(
+        val id: String,
+        val id_usuari: String,
+        val titol: String,
+        val contingut_presentacio: String,
+        val imatge_url: String? = null,
+        val area_id: String,
+        val created_at: String,
+        val updated_at: String,
+        val usuaris: UsuariInfo? = null
+    ) {
+        @Serializable
+        data class UsuariInfo(
+            val nom_usuari: String? = null,
+            val avatar_url: String? = null
+        )
 
-    suspend fun getPresentacionsAmbUsuari(areaId: String): List<Presentacio> {
-        val rows = SupabaseClient.client
-            .from("presentacions")
+        fun toPresentacio() = Presentacio(
+            id = id, id_usuari = id_usuari, titol = titol,
+            contingut_presentacio = contingut_presentacio, imatge_url = imatge_url,
+            area_id = area_id, created_at = created_at, updated_at = updated_at,
+            nom_usuari = usuaris?.nom_usuari,
+            avatar_url = usuaris?.avatar_url
+        )
+    }
+
+    suspend fun getPresentacionsAmbUsuari(areaId: String): List<Presentacio> =
+        SupabaseClient.client.from("presentacions")
             .select(Columns.raw("*, usuaris(nom_usuari, avatar_url)")) {
                 filter { eq("area_id", areaId) }
             }
-
-        return rows.decodeList<JsonObject>().map { row ->
-            val usuari = row["usuaris"] as? JsonObject
-            val base = json.decodeFromJsonElement(Presentacio.serializer(), row)
-            base.copy(
-                nom_usuari = usuari?.get("nom_usuari")?.jsonPrimitive?.content,
-                avatar_url = usuari?.get("avatar_url")?.jsonPrimitive?.content
-            )
-        }
-    }
+            .decodeList<PresentacioAmbUsuari>()
+            .map { it.toPresentacio() }
 
     suspend fun getPresentacioPerId(id: String): Presentacio =
         SupabaseClient.client.from("presentacions").select { filter { eq("id", id) } }.decodeSingle()
 
-    suspend fun getPresentacionsPerUsuari(idUsuari: String): List<Presentacio> {
-        val rows = SupabaseClient.client
-            .from("presentacions")
-            .select(Columns.list("id", "id_usuari", "titol", "contingut_presentacio", "imatge_url", "area_id", "created_at", "updated_at", "usuaris(nom_usuari, avatar_url)")) {
+    suspend fun getPresentacionsPerUsuari(idUsuari: String): List<Presentacio> =
+        SupabaseClient.client.from("presentacions")
+            .select(Columns.raw("id, id_usuari, titol, contingut_presentacio, imatge_url, area_id, created_at, updated_at, usuaris(nom_usuari, avatar_url)")) {
                 filter { eq("id_usuari", idUsuari) }
             }
-
-        return rows.decodeList<JsonObject>().map { row ->
-            val usuari = row["usuaris"] as? JsonObject
-            val base = json.decodeFromJsonElement(Presentacio.serializer(), row)
-            base.copy(
-                nom_usuari = usuari?.get("nom_usuari")?.jsonPrimitive?.content,
-                avatar_url = usuari?.get("avatar_url")?.jsonPrimitive?.content
-            )
-        }
-    }
+            .decodeList<PresentacioAmbUsuari>()
+            .map { it.toPresentacio() }
 
     suspend fun crearPresentacio(idUsuari: String, titol: String, contingut: String, areaId: String, img: String?): Presentacio {
         val nova = buildJsonObject {

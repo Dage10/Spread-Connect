@@ -3,10 +3,8 @@ package daos
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import models.Etiqueta
 import models.EtiquetaPost
@@ -15,46 +13,50 @@ import java.time.Instant
 
 class PostDao {
 
-    private val json = Json { ignoreUnknownKeys = true }
+    @Serializable
+    private data class PostAmbUsuari(
+        val id: String, val id_usuari: String,
+        val titol: String, val descripcio: String,
+        val area_id: String, val created_at: String,
+        val updated_at: String, val imatge_url: String? = null,
+        val usuaris: UsuariInfo? = null) {
+        @Serializable
+        data class UsuariInfo(
+            val nom_usuari: String? = null,
+            val avatar_url: String? = null
+        )
 
-    suspend fun getPostsAmbUsuari(areaId: String): List<Post> {
-        val rows = SupabaseClient.client
-            .from("posts")
-            .select(Columns.list("id", "id_usuari", "titol", "descripcio", "area_id", "created_at", "updated_at", "imatge_url", "usuaris(nom_usuari, avatar_url)")) {
+        fun toPost() = Post(
+            id = id, id_usuari = id_usuari,
+            titol = titol, descripcio = descripcio,
+            area_id = area_id, created_at = created_at,
+            updated_at = updated_at, imatge_url = imatge_url,
+            nom_usuari = usuaris?.nom_usuari, avatar_url = usuaris?.avatar_url
+        )
+    }
+
+    suspend fun getPostsAmbUsuari(areaId: String): List<Post> =
+        SupabaseClient.client.from("posts")
+            .select(Columns.raw("id, id_usuari, titol, descripcio, area_id, created_at, updated_at, imatge_url, usuaris(nom_usuari, avatar_url)")) {
                 filter { eq("area_id", areaId) }
             }
+            .decodeList<PostAmbUsuari>()
+            .map { it.toPost() }
 
-        return rows.decodeList<JsonObject>().map { row ->
-            val usuari = row["usuaris"] as? JsonObject
-            val base = json.decodeFromJsonElement(Post.serializer(), row)
-            base.copy(
-                nom_usuari = usuari?.get("nom_usuari")?.jsonPrimitive?.content,
-                avatar_url = usuari?.get("avatar_url")?.jsonPrimitive?.content
-            )
-        }
-    }
 
     suspend fun getPostPerId(id: String): Post =
         SupabaseClient.client.from("posts")
             .select { filter { eq("id", id) } }
             .decodeSingle()
 
-    suspend fun getPostsPerUsuari(idUsuari: String): List<Post> {
-        val rows = SupabaseClient.client
-            .from("posts")
-            .select(Columns.list("id", "id_usuari", "titol", "descripcio", "area_id", "created_at", "updated_at", "imatge_url", "usuaris(nom_usuari, avatar_url)")) {
+    suspend fun getPostsPerUsuari(idUsuari: String): List<Post> =
+        SupabaseClient.client.from("posts")
+            .select(Columns.raw("id, id_usuari, titol, descripcio, area_id, created_at, updated_at, imatge_url, usuaris(nom_usuari, avatar_url)")) {
                 filter { eq("id_usuari", idUsuari) }
             }
+            .decodeList<PostAmbUsuari>()
+            .map { it.toPost() }
 
-        return rows.decodeList<JsonObject>().map { row ->
-            val usuari = row["usuaris"] as? JsonObject
-            val base = json.decodeFromJsonElement(Post.serializer(), row)
-            base.copy(
-                nom_usuari = usuari?.get("nom_usuari")?.jsonPrimitive?.content,
-                avatar_url = usuari?.get("avatar_url")?.jsonPrimitive?.content
-            )
-        }
-    }
 
     suspend fun crearPost(idUsuari: String, titol: String, desc: String, areaId: String, img: String?): Post {
         val nouPost = buildJsonObject {

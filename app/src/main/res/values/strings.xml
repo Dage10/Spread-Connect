@@ -121,4 +121,5 @@
     <string name="no_converses">No tens converses</string>
     <string name="tipus_notificacio_post">Nou post</string>
     <string name="missatge_notificacio_post">Nou post: %1$s</string>
+    <string name="sessio_tancada">Logout completado</string>
 </resources>

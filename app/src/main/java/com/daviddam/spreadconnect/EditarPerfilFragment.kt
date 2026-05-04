@@ -16,7 +16,9 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.daviddam.spreadconnect.databinding.FragmentEditarPerfilBinding
 import kotlinx.coroutines.Dispatchers
@@ -125,7 +127,7 @@ class EditarPerfilFragment : Fragment() {
             )
         }
 
-        binding.btnEliminar.setOnClickListener {
+        binding.btnTancarSessio.setOnClickListener {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     SessionManager.tancarSessio(requireContext())
@@ -156,37 +158,57 @@ class EditarPerfilFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launchWhenStarted {
-            viewModelEditarPerfil.uiState.collectLatest { state ->
-                state.error?.let { Toast.makeText(requireContext(), it.asString(requireContext()), Toast.LENGTH_SHORT).show() }
-
-                if (state.usuari != null && binding.etNom.text.isNullOrBlank()) {
-                    binding.etNom.setText(state.usuari.nom_usuari)
-                    binding.etDescripcio.setText(state.usuari.descripcio ?: "")
-                    binding.imgAvatar.loadImageOrDefault(state.usuari.avatar_url, isProfile = true)
-
-                    state.preferencies?.let { prefs ->
-                        valorNotificacionsBD = prefs.rebre_notificacions
-                        binding.spinnerIdioma.setSelection(idiomesKeys.indexOf(prefs.llenguatge).coerceAtLeast(0))
-                        binding.spinnerTema.setSelection(temesKeys.indexOf(prefs.tema).coerceAtLeast(0))
-
-                        val permisRealment = tePermisNotificacions()
-                        canviSwitchPerCodi = true
-                        binding.switchNotificacions.isChecked = prefs.rebre_notificacions && permisRealment
-                        canviSwitchPerCodi = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModelEditarPerfil.uiState.collectLatest { state ->
+                    state.error?.let {
+                        Toast.makeText(
+                            requireContext(),
+                            it.asString(requireContext()),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                }
-                state.usuari?.let {
-                    binding.tvEmail.text = it.email
-                }
 
-                if (state.usuariActualitzat != null) {
-                    PreferenciesApplier.applyLanguageAndTheme(
-                        requireActivity(),
-                        idiomesKeys[binding.spinnerIdioma.selectedItemPosition],
-                        temesKeys[binding.spinnerTema.selectedItemPosition]
-                    )
-                    Toast.makeText(requireContext(), getString(R.string.perfil_actualitzat), Toast.LENGTH_SHORT).show()
+                    if (state.usuari != null && binding.etNom.text.isNullOrBlank()) {
+                        binding.etNom.setText(state.usuari.nom_usuari)
+                        binding.etDescripcio.setText(state.usuari.descripcio ?: "")
+                        binding.imgAvatar.loadImageOrDefault(
+                            state.usuari.avatar_url,
+                            isProfile = true
+                        )
+
+                        state.preferencies?.let { prefs ->
+                            valorNotificacionsBD = prefs.rebre_notificacions
+                            binding.spinnerIdioma.setSelection(
+                                idiomesKeys.indexOf(prefs.llenguatge).coerceAtLeast(0)
+                            )
+                            binding.spinnerTema.setSelection(
+                                temesKeys.indexOf(prefs.tema).coerceAtLeast(0)
+                            )
+
+                            val permisRealment = tePermisNotificacions()
+                            canviSwitchPerCodi = true
+                            binding.switchNotificacions.isChecked =
+                                prefs.rebre_notificacions && permisRealment
+                            canviSwitchPerCodi = false
+                        }
+                    }
+                    state.usuari?.let {
+                        binding.tvEmail.text = it.email
+                    }
+
+                    if (state.usuariActualitzat != null) {
+                        PreferenciesApplier.applyLanguageAndTheme(
+                            requireActivity(),
+                            idiomesKeys[binding.spinnerIdioma.selectedItemPosition],
+                            temesKeys[binding.spinnerTema.selectedItemPosition]
+                        )
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.perfil_actualitzat),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }
