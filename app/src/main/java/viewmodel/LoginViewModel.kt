@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import repository.Repository
 import sharedPreference.SharedPreference
 import util.UiText
+import util.PreferenciesApplier
 
 
 class LoginViewModel(
@@ -70,6 +71,16 @@ class LoginViewModel(
                         } catch (_: Exception) {
                         }
                     }
+                }
+
+                viewModelScope.launch {
+                    try {
+                        val prefs = repo.preferenciesDao.getPerUsuari(usuari.id)
+                        prefs?.let {
+                            PreferenciesApplier.applyLanguage(it.llenguatge)
+                            PreferenciesApplier.applyTheme(it.tema)
+                        }
+                    } catch (_: Exception) {}
                 }
 
                 _uiState.value = LoginUiState(usuari = usuari)
