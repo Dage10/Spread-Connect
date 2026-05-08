@@ -269,6 +269,7 @@ class AreesFragments : Fragment() {
                 when (item.itemId) {
                     1 -> findNavController().navigate(R.id.action_areesFragments_to_editarPerfilFragment)
                     2 -> {
+                        (requireActivity() as MainActivity).marcarTancamentManual()
                         lifecycleScope.launch {
                             withContext(Dispatchers.IO) {
                                 SessionManager.tancarSessio(requireContext())

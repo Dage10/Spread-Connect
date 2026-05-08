@@ -128,6 +128,7 @@ class EditarPerfilFragment : Fragment() {
         }
 
         binding.btnTancarSessio.setOnClickListener {
+            (requireActivity() as MainActivity).marcarTancamentManual()
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     SessionManager.tancarSessio(requireContext())

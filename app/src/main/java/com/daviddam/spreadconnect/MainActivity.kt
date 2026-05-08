@@ -33,6 +33,7 @@ import util.SessionManager
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private var tancantSessioManualment = false
     private val repo = Repository()
 
     private val requestPermisLauncher = registerForActivityResult(
@@ -208,13 +209,17 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 SupabaseClient.client.auth.sessionStatus.collect { status ->
                     if (status is SessionStatus.NotAuthenticated) {
-                        if (SharedPreference.obtenirUsuariLoguejat(this@MainActivity) != null) {
+                        if (!tancantSessioManualment && SharedPreference.obtenirUsuariLoguejat(this@MainActivity) != null) {
                             tancarSessioIAnarInici()
                         }
                     }
                 }
             }
         }
+    }
+
+    fun marcarTancamentManual() {
+        tancantSessioManualment = true
     }
 
     private fun tancarSessioIAnarInici() {
