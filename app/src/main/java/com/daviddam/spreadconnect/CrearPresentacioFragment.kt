@@ -44,6 +44,7 @@ class CrearPresentacioFragment : Fragment() {
             selectedImageUri = it
             binding.imgPreview.load(it)
             binding.imgPreview.visibility = View.VISIBLE
+            binding.btnEliminarImatge.visibility = View.VISIBLE
         }
     }
 
@@ -76,6 +77,13 @@ class CrearPresentacioFragment : Fragment() {
     private fun setupClickListeners(idUsuari: String) {
         binding.btnSeleccionarImatge.setOnClickListener {
             imagePickerLauncher.launch("image/*")
+        }
+
+        binding.btnEliminarImatge.setOnClickListener {
+            selectedImageUri = null
+            binding.imgPreview.setImageDrawable(null)
+            binding.imgPreview.visibility = View.GONE
+            binding.btnEliminarImatge.visibility = View.GONE
         }
 
         binding.btnGuardar.setOnClickListener {

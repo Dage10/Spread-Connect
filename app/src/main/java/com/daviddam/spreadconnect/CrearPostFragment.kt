@@ -50,6 +50,7 @@ class CrearPostFragment : Fragment() {
             selectedImageUri = it
             binding.imgPreview.load(it)
             binding.imgPreview.visibility = View.VISIBLE
+            binding.btnEliminarImatge.visibility = View.VISIBLE
         }
     }
 
@@ -83,6 +84,18 @@ class CrearPostFragment : Fragment() {
     private fun setupClickListeners(idUsuari: String) {
         binding.btnSeleccionarImatge.setOnClickListener {
             imagePickerLauncher.launch("image/*")
+        }
+
+        binding.btnEliminarImatge.setOnClickListener {
+            selectedImageUri = null
+            binding.imgPreview.setImageDrawable(null)
+            binding.imgPreview.visibility = View.GONE
+            binding.btnEliminarImatge.visibility = View.GONE
+        }
+
+        if (selectedImageUri != null) {
+            binding.imgPreview.visibility = View.VISIBLE
+            binding.btnEliminarImatge.visibility = View.VISIBLE
         }
 
         binding.btnGuardar.setOnClickListener {

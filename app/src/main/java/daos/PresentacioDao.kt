@@ -68,7 +68,7 @@ class PresentacioDao {
     suspend fun editarPresentacio(id: String, titol: String, contingut: String, img: String?): Presentacio {
         val data = buildJsonObject {
             put("titol", titol); put("contingut_presentacio", contingut); put("updated_at", Instant.now().toString())
-            img?.let { put("imatge_url", it) }
+            put("imatge_url", img)
         }
         SupabaseClient.client
             .from("presentacions")

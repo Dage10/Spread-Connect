@@ -38,6 +38,7 @@ private const val ARG_PARAM2 = "param2"
 class EditarPostFragment : Fragment() {
 
     private var selectedImageUri: Uri? = null
+    private var imatgeEliminada = false
     private var param1: String? = null
     private var param2: String? = null
 
@@ -46,8 +47,10 @@ class EditarPostFragment : Fragment() {
     private val launcherImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             selectedImageUri = it
+            imatgeEliminada = false
             binding.imgPreview.load(it)
             binding.imgPreview.visibility = View.VISIBLE
+            binding.btnEliminarImatge.visibility = View.VISIBLE
         }
     }
 
@@ -78,6 +81,14 @@ class EditarPostFragment : Fragment() {
 
         binding.btnSeleccionarImatge.setOnClickListener { launcherImage.launch("image/*") }
 
+        binding.btnEliminarImatge.setOnClickListener {
+            selectedImageUri = null
+            imatgeEliminada = true
+            binding.imgPreview.setImageDrawable(null)
+            binding.imgPreview.visibility = View.GONE
+            binding.btnEliminarImatge.visibility = View.GONE
+        }
+
         binding.btnGuardar.setOnClickListener {
             val titol = binding.etTitol.text.toString().trim()
             val desc = binding.etDescripcio.text.toString().trim()
@@ -89,12 +100,14 @@ class EditarPostFragment : Fragment() {
 
             lifecycleScope.launch {
                 try {
-                    val imatgeUrl = selectedImageUri?.let { uri ->
-
-                        SupabaseStorage.penjarPostImatge(uri) { u ->
+                    val imatgeOriginal = viewModelEditarPost.uiState.value.post?.imatge_url
+                    val imatgeUrl = when {
+                        selectedImageUri != null -> SupabaseStorage.penjarPostImatge(selectedImageUri!!) { u ->
                             requireContext().contentResolver.openInputStream(u)?.use { it.readBytes() } ?: byteArrayOf()
                         }
-                    } ?: viewModelEditarPost.uiState.value.post?.imatge_url
+                        imatgeEliminada -> null
+                        else -> imatgeOriginal
+                    }
                     viewModelEditarPost.editarPost(postId, titol, desc, imatgeUrl)
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "${getString(R.string.error)}: ${e.message}", Toast.LENGTH_LONG).show()
@@ -170,6 +183,7 @@ class EditarPostFragment : Fragment() {
                                 state.post.imatge_url?.let { url ->
                                     binding.imgPreview.load(url)
                                     binding.imgPreview.visibility = View.VISIBLE
+                                    binding.btnEliminarImatge.visibility = View.VISIBLE
                                 }
                             }
 

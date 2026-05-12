@@ -34,12 +34,15 @@ private const val ARG_PARAM2 = "param2"
 class EditarPresentacioFragment : Fragment() {
 
     private var selectedImageUri: Uri? = null
+    private var imatgeEliminada = false
 
     private val launcherImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             selectedImageUri = it
+            imatgeEliminada = false
             binding.imgPreview.load(it)
             binding.imgPreview.visibility = View.VISIBLE
+            binding.btnEliminarImatge.visibility = View.VISIBLE
         }
     }
 
@@ -73,6 +76,14 @@ class EditarPresentacioFragment : Fragment() {
 
         binding.btnSeleccionarImatge.setOnClickListener { launcherImage.launch("image/*") }
 
+        binding.btnEliminarImatge.setOnClickListener {
+            selectedImageUri = null
+            imatgeEliminada = true
+            binding.imgPreview.setImageDrawable(null)
+            binding.imgPreview.visibility = View.GONE
+            binding.btnEliminarImatge.visibility = View.GONE
+        }
+
         binding.btnGuardar.setOnClickListener {
             val titol = binding.etTitol.text.toString().trim()
             val contingut = binding.etContingut.text.toString().trim()
@@ -84,11 +95,14 @@ class EditarPresentacioFragment : Fragment() {
 
             lifecycleScope.launch {
                 try {
-                    val imatgeUrl = selectedImageUri?.let { uri ->
-                        SupabaseStorage.penjarPresentacioImatge(uri) { u ->
+                    val imatgeOriginal = viewModelEditarPresentacio.uiState.value.presentacio?.imatge_url
+                    val imatgeUrl = when {
+                        selectedImageUri != null -> SupabaseStorage.penjarPresentacioImatge(selectedImageUri!!) { u ->
                             requireContext().contentResolver.openInputStream(u)?.use { it.readBytes() } ?: byteArrayOf()
                         }
-                    } ?: viewModelEditarPresentacio.uiState.value.presentacio?.imatge_url
+                        imatgeEliminada -> null
+                        else -> imatgeOriginal
+                    }
 
                     viewModelEditarPresentacio.editarPresentacio(presentacioId, titol, contingut, imatgeUrl)
                 } catch (e: Exception) {
@@ -118,6 +132,7 @@ class EditarPresentacioFragment : Fragment() {
                         state.presentacio.imatge_url?.let { url ->
                             binding.imgPreview.load(url)
                             binding.imgPreview.visibility = View.VISIBLE
+                            binding.btnEliminarImatge.visibility = View.VISIBLE
                         }
                     }
 

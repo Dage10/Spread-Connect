@@ -139,6 +139,26 @@
                                     android:scaleType="centerCrop"
                                     android:visibility="gone" />
 
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/btnEliminarImatge"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:visibility="gone"
+                                    app:cardBackgroundColor="@color/item_background"
+                                    app:cardCornerRadius="12dp"
+                                    app:strokeWidth="0dp"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    android:layout_margin="8dp">
+
+                                    <ImageView
+                                        android:layout_width="14dp"
+                                        android:layout_height="14dp"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/eliminar"
+                                        app:tint="@android:color/white" />
+                                </com.google.android.material.card.MaterialCardView>
+
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/btnSeleccionarImatge"
                                     style="@style/Widget.Material3.Button.IconButton"

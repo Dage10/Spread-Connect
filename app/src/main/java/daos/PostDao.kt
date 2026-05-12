@@ -69,7 +69,7 @@ class PostDao {
     suspend fun editarPost(id: String, titol: String, desc: String, img: String?): Post {
         val data = buildJsonObject {
             put("titol", titol); put("descripcio", desc); put("updated_at", Instant.now().toString())
-            img?.let { put("imatge_url", it) }
+            put("imatge_url", img)
         }
         SupabaseClient.client
             .from("posts")
