@@ -79,7 +79,10 @@ class PostDao {
         return getPostPerId(id)
     }
 
-    suspend fun eliminarPost(id: String) = SupabaseClient.client.from("posts").delete { filter { eq("id", id) } }
+    suspend fun eliminarPost(id: String) {
+        SupabaseClient.client.from("posts_etiquetes").delete { filter { eq("id_post", id) } }
+        SupabaseClient.client.from("posts").delete { filter { eq("id", id) } }
+    }
 
     suspend fun getEtiquetesPost(postId: String): List<Etiqueta> =
         SupabaseClient.client.from("posts_etiquetes")
