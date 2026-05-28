@@ -74,6 +74,7 @@ class PresentacioAdapter(
             btnEliminar.setOnClickListener { onEliminar(presentacio) }
             btnLike.setOnClickListener { onLike(presentacio) }
             btnDislike.setOnClickListener { onDislike(presentacio) }
+            btnComentaris.visibility = View.VISIBLE
             btnComentaris.setOnClickListener { onComentaris(presentacio) }
             imgAvatarUser.setOnClickListener { onUserClick(presentacio.id_usuari) }
             tvUsuari.setOnClickListener { onUserClick(presentacio.id_usuari) }

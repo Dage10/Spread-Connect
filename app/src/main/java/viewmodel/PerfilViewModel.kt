@@ -33,19 +33,22 @@ class PerfilViewModel(
                 val posts = try {
                     repo.postDao.getPostsPerUsuari(idUsuari).map { post ->
                         val numComentaris = try { repo.comentarisDao.getNumComentarisPost(post.id) } catch (_: Exception) { 0 }
-                        post.copy(numComentaris = numComentaris)
+                        val likes = try { repo.reaccioDao.getLikes(post.id) } catch (_: Exception) { 0 }
+                        val dislikes = try { repo.reaccioDao.getDislikes(post.id) } catch (_: Exception) { 0 }
+                        val reaccio = if (idUsuariLoguejat != null) try { repo.reaccioDao.getReaccioUsuari(post.id, idUsuariLoguejat) } catch (_: Exception) { null } else null
+                        post.copy(numComentaris = numComentaris, likes = likes, dislikes = dislikes, reaccioActual = reaccio)
                     }
-                } catch (_: Exception) {
-                    emptyList()
-                }
+                } catch (_: Exception) { emptyList() }
+
                 val presentacions = try {
                     repo.presentacioDao.getPresentacionsPerUsuari(idUsuari).map { pres ->
                         val numComentaris = try { repo.comentarisDao.getNumComentarisPresentacio(pres.id) } catch (_: Exception) { 0 }
-                        pres.copy(numComentaris = numComentaris)
+                        val likes = try { repo.reaccioDao.getLikesPresentacio(pres.id) } catch (_: Exception) { 0 }
+                        val dislikes = try { repo.reaccioDao.getDislikesPresentacio(pres.id) } catch (_: Exception) { 0 }
+                        val reaccio = if (idUsuariLoguejat != null) try { repo.reaccioDao.getReaccioUsuariPresentacio(pres.id, idUsuariLoguejat) } catch (_: Exception) { null } else null
+                        pres.copy(numComentaris = numComentaris, likes = likes, dislikes = dislikes, reaccioActual = reaccio)
                     }
-                } catch (_: Exception) {
-                    emptyList()
-                }
+                } catch (_: Exception) { emptyList() }
 
                 _uiState.value = PerfilUiState(
                     usuari = usuari,

@@ -93,7 +93,7 @@ class PostAdapter(
             btnEditar.setOnClickListener { onEditar(post) }
             btnEliminar.setOnClickListener { onEliminar(post) }
             btnComentaris.setOnClickListener { onComentaris(post) }
-            btnComentaris.visibility = if (mostrarBotons) View.VISIBLE else View.GONE
+            btnComentaris.visibility = View.VISIBLE
             imgAvatarUser.setOnClickListener { onUserClick(post.id_usuari) }
             tvUsuari.setOnClickListener { onUserClick(post.id_usuari) }
         }
