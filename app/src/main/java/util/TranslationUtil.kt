@@ -21,10 +21,10 @@ object TranslationUtil {
 
     suspend fun translateList(texts: List<String>, targetLanguage: String): List<String> = coroutineScope {
         val targetCode = getLanguageCode(targetLanguage)
-        val sourceCode = TranslateLanguage.CATALAN
+        val sourceCode = TranslateLanguage.SPANISH
 
 
-        if (targetCode == sourceCode && targetLanguage == "Castellà") {
+        if (targetLanguage == "Español"){
             return@coroutineScope texts
         }
 
