@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import models.Comentari
 import models.ComentarisUiState
+import models.Post
+import models.Presentacio
+import models.ReaccioStats
 import repository.Repository
 import util.UiText
-
 
 class ComentarisViewModel(
     private val repo: Repository = Repository()
@@ -17,117 +20,122 @@ class ComentarisViewModel(
     private val _uiState = MutableStateFlow(ComentarisUiState())
     val uiState: StateFlow<ComentarisUiState> = _uiState
 
-
-    
     fun carregarDades(targetId: String, idUsuariLoguejat: String?, targetType: String) {
         _uiState.value = _uiState.value.copy(loading = true)
         viewModelScope.launch {
             try {
                 when (targetType) {
                     "post" -> {
-                        val postRaw = repo.postDao.getPostPerId(targetId)
-                        val usuariPost = repo.usuariDao.getUsuariPerId(postRaw.id_usuari)
-                        val likesPost = repo.reaccioDao.getLikes(targetId)
-                        val dislikesPost = repo.reaccioDao.getDislikes(targetId)
-                        val reaccioPost = idUsuariLoguejat?.let { repo.reaccioDao.getReaccioUsuari(targetId, it) }
-
-                        val postDetallat = postRaw.copy(
-                            nom_usuari = usuariPost.nom_usuari,
-                            avatar_url = usuariPost.avatar_url,
-                            likes = likesPost,
-                            dislikes = dislikesPost,
-                            reaccioActual = reaccioPost,
-                            numComentaris = try { repo.comentarisDao.getNumComentarisPost(targetId) } catch (_: Exception) { 0 }
+                        val post = enriquirPost(repo.postDao.getPostPerId(targetId), idUsuariLoguejat)
+                        val comentaris = enriquirComentaris(
+                            repo.comentarisDao.getComentarisPost(targetId),
+                            idUsuariLoguejat
                         )
-
-                        val comentarisRaw = repo.comentarisDao.getComentarisPost(targetId)
-                        val comentarisDetallats = carregarDetallsComentaris(comentarisRaw, idUsuariLoguejat)
-
                         _uiState.value = ComentarisUiState(
-                            post = postDetallat,
-                            comentaris = comentarisDetallats,
+                            post = post,
+                            comentaris = comentaris,
                             loading = false
                         )
                     }
                     "presentacio" -> {
-                        val presRaw = repo.presentacioDao.getPresentacioPerId(targetId)
-                        val usuariPres = repo.usuariDao.getUsuariPerId(presRaw.id_usuari)
-                        val likesPres = repo.reaccioDao.getLikesPresentacio(targetId)
-                        val dislikesPres = repo.reaccioDao.getDislikesPresentacio(targetId)
-                        val reaccioPres = idUsuariLoguejat?.let { repo.reaccioDao.getReaccioUsuariPresentacio(targetId, it) }
-
-                        val presDetallada = presRaw.copy(
-                            nom_usuari = usuariPres.nom_usuari,
-                            avatar_url = usuariPres.avatar_url,
-                            likes = likesPres,
-                            dislikes = dislikesPres,
-                            reaccioActual = reaccioPres,
-                            numComentaris = try { repo.comentarisDao.getNumComentarisPresentacio(targetId) } catch (_: Exception) { 0 }
+                        val presentacio = enriquirPresentacio(
+                            repo.presentacioDao.getPresentacioPerId(targetId),
+                            idUsuariLoguejat
                         )
-
-                        val comentarisRaw = repo.comentarisDao.getComentarisPresentacio(targetId)
-                        val comentarisDetallats = carregarDetallsComentaris(comentarisRaw, idUsuariLoguejat)
-
+                        val comentaris = enriquirComentaris(
+                            repo.comentarisDao.getComentarisPresentacio(targetId),
+                            idUsuariLoguejat
+                        )
                         _uiState.value = ComentarisUiState(
-                            presentacio = presDetallada,
-                            comentaris = comentarisDetallats,
+                            presentacio = presentacio,
+                            comentaris = comentaris,
                             loading = false
                         )
                     }
                     "comment" -> {
-                        val pareRaw = repo.comentarisDao.getComentariPerId(targetId)
-                        val usuariPare = repo.usuariDao.getUsuariPerId(pareRaw.id_usuari)
-                        val likesPare = repo.reaccioDao.getLikesComentari(targetId)
-                        val dislikesPare = repo.reaccioDao.getDislikesComentari(targetId)
-                        val reaccioPare = idUsuariLoguejat?.let { repo.reaccioDao.getReaccioUsuariComentari(targetId, it) }
-
-                        val pareDetallat = pareRaw.copy(
-                            nom_usuari = usuariPare.nom_usuari,
-                            avatar_url = usuariPare.avatar_url,
-                            likes = likesPare,
-                            dislikes = dislikesPare,
-                            reaccioActual = reaccioPare
+                        val comentariPare = enriquirComentariPare(
+                            repo.comentarisDao.getComentariPerId(targetId),
+                            idUsuariLoguejat
                         )
-
-                        val comentarisRaw = repo.comentarisDao.getComentarisRespostes(targetId)
-                        val comentarisDetallats = carregarDetallsComentaris(comentarisRaw, idUsuariLoguejat)
-
-
+                        val comentaris = enriquirComentaris(
+                            repo.comentarisDao.getComentarisRespostes(targetId),
+                            idUsuariLoguejat
+                        )
                         _uiState.value = ComentarisUiState(
-                            comentaris = comentarisDetallats,
+                            comentaris = comentaris,
                             loading = false
-                        ).copy(comentariPare = pareDetallat)
+                        ).copy(comentariPare = comentariPare)
                     }
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    loading = false, 
+                    loading = false,
                     error = UiText.DynamicString(e.message ?: "Error")
                 )
             }
         }
     }
 
-    private suspend fun carregarDetallsComentaris(raw: List<models.Comentari>, idUsuariLoguejat: String?): List<models.Comentari> {
-        return raw.map { comentari ->
-            try {
-                val usuari = repo.usuariDao.getUsuariPerId(comentari.id_usuari)
-                val likes = repo.reaccioDao.getLikesComentari(comentari.id)
-                val dislikes = repo.reaccioDao.getDislikesComentari(comentari.id)
-                val reaccioActual = idUsuariLoguejat?.let { repo.reaccioDao.getReaccioUsuariComentari(comentari.id, it) }
-                val numRespostes = try { repo.comentarisDao.getNumRespostes(comentari.id) } catch (_: Exception) { 0 }
-                
-                comentari.copy(
-                    nom_usuari = usuari.nom_usuari, 
-                    avatar_url = usuari.avatar_url,
-                    likes = likes,
-                    dislikes = dislikes,
-                    reaccioActual = reaccioActual,
-                    numRespostes = numRespostes
-                )
-            } catch (_: Exception) {
-                comentari
-            }
+    private suspend fun enriquirPost(post: Post, idUsuariLoguejat: String?): Post {
+        val usuari = repo.usuariDao.getUsuariPerId(post.id_usuari)
+        val reaccions = repo.reaccioDao.getStatsPosts(listOf(post.id), idUsuariLoguejat)[post.id] ?: ReaccioStats()
+        val numeroComentaris = repo.comentarisDao.getNumComentarisPerPosts(listOf(post.id))[post.id] ?: 0
+        return post.copy(
+            nom_usuari = usuari.nom_usuari,
+            avatar_url = usuari.avatar_url,
+            likes = reaccions.likes,
+            dislikes = reaccions.dislikes,
+            reaccioActual = reaccions.reaccioActual,
+            numComentaris = numeroComentaris
+        )
+    }
+
+    private suspend fun enriquirPresentacio(presentacio: Presentacio, idUsuariLoguejat: String?): Presentacio {
+        val usuari = repo.usuariDao.getUsuariPerId(presentacio.id_usuari)
+        val reaccions = repo.reaccioDao.getStatsPresentacions(listOf(presentacio.id), idUsuariLoguejat)
+            .getOrDefault(presentacio.id, ReaccioStats())
+        val numeroComentaris = repo.comentarisDao.getNumComentarisPerPresentacions(listOf(presentacio.id))
+            .getOrDefault(presentacio.id, 0)
+        return presentacio.copy(
+            nom_usuari = usuari.nom_usuari,
+            avatar_url = usuari.avatar_url,
+            likes = reaccions.likes,
+            dislikes = reaccions.dislikes,
+            reaccioActual = reaccions.reaccioActual,
+            numComentaris = numeroComentaris
+        )
+    }
+
+    private suspend fun enriquirComentariPare(comentari: Comentari, idUsuariLoguejat: String?): Comentari {
+        val usuari = repo.usuariDao.getUsuariPerId(comentari.id_usuari)
+        val reaccions = repo.reaccioDao.getStatsComentaris(listOf(comentari.id), idUsuariLoguejat)
+            .getOrDefault(comentari.id, ReaccioStats())
+        return comentari.copy(
+            nom_usuari = usuari.nom_usuari,
+            avatar_url = usuari.avatar_url,
+            likes = reaccions.likes,
+            dislikes = reaccions.dislikes,
+            reaccioActual = reaccions.reaccioActual
+        )
+    }
+
+    private suspend fun enriquirComentaris(
+        comentaris: List<Comentari>,
+        idUsuariLoguejat: String?
+    ): List<Comentari> {
+        if (comentaris.isEmpty()) return emptyList()
+        val comentarisIds = comentaris.map { it.id }
+        val reaccionsPerComentari = repo.reaccioDao.getStatsComentaris(comentarisIds, idUsuariLoguejat)
+        val numeroRespostesPerComentari = repo.comentarisDao.getNumRespostesPerComentaris(comentarisIds)
+
+        return comentaris.map { comentari ->
+            val reaccions = reaccionsPerComentari[comentari.id] ?: ReaccioStats()
+            comentari.copy(
+                likes = reaccions.likes,
+                dislikes = reaccions.dislikes,
+                reaccioActual = reaccions.reaccioActual,
+                numRespostes = numeroRespostesPerComentari[comentari.id] ?: 0
+            )
         }
     }
 
@@ -192,11 +200,11 @@ class ComentarisViewModel(
         }
     }
 
-    fun reaccionarPresentacio(presId: String, idUsuari: String, tipus: String) {
+    fun reaccionarPresentacio(presentacioId: String, idUsuari: String, tipus: String) {
         viewModelScope.launch {
             try {
-                repo.reaccioDao.canviarReaccioPresentacio(presId, idUsuari, tipus)
-                carregarDades(presId, idUsuari, "presentacio")
+                repo.reaccioDao.canviarReaccioPresentacio(presentacioId, idUsuari, tipus)
+                carregarDades(presentacioId, idUsuari, "presentacio")
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(error = UiText.DynamicString(e.message ?: "Error"))
             }

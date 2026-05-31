@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collectLatest
 import sharedPreference.SharedPreference
 import util.ImageExtension.loadImageOrDefault
+import util.applyPaddingSystemBarsBottom
 import adapter.ComentarisAdapter
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -58,6 +59,8 @@ class ComentarisFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         idUsuariLoguejat = SharedPreference.obtenirUsuariLoguejat(requireContext())
+
+        binding.layoutInputParent.applyPaddingSystemBarsBottom()
 
         binding.botoEnrere.setOnClickListener { findNavController().navigateUp() }
 

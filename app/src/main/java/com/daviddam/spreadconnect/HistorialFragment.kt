@@ -17,6 +17,7 @@ import adapter.HistorialAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import sharedPreference.SharedPreference
+import util.applyPaddingSystemBarsBottom
 import viewmodel.HistorialViewModel
 
 class HistorialFragment : Fragment() {
@@ -42,6 +43,7 @@ class HistorialFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = historialAdapter
         }
+        binding.bottomNavigationView.applyPaddingSystemBarsBottom()
 
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {

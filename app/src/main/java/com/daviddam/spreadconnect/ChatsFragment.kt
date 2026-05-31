@@ -19,6 +19,7 @@ import adapter.ConversaAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import sharedPreference.SharedPreference
+import util.applyPaddingSystemBarsBottom
 import viewmodel.ChatsViewModel
 import models.Conversa
 
@@ -53,6 +54,7 @@ class ChatsFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = conversaAdapter
         }
+        binding.bottomNavigationView.applyPaddingSystemBarsBottom()
 
         binding.etFiltreUsuari.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

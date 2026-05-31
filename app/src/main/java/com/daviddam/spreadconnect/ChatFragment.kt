@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import sharedPreference.SharedPreference
 import util.ImageExtension.loadImageOrDefault
+import util.applyPaddingSystemBarsBottom
+import util.applyPaddingSystemBarsTop
 import viewmodel.ChatViewModel
 
 class ChatFragment : Fragment() {
@@ -35,7 +37,7 @@ class ChatFragment : Fragment() {
     private val seleccionarImatge = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             imatgeUriSeleccionada = it
-            Toast.makeText(requireContext(), "Imatge seleccionada", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.imatge_seleccionada, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -49,6 +51,9 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.header.applyPaddingSystemBarsTop()
+        binding.inputLayout.applyPaddingSystemBarsBottom()
 
         val idUsuariLoguejat = SharedPreference.obtenirUsuariLoguejat(requireContext())
         missatgeAdapter = MissatgeAdapter(emptyList(), idUsuariLoguejat)

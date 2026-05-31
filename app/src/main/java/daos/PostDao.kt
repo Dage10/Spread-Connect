@@ -84,6 +84,16 @@ class PostDao {
         SupabaseClient.client.from("posts").delete { filter { eq("id", id) } }
     }
 
+    suspend fun getEtiquetesNomsPerPosts(postsIds: List<String>): Map<String, List<String>> {
+        if (postsIds.isEmpty()) return emptyMap()
+        return SupabaseClient.client.from("posts_etiquetes")
+            .select(Columns.list("id_post", "id_etiqueta", "etiquetes(id, nom)")) {
+                filter { isIn("id_post", postsIds) }
+            }
+            .decodeList<EtiquetaPost>()
+            .groupBy({ it.id_post }, { it.etiquetes.nom })
+    }
+
     suspend fun getEtiquetesPost(postId: String): List<Etiqueta> =
         SupabaseClient.client.from("posts_etiquetes")
             .select(Columns.list("id_post", "id_etiqueta", "etiquetes(id,nom)")) { filter { eq("id_post", postId) } }

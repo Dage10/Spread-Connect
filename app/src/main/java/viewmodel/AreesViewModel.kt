@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import models.Area
 import models.AreesUiState
+import models.ReaccioStats
 import repository.Repository
 import util.TranslationUtil
 import util.UiText
@@ -34,11 +35,7 @@ class AreesViewModel(
                         val usuari = repo.usuariDao.getUsuariPerId(idUsuari)
                         nomUsuari = usuari.nom_usuari
                         avatarUrl = usuari.avatar_url
-                        
-                        val prefs = repo.preferenciesDao.getPerUsuari(idUsuari)
-                        if (prefs != null) {
-                            idiomaUsuari = prefs.llenguatge
-                        }
+                        repo.preferenciesDao.getPerUsuari(idUsuari)?.let { idiomaUsuari = it.llenguatge }
                     } catch (_: Exception) {
                         _uiState.value = _uiState.value.copy(
                             error = UiText.StringResource(R.string.usuari_no_trobat),
@@ -58,34 +55,28 @@ class AreesViewModel(
                     nomUsuari = nomUsuari,
                     avatarUrl = avatarUrl
                 )
-                
-                if (primera != null) {
-                    carregarPerArea(primera.id)
-                }
 
-                viewModelScope.launch {
-                    try {
-                        val nomsOriginals = llistaOriginal.map { it.nom }
-                        val nomsTraduits = TranslationUtil.translateList(nomsOriginals, idiomaUsuari)
-                        
-                        val llistaTraduida = llistaOriginal.mapIndexed { index, area ->
-                            area.copy(nom = nomsTraduits.getOrElse(index) { area.nom })
-                        }
+                primera?.let { carregarPerArea(it.id) }
 
-                        val seleccionadaActual = _uiState.value.areaSeleccionada
-                        val novaSeleccionada = llistaTraduida.find { it.id == seleccionadaActual?.id }
-
-                        _uiState.value = _uiState.value.copy(
-                            areas = llistaTraduida,
-                            areaSeleccionada = novaSeleccionada ?: llistaTraduida.firstOrNull()
-                        )
-                    } catch (_: Exception) {
-                        _uiState.value = _uiState.value.copy(
-                            error = UiText.StringResource(R.string.error_traduccio)
-                        )
+                try {
+                    val nomsTraduits = TranslationUtil.translateList(
+                        llistaOriginal.map { it.nom },
+                        idiomaUsuari
+                    )
+                    val llistaTraduida = llistaOriginal.mapIndexed { i, area ->
+                        area.copy(nom = nomsTraduits.getOrElse(i) { area.nom })
                     }
+                    val seleccionadaId = _uiState.value.areaSeleccionada?.id
+                    _uiState.value = _uiState.value.copy(
+                        areas = llistaTraduida,
+                        areaSeleccionada = llistaTraduida.find { it.id == seleccionadaId }
+                            ?: llistaTraduida.firstOrNull()
+                    )
+                } catch (_: Exception) {
+                    _uiState.value = _uiState.value.copy(
+                        error = UiText.StringResource(R.string.error_traduccio)
+                    )
                 }
-
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     loading = false,
@@ -96,10 +87,7 @@ class AreesViewModel(
     }
 
     fun refrescarArea() {
-        val area = _uiState.value.areaSeleccionada
-        if (area != null) {
-            carregarPerArea(area.id)
-        }
+        _uiState.value.areaSeleccionada?.id?.let { carregarPerArea(it) }
     }
 
     fun seleccionarArea(area: Area) {
@@ -110,29 +98,47 @@ class AreesViewModel(
     private fun carregarPerArea(areaId: String) {
         viewModelScope.launch {
             try {
-                val postsDetallats = repo.postDao.getPostsAmbUsuari(areaId).map { post ->
-                    val likes = repo.reaccioDao.getLikes(post.id)
-                    val dislikes = repo.reaccioDao.getDislikes(post.id)
-                    val reaccioActual = idUsuariActual?.let { repo.reaccioDao.getReaccioUsuari(post.id, it) }
-                    val tags = try { repo.postDao.getEtiquetesPost(post.id).map { it.nom } } catch (_: Exception) { emptyList() }
-                    val numComentaris = try { repo.comentarisDao.getNumComentarisPost(post.id) } catch (_: Exception) { 0 }
-                    
+                val posts = repo.postDao.getPostsAmbUsuari(areaId)
+                val postsIds = posts.map { it.id }
+
+                val likesIDislikesPerPost = repo.reaccioDao.getStatsPosts(postsIds, idUsuariActual)
+                val numeroComentarisPosts = repo.comentarisDao.getNumComentarisPerPosts(postsIds)
+                val etiquetesPerPost = try {
+                    repo.postDao.getEtiquetesNomsPerPosts(postsIds)
+                } catch (_: Exception) {
+                    emptyMap()
+                }
+
+                val postsDetallats = posts.map { post ->
+                    val reaccions = likesIDislikesPerPost[post.id] ?: ReaccioStats()
+                    val likes = reaccions.likes
+                    val dislikes = reaccions.dislikes
+                    val reaccioActual = reaccions.reaccioActual
+                    val numComentaris = numeroComentarisPosts[post.id] ?: 0
+                    val etiquetes = etiquetesPerPost[post.id] ?: emptyList()
+
                     post.copy(
                         likes = likes,
                         dislikes = dislikes,
                         reaccioActual = reaccioActual,
                         numComentaris = numComentaris,
-                        etiquetes = tags
+                        etiquetes = etiquetes
                     )
                 }
 
-                val presentacionsDetallades = repo.presentacioDao.getPresentacionsAmbUsuari(areaId).map { pres ->
-                    val likes = repo.reaccioDao.getLikesPresentacio(pres.id)
-                    val dislikes = repo.reaccioDao.getDislikesPresentacio(pres.id)
-                    val reaccioActual = idUsuariActual?.let { repo.reaccioDao.getReaccioUsuariPresentacio(pres.id, it) }
-                    val numComentaris = try { repo.comentarisDao.getNumComentarisPresentacio(pres.id) } catch (_: Exception) { 0 }
-                    
-                    pres.copy(
+                val presentacions = repo.presentacioDao.getPresentacionsAmbUsuari(areaId)
+                val presentacionsIds = presentacions.map { it.id }
+
+                val likesIDislikesPerPresentacio = repo.reaccioDao.getStatsPresentacions(presentacionsIds, idUsuariActual)
+                val numeroComentarisPresentacio = repo.comentarisDao.getNumComentarisPerPresentacions(presentacionsIds)
+
+                val presentacionsDetallades = presentacions.map { presentacio ->
+                    val reaccions = likesIDislikesPerPresentacio[presentacio.id] ?: ReaccioStats()
+                    val likes = reaccions.likes
+                    val dislikes = reaccions.dislikes
+                    val reaccioActual = reaccions.reaccioActual
+                    val numComentaris = numeroComentarisPresentacio[presentacio.id] ?: 0
+                    presentacio.copy(
                         likes = likes,
                         dislikes = dislikes,
                         reaccioActual = reaccioActual,
@@ -154,27 +160,25 @@ class AreesViewModel(
     }
 
     fun reaccionarPost(post: models.Post, tipus: String) {
-        idUsuariActual?.let { usuari ->
-            viewModelScope.launch {
-                try {
-                    repo.reaccioDao.canviarReaccio(post.id, usuari, tipus)
-                    refrescarArea()
-                } catch (e: Exception) {
-                    _uiState.value = _uiState.value.copy(error = UiText.DynamicString("Error: ${e.message}"))
-                }
+        val usuari = idUsuariActual ?: return
+        viewModelScope.launch {
+            try {
+                repo.reaccioDao.canviarReaccio(post.id, usuari, tipus)
+                refrescarArea()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(error = UiText.DynamicString("Error: ${e.message}"))
             }
         }
     }
 
     fun reaccionarPresentacio(presentacio: models.Presentacio, tipus: String) {
-        idUsuariActual?.let { usuari ->
-            viewModelScope.launch {
-                try {
-                    repo.reaccioDao.canviarReaccioPresentacio(presentacio.id, usuari, tipus)
-                    refrescarArea()
-                } catch (e: Exception) {
-                    _uiState.value = _uiState.value.copy(error = UiText.DynamicString("Error: ${e.message}"))
-                }
+        val usuari = idUsuariActual ?: return
+        viewModelScope.launch {
+            try {
+                repo.reaccioDao.canviarReaccioPresentacio(presentacio.id, usuari, tipus)
+                refrescarArea()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(error = UiText.DynamicString("Error: ${e.message}"))
             }
         }
     }

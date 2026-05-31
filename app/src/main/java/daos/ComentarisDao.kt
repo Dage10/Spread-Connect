@@ -34,6 +34,32 @@ class ComentarisDao {
         )
     }
 
+    @Serializable
+    private data class ComentariIdRow(val id_post: String? = null, val id_presentacio: String? = null)
+
+    @Serializable
+    private data class ComentariPareRow(val id_comentari_pare: String? = null)
+
+    suspend fun getNumComentarisPerPosts(postsIds: List<String>): Map<String, Int> {
+        if (postsIds.isEmpty()) return emptyMap()
+        return SupabaseClient.client.from("comentaris")
+            .select(Columns.list("id_post")) { filter { isIn("id_post", postsIds) } }
+            .decodeList<ComentariIdRow>()
+            .mapNotNull { it.id_post }
+            .groupingBy { it }
+            .eachCount()
+    }
+
+    suspend fun getNumComentarisPerPresentacions(presentacionsIds: List<String>): Map<String, Int> {
+        if (presentacionsIds.isEmpty()) return emptyMap()
+        return SupabaseClient.client.from("comentaris")
+            .select(Columns.list("id_presentacio")) { filter { isIn("id_presentacio", presentacionsIds) } }
+            .decodeList<ComentariIdRow>()
+            .mapNotNull { it.id_presentacio }
+            .groupingBy { it }
+            .eachCount()
+    }
+
     suspend fun getNumComentarisPost(idPost: String): Int {
         return try {
             SupabaseClient.client
@@ -72,6 +98,16 @@ class ComentarisDao {
             .select(Columns.list("id")) { filter { eq("id_comentari_pare", comentariId) } }
             .decodeList<JsonObject>()
             .size
+    }
+
+    suspend fun getNumRespostesPerComentaris(comentarisIds: List<String>): Map<String, Int> {
+        if (comentarisIds.isEmpty()) return emptyMap()
+        return SupabaseClient.client.from("comentaris")
+            .select(Columns.list("id_comentari_pare")) { filter { isIn("id_comentari_pare", comentarisIds) } }
+            .decodeList<ComentariPareRow>()
+            .mapNotNull { it.id_comentari_pare }
+            .groupingBy { it }
+            .eachCount()
     }
 
     suspend fun getComentarisPost(idPost: String): List<Comentari> =

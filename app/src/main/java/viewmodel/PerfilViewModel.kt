@@ -2,13 +2,16 @@ package viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daviddam.spreadconnect.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import models.PerfilUiState
+import models.Post
+import models.Presentacio
+import models.ReaccioStats
 import repository.Repository
 import util.UiText
-import com.daviddam.spreadconnect.R
 
 class PerfilViewModel(
     private val repo: Repository = Repository()
@@ -31,24 +34,19 @@ class PerfilViewModel(
                 }
 
                 val posts = try {
-                    repo.postDao.getPostsPerUsuari(idUsuari).map { post ->
-                        val numComentaris = try { repo.comentarisDao.getNumComentarisPost(post.id) } catch (_: Exception) { 0 }
-                        val likes = try { repo.reaccioDao.getLikes(post.id) } catch (_: Exception) { 0 }
-                        val dislikes = try { repo.reaccioDao.getDislikes(post.id) } catch (_: Exception) { 0 }
-                        val reaccio = if (idUsuariLoguejat != null) try { repo.reaccioDao.getReaccioUsuari(post.id, idUsuariLoguejat) } catch (_: Exception) { null } else null
-                        post.copy(numComentaris = numComentaris, likes = likes, dislikes = dislikes, reaccioActual = reaccio)
-                    }
-                } catch (_: Exception) { emptyList() }
+                    enriquirPosts(repo.postDao.getPostsPerUsuari(idUsuari), idUsuariLoguejat)
+                } catch (_: Exception) {
+                    emptyList()
+                }
 
                 val presentacions = try {
-                    repo.presentacioDao.getPresentacionsPerUsuari(idUsuari).map { pres ->
-                        val numComentaris = try { repo.comentarisDao.getNumComentarisPresentacio(pres.id) } catch (_: Exception) { 0 }
-                        val likes = try { repo.reaccioDao.getLikesPresentacio(pres.id) } catch (_: Exception) { 0 }
-                        val dislikes = try { repo.reaccioDao.getDislikesPresentacio(pres.id) } catch (_: Exception) { 0 }
-                        val reaccio = if (idUsuariLoguejat != null) try { repo.reaccioDao.getReaccioUsuariPresentacio(pres.id, idUsuariLoguejat) } catch (_: Exception) { null } else null
-                        pres.copy(numComentaris = numComentaris, likes = likes, dislikes = dislikes, reaccioActual = reaccio)
-                    }
-                } catch (_: Exception) { emptyList() }
+                    enriquirPresentacions(
+                        repo.presentacioDao.getPresentacionsPerUsuari(idUsuari),
+                        idUsuariLoguejat
+                    )
+                } catch (_: Exception) {
+                    emptyList()
+                }
 
                 _uiState.value = PerfilUiState(
                     usuari = usuari,
@@ -68,10 +66,48 @@ class PerfilViewModel(
         }
     }
 
+    private suspend fun enriquirPosts(posts: List<Post>, idUsuariLoguejat: String?): List<Post> {
+        if (posts.isEmpty()) return emptyList()
+        val postsIds = posts.map { it.id }
+        val reaccionsPerPost = repo.reaccioDao.getStatsPosts(postsIds, idUsuariLoguejat)
+        val numeroComentarisPerPost = repo.comentarisDao.getNumComentarisPerPosts(postsIds)
+
+        return posts.map { post ->
+            val reaccions = reaccionsPerPost[post.id] ?: ReaccioStats()
+            post.copy(
+                likes = reaccions.likes,
+                dislikes = reaccions.dislikes,
+                reaccioActual = reaccions.reaccioActual,
+                numComentaris = numeroComentarisPerPost[post.id] ?: 0
+            )
+        }
+    }
+
+    private suspend fun enriquirPresentacions(
+        presentacions: List<Presentacio>,
+        idUsuariLoguejat: String?
+    ): List<Presentacio> {
+        if (presentacions.isEmpty()) return emptyList()
+        val presentacionsIds = presentacions.map { it.id }
+        val reaccionsPerPresentacio = repo.reaccioDao.getStatsPresentacions(presentacionsIds, idUsuariLoguejat)
+        val numeroComentarisPerPresentacio =
+            repo.comentarisDao.getNumComentarisPerPresentacions(presentacionsIds)
+
+        return presentacions.map { presentacio ->
+            val reaccions = reaccionsPerPresentacio[presentacio.id] ?: ReaccioStats()
+            presentacio.copy(
+                likes = reaccions.likes,
+                dislikes = reaccions.dislikes,
+                reaccioActual = reaccions.reaccioActual,
+                numComentaris = numeroComentarisPerPresentacio[presentacio.id] ?: 0
+            )
+        }
+    }
+
     fun toggleSeguir(idUsuariLoguejat: String) {
         val estatActual = _uiState.value
         val usuariAperfil = estatActual.usuari ?: return
-        
+
         if (idUsuariLoguejat == usuariAperfil.id) return
 
         viewModelScope.launch {
@@ -82,7 +118,11 @@ class PerfilViewModel(
                     repo.seguimentDao.seguirUsuari(idUsuariLoguejat, usuariAperfil.id)
                 }
 
-                val nousSeguidors = if (estatActual.isSeguint) (estatActual.numSeguidors ?: 0) - 1 else (estatActual.numSeguidors ?: 0) + 1
+                val nousSeguidors = if (estatActual.isSeguint) {
+                    (estatActual.numSeguidors ?: 0) - 1
+                } else {
+                    (estatActual.numSeguidors ?: 0) + 1
+                }
                 _uiState.value = estatActual.copy(
                     isSeguint = !estatActual.isSeguint,
                     numSeguidors = nousSeguidors

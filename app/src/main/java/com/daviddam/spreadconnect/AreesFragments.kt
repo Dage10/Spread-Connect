@@ -26,6 +26,8 @@ import androidx.core.widget.addTextChangedListener
 import sharedPreference.SharedPreference
 import util.SessionManager
 import util.ImageExtension.loadImageOrDefault
+import util.applyPaddingSystemBarsBottom
+import androidx.core.view.doOnLayout
 import viewmodel.AreesViewModel
 import viewmodel.EditarPostViewModel
 import viewmodel.EditarPresentacioViewModel
@@ -120,7 +122,11 @@ class AreesFragments : Fragment() {
         binding.rvArees.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = areesAdapter
+            doOnLayout {
+                areesAdapter.actualitzarAmpleDisponible(width - paddingLeft - paddingRight)
+            }
         }
+        binding.bottomNavigationView.applyPaddingSystemBarsBottom()
 
         binding.rvPresentacions.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -186,6 +192,9 @@ class AreesFragments : Fragment() {
                         totesArees = state.areas
                         actualitzarAreesPaginades()
                         areesAdapter.setSelected(state.areaSeleccionada?.id)
+                        binding.rvArees.doOnLayout {
+                            areesAdapter.actualitzarAmpleDisponible(it.width - it.paddingLeft - it.paddingRight)
+                        }
                         totsPosts = state.posts
                         totsPresentacions = state.presentacions
                         applyFilters()
@@ -216,11 +225,6 @@ class AreesFragments : Fragment() {
         actualitzarMode()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModelAreesViewModel.refrescarArea()
-    }
-
     private fun actualitzarMode() {
         binding.rvPresentacions.visibility = if (modePresentacions) View.VISIBLE else View.GONE
         binding.rvPosts.visibility = if (modePresentacions) View.GONE else View.VISIBLE
@@ -230,6 +234,9 @@ class AreesFragments : Fragment() {
     private fun actualitzarAreesPaginades() {
         val fi = (indexInici + maxPerPagina).coerceAtMost(totesArees.size)
         areesAdapter.updateData(if (indexInici < fi) totesArees.subList(indexInici, fi) else emptyList())
+        binding.rvArees.doOnLayout {
+            areesAdapter.actualitzarAmpleDisponible(it.width - it.paddingLeft - it.paddingRight)
+        }
         val hiHaMes = totesArees.size > maxPerPagina
         binding.btnPrevArea.visibility = if (hiHaMes && indexInici > 0) View.VISIBLE else View.INVISIBLE
         binding.btnNextArea.visibility = if (hiHaMes && indexInici + maxPerPagina < totesArees.size) View.VISIBLE else View.INVISIBLE

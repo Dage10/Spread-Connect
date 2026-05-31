@@ -2,11 +2,67 @@ package daos
 
 import conexio.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
+import kotlinx.serialization.Serializable
 import models.Reaccio
+import models.ReaccioStats
 import java.time.Instant
 import java.util.UUID
 
 class ReaccioDao {
+
+    @Serializable
+    private data class ReaccioRow(
+        val id_post: String? = null,
+        val id_presentacio: String? = null,
+        val id_comentari: String? = null,
+        val tipus: String,
+        val id_usuari: String
+    )
+
+    private fun agruparStats(
+        ids: List<String>,
+        rows: List<ReaccioRow>,
+        idSelector: (ReaccioRow) -> String?,
+        idUsuari: String?
+    ): Map<String, ReaccioStats> = ids.associateWith { id ->
+        val r = rows.filter { idSelector(it) == id }
+        ReaccioStats(
+            likes = r.count { it.tipus == "like" },
+            dislikes = r.count { it.tipus == "dislike" },
+            reaccioActual = idUsuari?.let { u -> r.find { it.id_usuari == u }?.tipus }
+        )
+    }
+
+    suspend fun getStatsPosts(postsIds: List<String>, idUsuari: String?): Map<String, ReaccioStats> {
+        if (postsIds.isEmpty()) return emptyMap()
+        val rows = SupabaseClient.client.from("reaccions_posts")
+            .select(Columns.list("id_post", "tipus", "id_usuari")) {
+                filter { isIn("id_post", postsIds) }
+            }
+            .decodeList<ReaccioRow>()
+        return agruparStats(postsIds, rows, { it.id_post }, idUsuari)
+    }
+
+    suspend fun getStatsPresentacions(presentacionsIds: List<String>, idUsuari: String?): Map<String, ReaccioStats> {
+        if (presentacionsIds.isEmpty()) return emptyMap()
+        val rows = SupabaseClient.client.from("reaccions_presentacions")
+            .select(Columns.list("id_presentacio", "tipus", "id_usuari")) {
+                filter { isIn("id_presentacio", presentacionsIds) }
+            }
+            .decodeList<ReaccioRow>()
+        return agruparStats(presentacionsIds, rows, { it.id_presentacio }, idUsuari)
+    }
+
+    suspend fun getStatsComentaris(comentarisIds: List<String>, idUsuari: String?): Map<String, ReaccioStats> {
+        if (comentarisIds.isEmpty()) return emptyMap()
+        val rows = SupabaseClient.client.from("reaccions_comentaris")
+            .select(Columns.list("id_comentari", "tipus", "id_usuari")) {
+                filter { isIn("id_comentari", comentarisIds) }
+            }
+            .decodeList<ReaccioRow>()
+        return agruparStats(comentarisIds, rows, { it.id_comentari }, idUsuari)
+    }
 
     private suspend fun getLikesGeneric(taula: String, columna: String, id: String): Int = try {
         SupabaseClient.client.from(taula)

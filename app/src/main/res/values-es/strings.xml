@@ -123,4 +123,5 @@
     <string name="notificacions_permis_configuracio">Para activar las notificaciones, tienes que ir a la configuración de la aplicación y conceder el permiso manualmente.</string>
     <string name="anar_a_configuracio">Ir a Configuración</string>
     <string name="sessio_tancada">Logout completado</string>
+    <string name="imatge_seleccionada">Imagen seleccionada</string>
 </resources>
