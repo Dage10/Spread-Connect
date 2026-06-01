@@ -26,7 +26,7 @@ Instálala en tu dispositivo Android:
 <img width="200" height="450" alt="Screenshot_20260531_152851_Spread Connect" src="https://github.com/user-attachments/assets/faf423e5-fad2-4a0f-a3ca-d79570862055" />
 <img width="200" height="450" alt="Screenshot_20260531_152846_Spread Connect" src="https://github.com/user-attachments/assets/f3375333-f53a-41d2-8a18-0e308f5c5d8b" />
 <img width="200" height="450" alt="Screenshot_20260531_152843_Spread Connect" src="https://github.com/user-attachments/assets/d8bab13c-827c-4ab8-968a-5bab95d44a0b" />
-<img width="200" height="450" alt="Screenshot_20260531_152832_Spread Connect" src="https://github.com/user-attachments/assets/92bb500b-50a1-4502-9f4e-c02bc5322936" />
+<img width="200" height="450" alt="Screenshot_20260601_164740_Spread Connect" src="https://github.com/user-attachments/assets/03a04bb4-bc86-4a54-b972-30844696a964" />
 <img width="200" height="450" alt="Screenshot_20260531_152821_Spread Connect" src="https://github.com/user-attachments/assets/77746456-c611-4d43-a2a8-fdb7642579e1" />
 <img width="200" height="450" alt="Screenshot_20260531_152817_Spread Connect" src="https://github.com/user-attachments/assets/88792740-ca7a-4e3b-9657-497e972a1185" />
 <img width="200" height="450" alt="Screenshot_20260531_152801_Spread Connect" src="https://github.com/user-attachments/assets/6bbc8b5f-98d9-46a7-9700-43eae2b89346" />
