@@ -23,28 +23,28 @@ Install it on your Android device:
 
 ## 📸 Screenshots
 
-<img width="200" height="450" alt="Screenshot_20260531_152951_Gmail" src="https://github.com/user-attachments/assets/a5c13be2-34b2-4a56-9054-df0973792b38" />
-<img width="200" height="450" alt="Screenshot_20260531_152933_Spread Connect" src="https://github.com/user-attachments/assets/8d10791f-3d4b-4684-9d11-a003402f8884" />
-<img width="200" height="450" alt="Screenshot_20260531_152917_Spread Connect" src="https://github.com/user-attachments/assets/87127ca1-1e3e-4aea-be62-343c1305b63f" />
-<img width="200" height="450" alt="Screenshot_20260531_152851_Spread Connect" src="https://github.com/user-attachments/assets/faf423e5-fad2-4a0f-a3ca-d79570862055" />
-<img width="200" height="450" alt="Screenshot_20260531_152846_Spread Connect" src="https://github.com/user-attachments/assets/f3375333-f53a-41d2-8a18-0e308f5c5d8b" />
-<img width="200" height="450" alt="Screenshot_20260531_152843_Spread Connect" src="https://github.com/user-attachments/assets/d8bab13c-827c-4ab8-968a-5bab95d44a0b" />
-<img width="200" height="450" alt="Screenshot_20260531_152832_Spread Connect" src="https://github.com/user-attachments/assets/92bb500b-50a1-4502-9f4e-c02bc5322936" />
-<img width="200" height="450" alt="Screenshot_20260531_152821_Spread Connect" src="https://github.com/user-attachments/assets/77746456-c611-4d43-a2a8-fdb7642579e1" />
-<img width="200" height="450" alt="Screenshot_20260531_152817_Spread Connect" src="https://github.com/user-attachments/assets/88792740-ca7a-4e3b-9657-497e972a1185" />
-<img width="200" height="450" alt="Screenshot_20260531_152801_Spread Connect" src="https://github.com/user-attachments/assets/6bbc8b5f-98d9-46a7-9700-43eae2b89346" />
-<img width="200" height="450" alt="Screenshot_20260531_152744_Spread Connect" src="https://github.com/user-attachments/assets/f80af43f-60cc-4ef1-bd76-d0a5387e5e30" />
-<img width="200" height="450" alt="Screenshot_20260531_152736_Spread Connect" src="https://github.com/user-attachments/assets/4dc4c5ce-cacd-4e48-879e-d43982ecc3df" />
-<img width="200" height="450" alt="Screenshot_20260531_152730_Spread Connect" src="https://github.com/user-attachments/assets/85aa7871-9263-4448-a712-513172f8cc80" />
-<img width="200" height="450" alt="Screenshot_20260531_154025_Spread Connect" src="https://github.com/user-attachments/assets/95ab67d8-7791-4de1-881f-1f4badfe0449" />
-<img width="200" height="450" alt="Screenshot_20260531_153958_Spread Connect" src="https://github.com/user-attachments/assets/20fb130a-1a65-431f-b242-70b1f7feb613" />
-<img width="200" height="450" alt="Screenshot_20260531_153944_Spread Connect" src="https://github.com/user-attachments/assets/d056e260-288f-4c10-9f94-6b0e44d0c6d7" />
-<img width="200" height="450" alt="Screenshot_20260531_153608_Spread Connect" src="https://github.com/user-attachments/assets/8bed55a4-9249-4779-bbde-62f8378d8368" />
-<img width="200" height="450" alt="Screenshot_20260531_153602_Spread Connect" src="https://github.com/user-attachments/assets/92587b97-91ee-4db2-ba7f-d378a2f6f0ee" />
-<img width="200" height="450" alt="Screenshot_20260531_153547_Spread Connect" src="https://github.com/user-attachments/assets/0afe4c5c-29c6-45b7-9aa0-4766b48d6c13" />
-<img width="200" height="450" alt="Screenshot_20260531_153505_Spread Connect" src="https://github.com/user-attachments/assets/20a6bc73-b21b-45b5-8e13-b3fe071db926" />
-<img width="200" height="450" alt="Screenshot_20260531_153452_Spread Connect" src="https://github.com/user-attachments/assets/47948fd3-b3d8-47b7-bafd-54cd0bd508b6" />
-<img width="200" height="450" alt="Screenshot_20260531_153448_Spread Connect" src="https://github.com/user-attachments/assets/73db177f-f736-496f-89f5-eabf22ced8f2" />
+<img width="200" height="450" alt="Screenshot_20260601_160307_Spread Connect" src="https://github.com/user-attachments/assets/a621e13b-0ee5-4dba-a6ca-256e988181bf" />
+<img width="200" height="450" alt="Screenshot_20260601_160920_Spread Connect" src="https://github.com/user-attachments/assets/1f5225fd-babf-4124-9512-27dbaee51785" />
+<img width="200" height="450" alt="Screenshot_20260601_161231_Spread Connect" src="https://github.com/user-attachments/assets/03af4b6d-4632-4e53-97f4-6c0dc1fde312" />
+<img width="200" height="450" alt="Screenshot_20260601_162325_Spread Connect" src="https://github.com/user-attachments/assets/0d2410e1-262a-4bf7-bb78-de9782335c12" />
+<img width="200" height="450" alt="Screenshot_20260601_161237_Spread Connect" src="https://github.com/user-attachments/assets/02cc64c6-8978-4e2a-b513-df0302e53901" />
+<img width="200" height="450" alt="Screenshot_20260601_160934_Spread Connect" src="https://github.com/user-attachments/assets/37e561e2-f132-4e21-ac6a-1ca43938b490" />
+<img width="200" height="450" alt="Screenshot_20260601_160930_Spread Connect" src="https://github.com/user-attachments/assets/882140f1-267e-45e4-9c1b-e403ea9c3ebb" />
+<img width="200" height="450" alt="Screenshot_20260601_160918_Spread Connect" src="https://github.com/user-attachments/assets/805ba524-fd55-424b-add5-f1b5ea91b5cf" />
+<img width="200" height="450" alt="Screenshot_20260601_160913_Spread Connect" src="https://github.com/user-attachments/assets/2a1aa085-c333-4aff-98c8-27a152f4943b" />
+<img width="200" height="450" alt="Screenshot_20260601_160800_Spread Connect" src="https://github.com/user-attachments/assets/44a9c31e-d968-43a7-97da-853d0569434a" />
+<img width="200" height="450" alt="Screenshot_20260601_160753_Spread Connect" src="https://github.com/user-attachments/assets/d284ef15-4a77-4d1c-9d30-115349e7972d" />
+<img width="200" height="450" alt="Screenshot_20260601_160736_Spread Connect" src="https://github.com/user-attachments/assets/49a03686-d547-431a-af6b-220fa771304e" />
+<img width="200" height="450" alt="Screenshot_20260601_160711_Spread Connect" src="https://github.com/user-attachments/assets/39e67a86-a185-4925-9063-cf7474feeb22" />
+<img width="200" height="450" alt="Screenshot_20260601_160649_Spread Connect" src="https://github.com/user-attachments/assets/40aebd38-f6b9-4577-80ba-2bd005ed9d5f" />
+<img width="200" height="450" alt="Screenshot_20260601_160636_Spread Connect" src="https://github.com/user-attachments/assets/27248dac-3a24-4187-a21d-4e1a41f09b17" />
+<img width="200" height="450" alt="Screenshot_20260601_160632_Spread Connect" src="https://github.com/user-attachments/assets/11e947df-cd22-47b8-9dca-d447a83071c7" />
+<img width="200" height="450" alt="Screenshot_20260601_160538_Gmail" src="https://github.com/user-attachments/assets/e4c61be1-cd3c-4de4-9e32-21a32ccf8686" />
+<img width="200" height="450" alt="Screenshot_20260601_160506_Spread Connect" src="https://github.com/user-attachments/assets/e8c2bd21-d0b9-492c-8732-226f0fbe2d18" />
+<img width="200" height="450" alt="Screenshot_20260601_160440_Spread Connect" src="https://github.com/user-attachments/assets/29737898-bf00-4d1b-aaa9-fa243dd8d3fb" />
+<img width="200" height="450" alt="Screenshot_20260601_160317_Spread Connect" src="https://github.com/user-attachments/assets/8ad00ee5-bf8b-47c4-b22c-cba99c58e223" />
+<img width="200" height="450" alt="Screenshot_20260601_160312_Spread Connect" src="https://github.com/user-attachments/assets/9f2dbc3c-7a80-4713-9ec3-3ead3f13a75f" />
+<img width="200" height="450" alt="Screenshot_20260601_163227_Spread Connect" src="https://github.com/user-attachments/assets/c9b00dbc-d289-43a5-9627-4a5a4d8b9f5e" />
 
 
 ---
