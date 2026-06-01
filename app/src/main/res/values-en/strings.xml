@@ -111,7 +111,6 @@
     <string name="ultim_post">Last post:</string>
     <string name="ultim_presentacio">Last presentation:</string>
     <string name="postMesInteraccions">Post with most interactions:</string>
-    <string name="enviar_missatge">Send message</string>
     <string name="seguir">Follow</string>
     <string name="posts_menu_item">Posts</string>
     <string name="historial_menu_item">History</string>
@@ -124,4 +123,5 @@
     <string name="anar_a_configuracio">Go to Settings</string>
     <string name="sessio_tancada">Logout completed</string>
     <string name="imatge_seleccionada">Image selected</string>
+    <string name="enviar_missatge">Send message…</string>
 </resources>
